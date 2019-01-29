@@ -4,7 +4,7 @@ import Level from '../../base/Level';
 export default class CreditsLevel extends Level {
 
     setupAssets() {
-        this.assets.addMusic('music', '/assets/musics/Guitar-Mayhem.mp3');
+        //this.assets.addMusic('music', '/assets/musics/music.mp3');
     }
 
     buildScene() {
@@ -27,7 +27,7 @@ export default class CreditsLevel extends Level {
             'horizontalAlignment': BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_TOP
         });
 
-        ui.addText('Music by Eric Matyas\nwww.soundimage.org\n\nPlease check the game license documentation before\nchanging the credits', {
+        ui.addText('Music by Eric Matyas\nwww.soundimage.org\n\nPlease check the music license documentation before\nchanging the credits', {
             'top': '140px',
             'fontSize': '20px',
             'horizontalAlignment': BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_TOP

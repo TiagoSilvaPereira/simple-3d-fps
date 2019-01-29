@@ -12,7 +12,7 @@ export default class FirstLevel extends Level {
 
     setupAssets() {
 
-        // this.assets.addMusic('music', '/assets/musics/music.mp3');
+        this.assets.addMusic('music', '/assets/musics/music.mp3');
         // this.assets.addSound('sound', '/assets/sounds/sound.mp3', { volume: 0.4 });
         
     }
@@ -41,7 +41,10 @@ export default class FirstLevel extends Level {
             'verticalAlignment': BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER
         });
 
-
+        this.menu.addButton('backButton', 'Return to Home', {
+            'top': '70px',
+            'onclick': () => GAME.goToLevel('HomeMenuLevel')
+        });
     }
 
     createArcCamera() {
