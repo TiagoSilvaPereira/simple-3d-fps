@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Cube Endless Runner Documentation</title>
+
+    <!-- PureCSS -->
+    <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
+    <link rel="stylesheet" href="../source/side-menu.css">
+
+</head>
+<body>
+
+<div id="layout">
+    <!-- Menu toggle -->
+    <a href="#menu" id="menuLink" class="menu-link">
+        <!-- Hamburger icon -->
+        <span></span>
+    </a>
+
+    <div id="menu">
+        <!-- Write the menu html to avoid duplication -->
+        <script>
+            var menuContext = '../';
+        </script>
+        <script src="../includes/menu.html.js"></script>
+    </div>
+
+    <div id="main">
+
+<div id="markdown-content" class="content">
+# The Level Class
+
+The Level class is a fluent interface to handle game scenes. This class has important tools to build game scenes with less code and compatible with the game internal mechanics.
+
+Let's see some of these tools below:
+
+## 1 - Colliders
+
+Creating colliders that execute codes when intersects with other meshes can take a lot of code. Then we created these methods to help with it:
+
+**addCollider(name, options)** - Adds a collider to the current scene. You can see usage examples inside the **TilesGenerator.js** class
+
+**disposeColliders()** - Disposes all scene colliders
+
+Usage example:
+
+```
+let colliderOptions = {
+    width: 100, 
+    height: 100,
+    visible: false,
+    disposeAfterCollision: true,
+    collisionMesh: this.player.getMesh(),
+    positionZ: 10,
+};
+
+// Will execute this code when collide with this.player.mesh
+colliderOptions.onCollide = function() {
+    console.log('will delete old tile colliders')
+}
+
+this.level.addCollider('deleteOldTilesCollider', colliderOptions);
+```
+
+## 2 - Materials Repository
+
+To add BabylonJS materials and use in any part of the level (reducing material duplication), you can use these methods:
+
+**addMaterial(material)** - Adds a material to the Materials Repository
+
+**getMaterial(materialName)** - Gets the material from Repository by name
+
+**removeMaterial(materialName)** - Removes a material from Materials Repository
+
+## 3 - Value Interpolation
+
+Sometimes it is necessary to smoothly interpolate values in the scene (for example, if I need to move an object to another place in 2 seconds, or change the object scale in 200 ms, etc).
+
+With BabylonJS you can do it using [Actions](https://doc.babylonjs.com/how_to/how_to_use_actions), but we added the simplest method to do interpolations and execute code after the interpolation ends, if necessary:
+
+```
+/**
+* Interpolate a value inside the Level Scene using the BABYLON Action Manager
+* @param {*} target The target object
+* @param {*} property The property in the object to interpolate
+* @param {*} toValue The final value of interpolation
+* @param {*} duration The interpolation duration in milliseconds
+* @param {*} afterExecutionCallback Callback executed after ther interpolation ends
+*/
+interpolate(target, property, toValue, duration, afterExecutionCallback = null)
+```
+
+Usage example:
+
+```
+// Interpolates the player mesh height to 1.5 in 200 ms and then
+// shows a message in the console
+
+this.level.interpolate(this.mesh.scale, 'y', 1.5, 200, function() {
+    console.log('Interpolation finished');
+});
+```
+
+## 4 - Assets Database
+
+We added a simple way to load assets to the Level scene. To load assets before the scene starts rendering, put the code inside the method **setupAssets** on your Level class, as we made on **FirstLevel.js**:
+
+```
+setupAssets() {
+
+    this.assets.addMusic('music', '/assets/musics/Guitar-Mayhem.mp3'); // Musics are sounds with autoplay and looping by default
+    this.assets.addSound('playerDieSound', '/assets/sounds/game-die.mp3', { volume: 0.4 });
+    
+}
+```
+
+Each of these loaded assets returns a [BabylonJS correspondent asset](https://doc.babylonjs.com/how_to/how_to_use_assetsmanager), then you can attach it to a property and reuse it on other places of your code:
+
+```
+setupPlayer() {
+        
+    this.dieSound = this.level.assets.getSound('playerDieSound');
+    //...
+
+}
+
+// Then...
+
+this.dieSound.play();
+```
+
+You can inspect all the Assets Database features inside the **AssetsDatabase.j** class.
+
+</div>
+
+    </div>
+
+</div>
+
+
+<script src="https://cdn.rawgit.com/showdownjs/showdown/1.9.0/dist/showdown.min.js"></script>.
+<script src="../source/ui.js"></script>
+<script src="../source/docs.js"></script>
+
+</body>
+</html>

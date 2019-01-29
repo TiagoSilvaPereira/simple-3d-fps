@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Cube Endless Runner Documentation</title>
+
+    <!-- PureCSS -->
+    <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
+    <link rel="stylesheet" href="../source/side-menu.css">
+
+</head>
+<body>
+
+<div id="layout">
+    <!-- Menu toggle -->
+    <a href="#menu" id="menuLink" class="menu-link">
+        <!-- Hamburger icon -->
+        <span></span>
+    </a>
+
+    <div id="menu">
+        <!-- Write the menu html to avoid duplication -->
+        <script>
+            var menuContext = '../';
+        </script>
+        <script src="../includes/menu.html.js"></script>
+    </div>
+
+    <div id="main">
+
+<div id="markdown-content" class="content">
+# Publishing
+
+The first thing to know before publishing the game is what are the files that will be published or packaged.
+
+It is important to say that you don't need to upload or package all the files, only the /public folder.
+
+The other files and folders (**/docs, /node\_modules, /src,** etc) are not necessary because they are used only to build the game, and **we highly recommend** to never upload these files to your remote web server (mainly the **/node\_modules** folder, if exists).
+
+The **/node\_modules** folder will exist only if you set up the NPM modules to modify the code. If you are not modifying the code, don't worry about it.
+
+Here is an image to help you... The files and folders marked in red are the main files to run, upload and package the game.
+
+![Main Files Image](../assets/upload_files.jpg)
+
+## 1 - Publishing to Web
+
+To publish the game on your website, you need only to upload (using FTP, GIT, etc) the game main files (see above) to a folder inside your web server (maybe inside public_html, www, etc). Then, you may add a subdomain (or another domain) that points to your game folder to access it, or, if your web server allows, you can access directly the game folder.
+
+
+## 2 - Publishing to Mobile
+
+As the game is made with HTML5 technologies, you can build and pack it to a mobile application. We have some ways to do it:
+
+* The simplest way is packaging the main/public (see above) files into ZIP and using the [Cocoon Tool](https://cocoon.io/) to transform it in a mobile application. The [Cocoon Tool](https://cocoon.io/) is free up to 2 simultaneous projects and is very easy to use.
+
+* You can use [Apache Cordova](https://cordova.apache.org/) to compile the mobile application locally. It is a little more complicated because you need to install the platform API's on your machine and needs a little knowledge about mobile applications development. We only recommend it for experienced developers, or if you have time to learn Cordova properly. You can learn more about this alternative [here](https://auth0.com/blog/converting-your-web-app-to-mobile/).
+
+## 3 - Publishing into a Desktop application
+
+To publish the game into Desktop application, we recommend using one of the following technologies:
+
+* [NW.js](https://nwjs.io/) - It is too easy to transform an html5 application to a desktop application using NW.js, you need only to drag the main/public files (see above) to the correct folder, configure the **package.json** to point the **index.html** file and the application is now running. See the [documentation](http://docs.nwjs.io/en/latest/For%20Users/Getting%20Started/) to understand better how it works.
+
+* [ElectronJS](https://electronjs.org/) - It is an awesome solution to create Desktop Applications using HTML5 technology. You will need a little more knowledge about Node.js and JavaScript here, but it is not complicated to use.
+
+You can compare the differences between these two solutions [here](https://electronjs.org/docs/development/atom-shell-vs-node-webkit).
+</div>
+
+    </div>
+
+</div>
+
+
+<script src="https://cdn.rawgit.com/showdownjs/showdown/1.9.0/dist/showdown.min.js"></script>.
+<script src="../source/ui.js"></script>
+<script src="../source/docs.js"></script>
+
+</body>
+</html>

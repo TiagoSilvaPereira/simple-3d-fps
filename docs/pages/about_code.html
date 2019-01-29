@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Cube Endless Runner Documentation</title>
+
+    <!-- PureCSS -->
+    <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
+    <link rel="stylesheet" href="../source/side-menu.css">
+
+</head>
+<body>
+
+<div id="layout">
+    <!-- Menu toggle -->
+    <a href="#menu" id="menuLink" class="menu-link">
+        <!-- Hamburger icon -->
+        <span></span>
+    </a>
+
+    <div id="menu">
+        <!-- Write the menu html to avoid duplication -->
+        <script>
+            var menuContext = '../';
+        </script>
+        <script src="../includes/menu.html.js"></script>
+    </div>
+
+    <div id="main">
+
+<div id="markdown-content" class="content">
+# About the code style and organization
+
+The game was made with [BabylonJS](https://www.babylonjs.com/) (*A complete JavaScript framework for building 3D games and experiences with HTML5, WebGL, WebVR and Web Audio*) using the JavaScript language. 
+
+As we used **ES6+** Javascript code (to allow a good code organization), it is necessary to "transpile" the code to **ES5** before. The **ES6+** code is always in the *src/* folder, and the "transpiled" **ES5** code is always inside the */build* folder.
+
+We have adopted some code conventions and patterns to keep the code quality. Let's see it below:
+
+## 1 - Clean Code
+
+We tried to keep the code the maximum cleaner as possible, following **Clean Code** conventions like naming, small methods, SRP classes, etc. (No single letters variables, no big methods, and no God Classes).
+
+See a small piece of code example (inside the class **Monster.js**):
+
+```
+moveAwayFromPlayer() {
+    this.statuses.CLOSE_TO_PLAYER = false;
+    this.level.interpolate(this, 'distanceBeetweenPlayer', 1.5, 1500);
+}
+```
+
+You can see more examples in this [Gist](https://gist.github.com/TiagoSilvaPereira/8f3c1a49c87a70446191dafda916674b).
+
+## 2 - Comments
+
+We commented all the complex code to help understand how the code works. 
+
+## 3 - BabylonJS Add-ons
+
+We added some methods to help interaction with **BabylonJS** engine writing less code. You can find some of these methods inside the **/src/libs/babylon.addons.js**:
+
+
+**mesh.executeOnIntersection** - Used to execute some code when a BabylonJS mesh intersects another mesh.
+
+**mesh.setEllipsoidPerBoundingBox** - This method sets a collision ellipsoid based on the mesh bounding box
+
+**mesh.drawEllipsoid** - Can be helpful if you want to draw the mesh collision ellipsoid
+
+## 4 - The GAME object
+
+The GAME object is a global instance of the **Game.js** class that you can access from any part of the code. It is helpful to a lot of cases, for example:
+
+```
+// Getting options from options.js
+let color = GAME.options.backgroundColor;
+
+// Testing game controls
+if(GAME.keys.left) {
+    // Then move something to left
+}
+
+// Pause the game
+GAME.pause();
+GAME.resume();
+
+// Test if the game is paused
+if(GAME.isPaused()) {
+    // Do anything
+}
+
+// Use the Debug Log (See more on the Log Class Section)
+GAME.log.push({});
+GAME.log.doing('WALKING...');
+GAME.log.logLast(10);
+```
+</div>
+
+    </div>
+
+</div>
+
+
+<script src="https://cdn.rawgit.com/showdownjs/showdown/1.9.0/dist/showdown.min.js"></script>.
+<script src="../source/ui.js"></script>
+<script src="../source/docs.js"></script>
+
+</body>
+</html>

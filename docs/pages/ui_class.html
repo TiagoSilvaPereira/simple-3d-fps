@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Cube Endless Runner Documentation</title>
+
+    <!-- PureCSS -->
+    <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
+    <link rel="stylesheet" href="../source/side-menu.css">
+
+</head>
+<body>
+
+<div id="layout">
+    <!-- Menu toggle -->
+    <a href="#menu" id="menuLink" class="menu-link">
+        <!-- Hamburger icon -->
+        <span></span>
+    </a>
+
+    <div id="menu">
+        <!-- Write the menu html to avoid duplication -->
+        <script>
+            var menuContext = '../';
+        </script>
+        <script src="../includes/menu.html.js"></script>
+    </div>
+
+    <div id="main">
+
+<div id="markdown-content" class="content">
+# The UI Class
+
+The UI Class was created to provide a basic interface for [BabylonJS GUI](https://doc.babylonjs.com/how_to/gui). You can improve this class following the BabylonJS GUI conventions. We recommend using the official GUI methods to make your game UI instead of CSS/HTML because it can have an impact on the game performance.
+
+At this moment, this class offers the following methods:
+
+**addText** - Adds a Text to the UI instance. The options supported are the same of BabylonJS GUI Text
+
+**addButton** - Adds a Button to the UI instance. The options supported are the same of BabylonJS GUI Button
+
+**show** - Shows all the UI instance elements
+
+**hide** - Hides all the UI instance elements
+
+You can show/hide an especific element setting your isVisible property, as we made on **FirstLevel.js**:
+
+```
+this.hasMadeRecordTextControl.isVisible = false;
+```
+
+</div>
+
+    </div>
+
+</div>
+
+
+<script src="https://cdn.rawgit.com/showdownjs/showdown/1.9.0/dist/showdown.min.js"></script>.
+<script src="../source/ui.js"></script>
+<script src="../source/docs.js"></script>
+
+</body>
+</html>

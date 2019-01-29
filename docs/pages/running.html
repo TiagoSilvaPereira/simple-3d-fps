@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Cube Endless Runner Documentation</title>
+
+    <!-- PureCSS -->
+    <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
+    <link rel="stylesheet" href="../source/side-menu.css">
+
+</head>
+<body>
+
+<div id="layout">
+    <!-- Menu toggle -->
+    <a href="#menu" id="menuLink" class="menu-link">
+        <!-- Hamburger icon -->
+        <span></span>
+    </a>
+
+    <div id="menu">
+        <!-- Write the menu html to avoid duplication -->
+        <script>
+            var menuContext = '../';
+        </script>
+        <script src="../includes/menu.html.js"></script>
+    </div>
+
+    <div id="main">
+
+<div id="markdown-content" class="content">
+# Running
+
+As the game loads assets using HTTP Requests, you will need to set up a web-server to run the game correctly and avoid CORS problems (See more in this [article](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/set_up_a_local_testing_server)). Don't worry, it is quite simple and we'll present some ways of doing it.
+
+## 1 - Using the python HTTP server
+
+* Install python on your computer from [https://www.python.org/](https://www.python.org/) - If you are running Linux or MacOS, it's possible that python is already installed.
+* Check if python is installed with the command **python -V** on your terminal/command line.
+* This should return a version number. If this is OK, navigate to the public directory that your game is inside, using the **cd** command (the directory with **index.html**). See the example:
+```
+# include the directory name to enter it, for example
+cd cube_runner/public
+# use two dots to jump up one directory level if you need to
+cd ..
+```
+* Then, enter the command to start up the web-server. In the example below, we'll run the game on the port 4000. If you have something running on this port, please change it to another number (maybe 4001, 8000, etc)
+```
+# If Python version returned above is 3.X
+python3 -m http.server 4000
+
+# If Python version returned above is 2.X
+python -m SimpleHTTPServer 4000
+```
+
+* Now, open your preferred browser and type [http://localhost:4000](http://localhost:4000) (or the port that you chose) and the game will be running.
+
+Enjoy it!
+
+## 2 - Using the PHP Web server
+
+You can use the PHP built-in webserver in the same way of the python webserver above. Follow the steps to setup:
+
+* Install PHP on your computer from [http://php.net/](http://php.net/) - If you are running Linux or MacOS, it's possible that php is already installed.
+* Check if PHP is installed with the command **php -v** on your terminal/command line.
+* This should return a version number. If this is OK, navigate to the public directory that your game is inside, using the **cd** command (the directory with **index.html**). See the example:
+```
+# include the directory name to enter it, for example
+cd cube_runner/public
+# use two dots to jump up one directory level if you need to
+cd ..
+```
+* Then, enter the command to start up the web-server. In the example below, we'll run the game on the port 4000. If you have something running on this port, please change it to another number (maybe 4001, 8000, etc)
+
+```
+php -S localhost:4000
+
+# Or you can pass the IP of your computer in your local network to make the game accessible from other devices (eg: your smartphone)
+php -S 192.168.1.2:4000
+```
+
+* Now, open your preferred browser and type [http://localhost:4000](http://localhost:4000) (or the address/port that you chose) and the game will be running.
+
+Enjoy it!
+
+## 3 - Using a specialized software that provides webservers
+
+You can install a software that cares of serving the content for you, like WAMP, XAMPP, etc. For these softwares, you need only to drag the game files to their special directories and then, access it from your browser.
+
+## 4 - Using other local servers
+
+There are a lot of webserver that you can use, like:
+
+* [Apache HTTP Server](https://httpd.apache.org/)
+* [Nginx](https://www.nginx.com/)
+* And others... you can use your preferred web server
+
+</div>
+
+    </div>
+
+</div>
+
+
+<script src="https://cdn.rawgit.com/showdownjs/showdown/1.9.0/dist/showdown.min.js"></script>.
+<script src="../source/ui.js"></script>
+<script src="../source/docs.js"></script>
+
+</body>
+</html>

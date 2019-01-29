@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Cube Endless Runner Documentation</title>
+
+    <!-- PureCSS -->
+    <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
+    <link rel="stylesheet" href="../source/side-menu.css">
+
+</head>
+<body>
+
+<div id="layout">
+    <!-- Menu toggle -->
+    <a href="#menu" id="menuLink" class="menu-link">
+        <!-- Hamburger icon -->
+        <span></span>
+    </a>
+
+    <div id="menu">
+        <!-- Write the menu html to avoid duplication -->
+        <script>
+            var menuContext = '../';
+        </script>
+        <script src="../includes/menu.html.js"></script>
+    </div>
+
+    <div id="main">
+
+<div id="markdown-content" class="content">
+# Modifying the code
+
+This game code was written using JavaScript ES6+ to support the most modern features (like imports, constructors, etc), and needs to be "transpiled" to JavaScript ES5 due to compatibility with old browsers (because some old browsers don't support ES6+). You can see more about it [here](about_code.html).
+
+Then, before modifying the code, you will need to install the tools to transpile it. Don't worry, we used the simplest tools to help you.
+
+To care about assets compilation and code transpilation, we used the [Laravel Mix Tool](https://laravel.com/docs/5.7/mix), that provides a fluent API for defining [Webpack](https://webpack.js.org/) build steps. You can use **Webpack** or your preferred tools if you want, but we chose **Laravel Mix** due to the facility to set up and use with a few lines of code.
+
+## 1 - Installing Tools and Modules
+
+Firstly, you will need to install [NodeJS](https://nodejs.org) and **NPM** on your system. NPM is installed by default with **NodeJS** installation.
+
+Then you can check if these two are installed with the commands below:
+
+```
+node -v
+npm -v
+```
+
+If this is OK, enter the project main folder (the folder with package.json) and run:
+
+```
+npm install
+```
+
+This will install all the Node Modules inside the project inside the folder **node\_modules**. Be sure of never uploading this folder to your server or committing it to a repository (we added a rule to the **.gitignore** to prevent it).
+
+## 2 - Compiling the assets
+
+And then, you can compile your assets inside the game main folder, generating the **app.js** and **vendor.js** inside the **public/build/** folder: 
+
+For development, you can run a Watcher, that verifies and compiles your scripts ever you modify them: 
+```
+npm run watch
+```
+
+Or, to compile and version the development scripts once, without watching, run:
+```
+npm run dev
+```
+
+And, after your modifications are OK, and you want to publish your code, **we highly recommend** to compile the production scripts, running:
+```
+npm run production
+```
+
+This command will minify and uglify the files, reducing their sizes for production environments.
+
+All the assets that can be compiled are in the **/src** folder and the compiled assets are saved in the **/public/build** folder. 
+
+You can see and set the Assets Compilation Settings inside the **webpack.mix.js** file.
+
+If you want to know more about the compilation/transpilation process, please see the [Laravel Mix Documentation here](https://laravel.com/docs/5.7/mix).
+
+## 3 - About CSS
+
+As the game has little CSS, we added it to **index.html**.
+
+    </div>
+
+</div>
+
+
+<script src="https://cdn.rawgit.com/showdownjs/showdown/1.9.0/dist/showdown.min.js"></script>.
+<script src="../source/ui.js"></script>
+<script src="../source/docs.js"></script>
+
+</body>
+</html>

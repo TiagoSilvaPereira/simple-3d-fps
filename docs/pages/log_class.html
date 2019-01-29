@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Cube Endless Runner Documentation</title>
+
+    <!-- PureCSS -->
+    <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
+    <link rel="stylesheet" href="../source/side-menu.css">
+
+</head>
+<body>
+
+<div id="layout">
+    <!-- Menu toggle -->
+    <a href="#menu" id="menuLink" class="menu-link">
+        <!-- Hamburger icon -->
+        <span></span>
+    </a>
+
+    <div id="menu">
+        <!-- Write the menu html to avoid duplication -->
+        <script>
+            var menuContext = '../';
+        </script>
+        <script src="../includes/menu.html.js"></script>
+    </div>
+
+    <div id="main">
+
+<div id="markdown-content" class="content">
+# The Log Class
+
+We added the Log class to help to debug the game during the development. You can access the log using the global [GAME object](about_code.html).
+
+If you want only to debug small messages when in Debug Mode (you need to enable the debug mode on **options.js** file), you can use the methods:
+
+```
+GAME.log.debug() // Calls the method console.log passing the arguments
+GAME.log.debugWarning() // Calls the method console.warn passing the arguments
+GAME.log.debugError() // Calls the method console.error passing the arguments
+```
+
+The methods below are a more sophisticated log alternative to find bugs during runtime. You can use the **push(something)** or **doing(something)** methods to push log entries. Then you can use **getLast(quantity)** or **logLast(quantity)** methods to see the last **quantity** of logs stored.
+
+```
+
+// Adds something to the log (you can push text, objects, etc)
+GAME.log.push({});
+
+// Recommended to log simple actions
+GAME.log.doing('WALKING...');
+
+// Gets all logs
+GAME.log.get();
+
+// Gets the last specified quantity of logs
+GAME.log.getLast(10);
+
+// Prints all logs in the console
+GAME.log.log();
+
+// Prints the last specified quantity of logs
+GAME.log.logLast(10);
+```
+</div>
+
+    </div>
+
+</div>
+
+
+<script src="https://cdn.rawgit.com/showdownjs/showdown/1.9.0/dist/showdown.min.js"></script>.
+<script src="../source/ui.js"></script>
+<script src="../source/docs.js"></script>
+
+</body>
+</html>

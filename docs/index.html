@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Cube Endless Runner Documentation</title>
+
+    <!-- PureCSS -->
+    <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
+    <link rel="stylesheet" href="./source/side-menu.css">
+    <style>
+        #markdown-content img {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+<div id="layout">
+    <!-- Menu toggle -->
+    <a href="#menu" id="menuLink" class="menu-link">
+        <!-- Hamburger icon -->
+        <span></span>
+    </a>
+
+    <div id="menu">
+        <!-- Write the menu html to avoid duplication -->
+        <script>
+            var menuContext = './';
+        </script>
+        <script src="./includes/menu.html.js"></script>
+    </div>
+
+    <div id="main">
+
+<div id="markdown-content" class="content">
+# Introduction
+
+Cube Endless Runner is a 3D game built with BabylonJS engine on top of WebGL and HTML5 technologies.
+
+The code was made with care and following the *Clean Code* concepts to easily understanding and modification (see more [here](pages/about_code.html)).
+
+If you want, you can see a live preview here: 
+
+[Live Preview - Cube Endless Runner](https://cube-endless-runner.herokuapp.com/)
+
+**IMPORTANT:** Some music and sounds present in this game have special license. Please see the [Licenses](/pages/licenses.html) section.
+
+![Game Image](./assets/game.jpg)
+
+</div>
+
+    </div>
+
+</div>
+
+
+<script src="https://cdn.rawgit.com/showdownjs/showdown/1.9.0/dist/showdown.min.js"></script>.
+<script src="./source/ui.js"></script>
+<script src="./source/docs.js"></script>
+
+</body>
+</html>
