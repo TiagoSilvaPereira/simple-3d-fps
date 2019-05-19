@@ -28,14 +28,21 @@
                 touch-action: none;
             }
 
+            #gunsight-container {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                pointer-events: none;
+            }
+
             #gunsight {
-                position:absolute;
-                top:50%;
-                left:50%;
-                margin-top:-37px;
-                margin-left:-37px;
                 width: 1em;
-                height: auto;
+                height: 1em;
             }
         </style>
 
@@ -47,7 +54,9 @@
     </head>
 
     <body>
-        <img id="gunsight" src="assets/images/gunsight.png" />
+        <div id="gunsight-container">
+            <img id="gunsight" src="assets/images/gunsight.png" />
+        </div>
 
         <!-- Main game canvas -->
         <canvas id="renderCanvas" touch-action="none"></canvas>
