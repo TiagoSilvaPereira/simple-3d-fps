@@ -51,8 +51,8 @@ export default class Game {
     start() {
         this.listenKeys();
         this.lintenTouchEvents();
-        this.listenOtherEvents();
         this.startLevel();
+        this.listenOtherEvents();
     }
 
     pause() {

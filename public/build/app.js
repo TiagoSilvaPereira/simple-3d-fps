@@ -160,8 +160,8 @@ function () {
     value: function start() {
       this.listenKeys();
       this.lintenTouchEvents();
-      this.listenOtherEvents();
       this.startLevel();
+      this.listenOtherEvents();
     }
   }, {
     key: "pause",
