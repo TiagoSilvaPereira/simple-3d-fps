@@ -5,6 +5,7 @@ mix.js('src/app.js', 'public/build/')
       'src/libs/hammer.min.js',
       'src/libs/cannon.js',
       'src/libs/babylon.max.js',
+      'src/libs/babylon.objFileLoader.js',
       'src/libs/babylon.gui.js',
       'src/libs/babylon.addons.js',
    ], 'public/build/vendor.js')

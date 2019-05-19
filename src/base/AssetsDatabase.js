@@ -53,16 +53,28 @@ export default class AssetsDatabase {
 
     }
 
-    addMesh(name, file, options = {}) {
-        let fileTask = this.manager.addMeshFileTask(name + '__MeshTask', file);
+    addMergedMesh(name, file, options) {
+        return this.addMesh(name, file, options, true);
+    }
+
+    addMesh(name, file, options = {}, mergeMeshes = false) {
+        let fileTask = this.manager.addMeshTask(name + '__MeshTask', '', file);
 
         fileTask.onSuccess = (task) => {
-            this.meshes[name] = task.loadedMeshes[0];
+            
+            let mesh = task.loadedMeshes;
+
+            if(mergeMeshes) {
+                mesh = BABYLON.Mesh.MergeMeshes(task.loadedMeshes);
+            }
+
+            this.meshes[name] = mesh;
             
             // Execute a success callback
             if(options.onSuccess) {
                 options.onSuccess(this.meshes[name]);
             }
+
         }
 
         return this.meshes[name];

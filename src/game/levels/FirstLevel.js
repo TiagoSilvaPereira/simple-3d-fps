@@ -7,10 +7,14 @@ export default class FirstLevel extends Level {
 
         // Menu
         this.menu = null;
+        this.canFire = true;
+        this.fireRate = 1;
         
     }
 
     setupAssets() {
+
+        this.assets.addMergedMesh('shotgun', '/assets/models/weapons/shotgun.obj');
 
         // this.assets.addMusic('music', '/assets/musics/music.mp3');
         // this.assets.addSound('sound', '/assets/sounds/sound.mp3', { volume: 0.4 });
@@ -42,6 +46,47 @@ export default class FirstLevel extends Level {
         ground.material = groundMaterial;
 
         this.pointerLock();
+
+        this.addWeapon();
+        
+
+        this.setupEventListeners();
+    }
+
+    addWeapon() {
+        this.weapon = this.assets.getMesh('shotgun');
+        this.weapon.isVisible = true;
+        this.weapon.rotationQuaternion = null;
+        // weapon.rotation.x = -Math.PI/2;
+        this.weapon.rotation.y = -Math.PI/2;
+        this.weapon.parent = this.camera;
+        this.weapon.position = new BABYLON.Vector3(0.7,-0.45,1.1);
+        this.weapon.scaling = new BABYLON.Vector3(2, 2, 2);
+    }
+
+    setupEventListeners() {
+        GAME.canvas.addEventListener("click", () => {
+            var width = this.scene.getEngine().getRenderWidth();
+            var height = this.scene.getEngine().getRenderHeight();
+            
+            if (this.controlEnabled) {
+                var pickInfo = this.scene.pick(width/2, height/2, null, false, this.camera);
+                this.fire(pickInfo);
+            }
+        }, false);
+    }
+
+    fire(pickInfo) {
+        if (this.canFire) {
+            if (pickInfo.hit && pickInfo.pickedMesh.name === "target") {
+                pickInfo.pickedMesh.explode();
+            } else {
+                var b = BABYLON.Mesh.CreateBox("box", 0.1, this.game.scene);
+                b.position = pickInfo.pickedPoint.clone();
+            }
+            //this.animate();
+            this.canFire = false;
+        }
     }
 
     createMenus() {
@@ -69,6 +114,9 @@ export default class FirstLevel extends Level {
         camera.checkCollisions = true;
         camera._needMoveForGravity = true;
 
+        // Reducing the minimum visible FOV to show the Weapon correctly 
+        camera.minZ = 0;
+
         // Remap keys to move with ZQSD
         // camera.keysUp = [87]; // W
         // camera.keysDown = [83]; // S
@@ -84,7 +132,13 @@ export default class FirstLevel extends Level {
 
     beforeRender() {
         if(!GAME.isPaused()) {
-            // Do something
+            if (!this.canFire) {
+                this.currentFireRate -= BABYLON.Tools.GetDeltaTime();
+                if (this.currentFireRate <= 0) {
+                    this.canFire = true;
+                    this.currentFireRate = this.fireRate;
+                }
+            }
         }
     }
 

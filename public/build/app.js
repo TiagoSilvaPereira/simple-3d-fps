@@ -429,15 +429,27 @@ function () {
       return this.addSound(name, file, options);
     }
   }, {
+    key: "addMergedMesh",
+    value: function addMergedMesh(name, file, options) {
+      return this.addMesh(name, file, options, true);
+    }
+  }, {
     key: "addMesh",
     value: function addMesh(name, file) {
       var _this2 = this;
 
       var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-      var fileTask = this.manager.addMeshFileTask(name + '__MeshTask', file);
+      var mergeMeshes = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+      var fileTask = this.manager.addMeshTask(name + '__MeshTask', '', file);
 
       fileTask.onSuccess = function (task) {
-        _this2.meshes[name] = task.loadedMeshes[0]; // Execute a success callback
+        var mesh = task.loadedMeshes;
+
+        if (mergeMeshes) {
+          mesh = BABYLON.Mesh.MergeMeshes(task.loadedMeshes);
+        }
+
+        _this2.meshes[name] = mesh; // Execute a success callback
 
         if (options.onSuccess) {
           options.onSuccess(_this2.meshes[name]);
@@ -1017,10 +1029,13 @@ function (_Level) {
     value: function setProperties() {
       // Menu
       this.menu = null;
+      this.canFire = true;
+      this.fireRate = 1;
     }
   }, {
     key: "setupAssets",
-    value: function setupAssets() {// this.assets.addMusic('music', '/assets/musics/music.mp3');
+    value: function setupAssets() {
+      this.assets.addMergedMesh('shotgun', '/assets/models/weapons/shotgun.obj'); // this.assets.addMusic('music', '/assets/musics/music.mp3');
       // this.assets.addSound('sound', '/assets/sounds/sound.mp3', { volume: 0.4 });
     }
   }, {
@@ -1042,6 +1057,52 @@ function (_Level) {
       groundMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
       ground.material = groundMaterial;
       this.pointerLock();
+      this.addWeapon();
+      this.setupEventListeners();
+    }
+  }, {
+    key: "addWeapon",
+    value: function addWeapon() {
+      this.weapon = this.assets.getMesh('shotgun');
+      this.weapon.isVisible = true;
+      this.weapon.rotationQuaternion = null; // weapon.rotation.x = -Math.PI/2;
+
+      this.weapon.rotation.y = -Math.PI / 2;
+      this.weapon.parent = this.camera;
+      this.weapon.position = new BABYLON.Vector3(0.7, -0.45, 1.1);
+      this.weapon.scaling = new BABYLON.Vector3(2, 2, 2);
+    }
+  }, {
+    key: "setupEventListeners",
+    value: function setupEventListeners() {
+      var _this = this;
+
+      GAME.canvas.addEventListener("click", function () {
+        var width = _this.scene.getEngine().getRenderWidth();
+
+        var height = _this.scene.getEngine().getRenderHeight();
+
+        if (_this.controlEnabled) {
+          var pickInfo = _this.scene.pick(width / 2, height / 2, null, false, _this.camera);
+
+          _this.fire(pickInfo);
+        }
+      }, false);
+    }
+  }, {
+    key: "fire",
+    value: function fire(pickInfo) {
+      if (this.canFire) {
+        if (pickInfo.hit && pickInfo.pickedMesh.name === "target") {
+          pickInfo.pickedMesh.explode();
+        } else {
+          var b = BABYLON.Mesh.CreateBox("box", 0.1, this.game.scene);
+          b.position = pickInfo.pickedPoint.clone();
+        } //this.animate();
+
+
+        this.canFire = false;
+      }
     }
   }, {
     key: "createMenus",
@@ -1064,7 +1125,9 @@ function (_Level) {
       camera.applyGravity = true;
       camera.ellipsoid = new BABYLON.Vector3(1, 1, 1);
       camera.checkCollisions = true;
-      camera._needMoveForGravity = true; // Remap keys to move with ZQSD
+      camera._needMoveForGravity = true; // Reducing the minimum visible FOV to show the Weapon correctly 
+
+      camera.minZ = 0; // Remap keys to move with ZQSD
       // camera.keysUp = [87]; // W
       // camera.keysDown = [83]; // S
       // camera.keysLeft = [65]; // A
@@ -1078,13 +1141,21 @@ function (_Level) {
   }, {
     key: "beforeRender",
     value: function beforeRender() {
-      if (!GAME.isPaused()) {// Do something
+      if (!GAME.isPaused()) {
+        if (!this.canFire) {
+          this.currentFireRate -= BABYLON.Tools.GetDeltaTime();
+
+          if (this.currentFireRate <= 0) {
+            this.canFire = true;
+            this.currentFireRate = this.fireRate;
+          }
+        }
       }
     }
   }, {
     key: "pointerLock",
     value: function pointerLock() {
-      var _this = this;
+      var _this2 = this;
 
       var canvas = GAME.canvas; // On click event, request pointer lock
 
@@ -1097,12 +1168,12 @@ function (_Level) {
       }, false); // Event listener when the pointerlock is updated (or removed by pressing ESC for example).
 
       var pointerlockchange = function pointerlockchange(event) {
-        _this.controlEnabled = document.mozPointerLockElement === canvas || document.webkitPointerLockElement === canvas || document.msPointerLockElement === canvas || document.pointerLockElement === canvas; // If the user is alreday locked
+        _this2.controlEnabled = document.mozPointerLockElement === canvas || document.webkitPointerLockElement === canvas || document.msPointerLockElement === canvas || document.pointerLockElement === canvas; // If the user is alreday locked
 
-        if (!_this.controlEnabled) {
-          _this.camera.detachControl(canvas);
+        if (!_this2.controlEnabled) {
+          _this2.camera.detachControl(canvas);
         } else {
-          _this.camera.attachControl(canvas);
+          _this2.camera.attachControl(canvas);
         }
       }; // Attach events to the document
 
