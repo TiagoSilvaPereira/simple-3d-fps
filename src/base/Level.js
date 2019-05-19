@@ -49,7 +49,7 @@ export default class Level {
                     this.beforeRender.bind(this)
                 );
             } else {
-                GAME.log.debugWarning('You can define animations and other game logics that happends inside the main loop on the beforeRender method');
+                GAME.log.debugWarning('You can define animations and other game logics that happens inside the main loop on the beforeRender method');
             }
 
             GAME.startRenderLoop();

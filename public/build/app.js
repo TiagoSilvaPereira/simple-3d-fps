@@ -267,6 +267,9 @@ function () {
       window.addEventListener('focus', function () {
         _this2.resume();
       });
+      window.addEventListener('resize', function () {
+        _this2.engine.resize();
+      });
     }
   }, {
     key: "goToLevel",
@@ -292,20 +295,15 @@ function () {
   }, {
     key: "render",
     value: function render() {
-      var _this3 = this;
-
       this.startRenderLoop();
-      window.addEventListener("resize", function () {
-        _this3.engine.resize();
-      });
     }
   }, {
     key: "startRenderLoop",
     value: function startRenderLoop() {
-      var _this4 = this;
+      var _this3 = this;
 
       this.engine.runRenderLoop(function () {
-        _this4.currentLevel.scene.render();
+        _this3.currentLevel.scene.render();
       });
     }
   }, {
@@ -551,7 +549,7 @@ function () {
         if (_this.beforeRender) {
           _this.scene.registerBeforeRender(_this.beforeRender.bind(_this));
         } else {
-          GAME.log.debugWarning('You can define animations and other game logics that happends inside the main loop on the beforeRender method');
+          GAME.log.debugWarning('You can define animations and other game logics that happens inside the main loop on the beforeRender method');
         }
 
         GAME.startRenderLoop();

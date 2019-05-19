@@ -153,6 +153,10 @@ export default class Game {
         window.addEventListener('focus', () => {
             this.resume();
         });
+
+        window.addEventListener('resize', () => { 
+            this.engine.resize();
+        });
     }
 
     goToLevel(levelName) {
@@ -179,11 +183,6 @@ export default class Game {
 
     render() {
         this.startRenderLoop();
-
-        window.addEventListener("resize", () => { 
-            this.engine.resize();
-        });
-
     }
 
     startRenderLoop() {
