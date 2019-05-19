@@ -106,6 +106,8 @@ export default class Game {
     }
 
     lintenTouchEvents() {
+        if(typeof(Hammer) == 'undefined') return;
+
         var hammertime = new Hammer(document.body);
         hammertime.get('swipe').set({ direction: Hammer.DIRECTION_ALL });
 

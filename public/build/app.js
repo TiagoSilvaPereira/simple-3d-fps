@@ -225,6 +225,7 @@ function () {
     value: function lintenTouchEvents() {
       var _this = this;
 
+      if (typeof Hammer == 'undefined') return;
       var hammertime = new Hammer(document.body);
       hammertime.get('swipe').set({
         direction: Hammer.DIRECTION_ALL
@@ -349,7 +350,7 @@ var app = {
     GAME.start();
   }
 };
-window.addEventListener('load', function () {
+window.addEventListener('DOMContentLoaded', function () {
   app.init();
 });
 
@@ -980,6 +981,9 @@ function () {
       this.meshMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
       this.mesh.material = this.meshMaterial;
     }
+  }, {
+    key: "move",
+    value: function move() {}
   }]);
 
   return Enemy;
@@ -1243,14 +1247,13 @@ function (_Level) {
     key: "buildScene",
     value: function buildScene() {
       this.scene.clearColor = new BABYLON.Color3.FromHexString(GAME.options.backgroundColor);
-      var light = new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 0), this.scene);
-      this.scene.gravity = new BABYLON.Vector3(0, -9.81, 0);
-      this.scene.collisionsEnabled = true;
+      var light = new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 0), this.scene); //this.scene.gravity = new BABYLON.Vector3(0, -9.81, 0);
+      //this.scene.collisionsEnabled = true;
+
       this.createMenus(); // Sets the active camera
 
-      this.camera = this.createCamera();
-      this.scene.activeCamera = this.camera;
-      this.camera.attachControl(GAME.canvas, true);
+      this.camera = this.createCamera(); //this.scene.activeCamera = this.camera;
+
       this.enablePointerLock();
       this.createGround();
       this.addWeapon();
@@ -1263,7 +1266,7 @@ function (_Level) {
       var ground = BABYLON.Mesh.CreateGround("ground", 100, 100, 2, this.scene);
       ground.checkCollisions = true;
       var groundMaterial = new BABYLON.StandardMaterial("groundMaterial", this.scene);
-      groundMaterial.diffuseTexture = new BABYLON.Texture("/assets/images/grass.jpg", this.scene);
+      groundMaterial.diffuseTexture = new BABYLON.Texture("/assets/images/sand.jpg", this.scene);
       groundMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
       ground.material = groundMaterial;
     }
@@ -1292,26 +1295,17 @@ function (_Level) {
     }
   }, {
     key: "createMenus",
-    value: function createMenus() {// this.menu = new UI('runnerMenuUI');
-      // let text = GAME.isMobile() ? 'You are in a mobile device' : 'You are not in a mobile device';
-      // // Small tutorial text
-      // this.menu.addText(text, {
-      //     'verticalAlignment': BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER
-      // });
-      // this.menu.addButton('backButton', 'Return to Home', {
-      //     'top': '70px',
-      //     'onclick': () => GAME.goToLevel('HomeMenuLevel')
-      // });
-    }
+    value: function createMenus() {}
   }, {
     key: "createCamera",
     value: function createCamera() {
-      var camera = new BABYLON.UniversalCamera("UniversalCamera", new BABYLON.Vector3(0, 100, 0), this.scene);
-      camera.setTarget(BABYLON.Vector3.Zero());
-      camera.applyGravity = true;
-      camera.ellipsoid = new BABYLON.Vector3(1, 1, 1);
-      camera.checkCollisions = true;
-      camera._needMoveForGravity = true; // Reducing the minimum visible FOV to show the Weapon correctly 
+      var camera = new BABYLON.UniversalCamera("UniversalCamera", new BABYLON.Vector3(0, 2, -10), this.scene);
+      camera.setTarget(new BABYLON.Vector3(0, 2, 0));
+      camera.attachControl(GAME.canvas, true); //camera.applyGravity = true;
+      //camera.ellipsoid = new BABYLON.Vector3(1, 1, 1);
+      //camera.checkCollisions = true;
+      //camera._needMoveForGravity = true;
+      // Reducing the minimum visible FOV to show the Weapon correctly 
 
       camera.minZ = 0; // Remap keys to move with ZQSD
       // camera.keysUp = [87]; // W

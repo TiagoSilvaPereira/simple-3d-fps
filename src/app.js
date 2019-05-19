@@ -12,6 +12,6 @@ var app = {
 
 }
 
-window.addEventListener('load', () => {
+window.addEventListener('DOMContentLoaded', () => {
     app.init();
 });

@@ -2,7 +2,7 @@ let mix = require('laravel-mix');
 
 mix.js('src/app.js', 'public/build/')
    .babel([
-      'src/libs/hammer.min.js',
+      // 'src/libs/hammer.min.js',
       'src/libs/cannon.js',
       'src/libs/babylon.max.js',
       'src/libs/babylon.objFileLoader.js',

@@ -26,4 +26,8 @@ export default class Enemy {
         this.mesh.material = this.meshMaterial;
     }
 
+    move() {
+        
+    }
+
 }
