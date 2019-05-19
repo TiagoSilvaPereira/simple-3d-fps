@@ -1,7 +1,7 @@
+import Enemy from '../Enemy';
 import UI from '../../base/UI';
 import Weapon from '../Weapon';
 import Level from '../../base/Level';
-import Enemy from '../Enemy';
 
 export default class FirstLevel extends Level {
 
@@ -92,11 +92,11 @@ export default class FirstLevel extends Level {
         // Reducing the minimum visible FOV to show the Weapon correctly 
         camera.minZ = 0;
 
-        // Remap keys to move with ZQSD
-        // camera.keysUp = [87]; // W
-        // camera.keysDown = [83]; // S
-        // camera.keysLeft = [65]; // A
-        // camera.keysRight = [68]; // D
+        // Remap keys to move with WASD
+        camera.keysUp = [87]; // W
+        camera.keysDown = [83]; // S
+        camera.keysLeft = [65]; // A
+        camera.keysRight = [68]; // D
         
         // camera.speed = 10;
         // camera.inertia = 5;

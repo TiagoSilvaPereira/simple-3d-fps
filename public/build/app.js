@@ -1,1 +1,1433 @@
-!function(e){var t={};function n(o){if(t[o])return t[o].exports;var i=t[o]={i:o,l:!1,exports:{}};return e[o].call(i.exports,i,i.exports,n),i.l=!0,i.exports}n.m=e,n.c=t,n.d=function(e,t,o){n.o(e,t)||Object.defineProperty(e,t,{enumerable:!0,get:o})},n.r=function(e){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})},n.t=function(e,t){if(1&t&&(e=n(e)),8&t)return e;if(4&t&&"object"==typeof e&&e&&e.__esModule)return e;var o=Object.create(null);if(n.r(o),Object.defineProperty(o,"default",{enumerable:!0,value:e}),2&t&&"string"!=typeof e)for(var i in e)n.d(o,i,function(t){return e[t]}.bind(null,i));return o},n.n=function(e){var t=e&&e.__esModule?function(){return e.default}:function(){return e};return n.d(t,"a",t),t},n.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},n.p="/",n(n.s=0)}([function(e,t,n){e.exports=n(1)},function(e,t,n){"use strict";function o(e,t){for(var n=0;n<t.length;n++){var o=t[n];o.enumerable=o.enumerable||!1,o.configurable=!0,"value"in o&&(o.writable=!0),Object.defineProperty(e,o.key,o)}}n.r(t);var i=function(){function e(){var t=!(arguments.length>0&&void 0!==arguments[0])||arguments[0];!function(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}(this,e),this.currentID=0,this.logs=[],this.enabled=t}var t,n,i;return t=e,(n=[{key:"push",value:function(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{};this.enabled&&(e.ID=++this.currentID,this.logs.push(e))}},{key:"doing",value:function(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:"";this.push({doing:e})}},{key:"getLast",value:function(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:1;return this.logs.slice(-e)}},{key:"logLast",value:function(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:1;console.log(this.getLast(e))}},{key:"get",value:function(){return this.logs}},{key:"log",value:function(){console.log(this.logs)}},{key:"debug",value:function(e){GAME.options.debugMode&&console.log("DEBUG LOG: "+e)}},{key:"debugWarning",value:function(e){GAME.options.debugMode&&console.warn("DEBUG LOG: "+e)}},{key:"debugError",value:function(e){GAME.options.debugMode&&console.error("DEBUG LOG: "+e)}}])&&o(t.prototype,n),i&&o(t,i),e}();function r(e,t){for(var n=0;n<t.length;n++){var o=t[n];o.enumerable=o.enumerable||!1,o.configurable=!0,"value"in o&&(o.writable=!0),Object.defineProperty(e,o.key,o)}}var s=function(){function e(t){!function(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}(this,e),this.currentControlID=0,this.controls=[],this.menuTexture=BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI(t)}var t,n,o;return t=e,(n=[{key:"addButton",value:function(e,t){var n=arguments.length>2&&void 0!==arguments[2]?arguments[2]:{},o=BABYLON.GUI.Button.CreateSimpleButton(e,t);return o.width=n.width||.5,o.height=n.height||"60px",o.color=n.color||"black",o.outlineWidth=n.outlineWidth||0,o.outlineColor=n.outlineColor||o.color,o.background=n.background||"white",o.left=n.left||"0px",o.top=n.top||"0px",o.textHorizontalAlignment=void 0!==n.horizontalAlignment?n.horizontalAlignment:BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER,o.textVerticalAlignment=void 0!==n.verticalAlignment?n.verticalAlignment:BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER,n.onclick&&o.onPointerUpObservable.add(n.onclick),this.menuTexture.addControl(o),this.add(o),o}},{key:"addText",value:function(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{},n=new BABYLON.GUI.TextBlock;return n.text=e,n.color=t.color||"white",n.fontSize=t.fontSize||28,n.outlineWidth=t.outlineWidth||0,n.outlineColor=t.outlineColor||"black",n.lineSpacing=t.lineSpacing||"5px",n.left=t.left||"0px",n.top=t.top||"0px",n.textHorizontalAlignment=void 0!==t.horizontalAlignment?t.horizontalAlignment:BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER,n.textVerticalAlignment=void 0!==t.verticalAlignment?t.verticalAlignment:BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP,n.textWrapping=t.wrapping||!0,this.menuTexture.addControl(n),this.add(n),n}},{key:"add",value:function(e){e.uiControlID=this.currentControlID++,this.controls.push(e)}},{key:"remove",value:function(e){e.isVisible=!1,this.controls.splice(e.uiControlID,1)}},{key:"show",value:function(){this.controls.forEach(function(e){return e.isVisible=!0})}},{key:"hide",value:function(){this.controls.forEach(function(e){return e.isVisible=!1})}}])&&r(t.prototype,n),o&&r(t,o),e}();function a(e,t){for(var n=0;n<t.length;n++){var o=t[n];o.enumerable=o.enumerable||!1,o.configurable=!0,"value"in o&&(o.writable=!0),Object.defineProperty(e,o.key,o)}}var u=function(){function e(t){!function(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}(this,e),this.level=t,this.scene=t.scene,this.fireRate=1,this.canFire=!0,this.currentFireRate=0}var t,n,o;return t=e,(n=[{key:"create",value:function(){this.mesh=this.level.assets.getMesh("shotgun"),this.mesh.isVisible=!0,this.mesh.rotationQuaternion=null,this.mesh.rotation.y=-Math.PI/2,this.mesh.parent=this.level.camera,this.mesh.position=new BABYLON.Vector3(.7,-.45,1.3),this.mesh.scaling=new BABYLON.Vector3(2,2,2),this.controlFireRate()}},{key:"fire",value:function(){var e=this.scene.getEngine().getRenderWidth(),t=this.scene.getEngine().getRenderHeight();if(this.level.controlEnabled){var n=this.scene.pick(e/2,t/2,null,!1,this.camera);this.doFire(n)}}},{key:"doFire",value:function(e){if(this.canFire){if(e.hit&&"enemy"===e.pickedMesh.name)e.pickedMesh.dispose();else if(e.pickedPoint)BABYLON.Mesh.CreateBox("box",.1,this.scene).position=e.pickedPoint.clone();this.animateFire(),this.canFire=!1}}},{key:"animateFire",value:function(){var e=this;this.level.interpolate(this.mesh.position,"z",1,100),setTimeout(function(){e.level.interpolate(e.mesh.position,"z",1.3,100)},100)}},{key:"controlFireRate",value:function(){this.canFire||(this.currentFireRate-=GAME.engine.getDeltaTime(),this.currentFireRate<=0&&(this.canFire=!0,this.currentFireRate=this.fireRate))}}])&&a(t.prototype,n),o&&a(t,o),e}();function l(e,t){for(var n=0;n<t.length;n++){var o=t[n];o.enumerable=o.enumerable||!1,o.configurable=!0,"value"in o&&(o.writable=!0),Object.defineProperty(e,o.key,o)}}var c=function(){function e(t,n){!function(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}(this,e),this.scene=t,this.meshes=[],this.sounds=[],this.manager=new BABYLON.AssetsManager(this.scene),this.manager.onFinish=function(e){n&&n(e)}}var t,n,o;return t=e,(n=[{key:"addSound",value:function(e,t,n){var o=this;return this.manager.addBinaryFileTask(e+"__SoundTask",t).onSuccess=function(t){o.sounds[e]=new BABYLON.Sound(e,t.data,o.scene,null,n),n.onSuccess&&n.onSuccess(o.sounds[e])},this.sounds[e]}},{key:"addMusic",value:function(e,t){var n=arguments.length>2&&void 0!==arguments[2]?arguments[2]:{};return n.loop=void 0===n.loop||n.loop,n.volume=void 0!==n.volume?n.volume:.5,n.autoplay=void 0===n.autoplay||n.autoplay,this.addSound(e,t,n)}},{key:"addMergedMesh",value:function(e,t,n){return this.addMesh(e,t,n,!0)}},{key:"addMesh",value:function(e,t){var n=this,o=arguments.length>2&&void 0!==arguments[2]?arguments[2]:{},i=arguments.length>3&&void 0!==arguments[3]&&arguments[3];return this.manager.addMeshTask(e+"__MeshTask","",t).onSuccess=function(t){var r=t.loadedMeshes;i&&(r=BABYLON.Mesh.MergeMeshes(t.loadedMeshes)),n.meshes[e]=r,o.onSuccess&&o.onSuccess(n.meshes[e])},this.meshes[e]}},{key:"getMesh",value:function(e){return this.meshes[e]}},{key:"getSound",value:function(e){return this.sounds[e]}},{key:"load",value:function(){this.manager.load()}}])&&l(t.prototype,n),o&&l(t,o),e}();function h(e,t){for(var n=0;n<t.length;n++){var o=t[n];o.enumerable=o.enumerable||!1,o.configurable=!0,"value"in o&&(o.writable=!0),Object.defineProperty(e,o.key,o)}}var d=function(){function e(){!function(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}(this,e),this.materials={},this.scene=null,this.assets=null}var t,n,o;return t=e,(n=[{key:"start",value:function(){GAME.resume(),GAME.stopRenderLoop(),this.setProperties?this.setProperties():GAME.log.debugWarning("The setProperties method is recommended to initialize the Level properties"),this.createScene()}},{key:"createScene",value:function(){var e=this;return this.scene=new BABYLON.Scene(GAME.engine),this.assets=new c(this.scene,function(){GAME.log.debug("Level Assets loaded"),e.buildScene?e.buildScene():GAME.log.debugWarning("You can add the buildScene method to your level to define your scene"),e.beforeRender?e.scene.registerBeforeRender(e.beforeRender.bind(e)):GAME.log.debugWarning("You can define animations and other game logics that happends inside the main loop on the beforeRender method"),GAME.startRenderLoop()}),this.setupAssets&&this.setupAssets(),this.assets.load(),this.scene}},{key:"exit",value:function(){this.scene.dispose(),this.scene=null}},{key:"addCollider",value:function(e,t){var n=BABYLON.MeshBuilder.CreateBox(e,{width:t.width||1,height:t.height||1,depth:t.depth||1},this.scene);if(BABYLON.Tags.AddTagsTo(n,"collider boxCollider"),n.position.x=t.positionX||0,n.position.y=t.positionY||0,n.position.z=t.positionZ||0,n.isVisible=!!t.visible&&t.visible,n.isVisible){var o=new BABYLON.StandardMaterial(e+"Material");o.diffuseColor=new BABYLON.Color3(.5,.5,0),o.alpha=.5,n.material=o}return t.timeToDispose=t.timeToDispose?t.timeToDispose:0,n.actionManager=new BABYLON.ActionManager(this.scene),n.actionManager.registerAction(new BABYLON.ExecuteCodeAction({trigger:BABYLON.ActionManager.OnIntersectionEnterTrigger,parameter:t.collisionMesh},function(){t.onCollide&&t.onCollide(),t.disposeAfterCollision&&setTimeout(function(){n.dispose()},t.timeToDispose)})),n}},{key:"disposeColliders",value:function(){for(var e=this.scene.getMeshesByTags("collider"),t=0;t<e.length;t++)e[t].dispose()}},{key:"addMaterial",value:function(e){this.materials[e.name]=e}},{key:"getMaterial",value:function(e){return this.materials[e]}},{key:"removeMaterial",value:function(e){var t=null;(t=this.materials[e])&&(t.dispose(),delete this.materials[e])}},{key:"interpolate",value:function(e,t,n,o){var i=arguments.length>4&&void 0!==arguments[4]?arguments[4]:null;this.scene.actionManager||(this.scene.actionManager=new BABYLON.ActionManager(this.scene));var r=new BABYLON.InterpolateValueAction(BABYLON.ActionManager.NothingTrigger,e,t,n,o);r.onInterpolationDoneObservable.add(function(){GAME.log.debug("Interpolation done"),i&&i()}),this.scene.actionManager.registerAction(r),r.execute()}},{key:"enablePointerLock",value:function(){var e=this,t=GAME.canvas;this.camera||console.error("You need to add a camera to the level to enable pointer lock"),t.addEventListener("click",function(e){t.requestPointerLock=t.requestPointerLock||t.msRequestPointerLock||t.mozRequestPointerLock||t.webkitRequestPointerLock,t.requestPointerLock&&t.requestPointerLock()},!1);var n=function(n){e.controlEnabled=document.mozPointerLockElement===t||document.webkitPointerLockElement===t||document.msPointerLockElement===t||document.pointerLockElement===t,e.controlEnabled?e.camera.attachControl(t):e.camera.detachControl(t)};document.addEventListener("pointerlockchange",n,!1),document.addEventListener("mspointerlockchange",n,!1),document.addEventListener("mozpointerlockchange",n,!1),document.addEventListener("webkitpointerlockchange",n,!1)}}])&&h(t.prototype,n),o&&h(t,o),e}();function f(e,t){for(var n=0;n<t.length;n++){var o=t[n];o.enumerable=o.enumerable||!1,o.configurable=!0,"value"in o&&(o.writable=!0),Object.defineProperty(e,o.key,o)}}var p=function(){function e(t){!function(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}(this,e),this.level=t,this.scene=t.scene,this.mesh=null}var t,n,o;return t=e,(n=[{key:"create",value:function(){return this.mesh=BABYLON.MeshBuilder.CreateSphere("enemy",{diameter:1.5,segments:2},this.scene),this.mesh.position.x=Math.floor(100*Math.random())-50,this.mesh.position.z=Math.floor(100*Math.random())-50,this.mesh.position.y=2,this.addEnemyMaterial(),this}},{key:"addEnemyMaterial",value:function(){this.meshMaterial=new BABYLON.StandardMaterial("meshMaterial",this.scene),this.meshMaterial.diffuseColor=new BABYLON.Color3.FromHexString("#6ab04c"),this.meshMaterial.specularColor=new BABYLON.Color3(0,0,0),this.mesh.material=this.meshMaterial}},{key:"move",value:function(){}}])&&f(t.prototype,n),o&&f(t,o),e}();function v(e){return(v="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e})(e)}function y(e,t){for(var n=0;n<t.length;n++){var o=t[n];o.enumerable=o.enumerable||!1,o.configurable=!0,"value"in o&&(o.writable=!0),Object.defineProperty(e,o.key,o)}}function m(e,t){return!t||"object"!==v(t)&&"function"!=typeof t?function(e){if(void 0===e)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return e}(e):t}function g(e){return(g=Object.setPrototypeOf?Object.getPrototypeOf:function(e){return e.__proto__||Object.getPrototypeOf(e)})(e)}function b(e,t){return(b=Object.setPrototypeOf||function(e,t){return e.__proto__=t,e})(e,t)}var k=function(e){function t(){return function(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}(this,t),m(this,g(t).apply(this,arguments))}var n,o,i;return function(e,t){if("function"!=typeof t&&null!==t)throw new TypeError("Super expression must either be null or a function");e.prototype=Object.create(t&&t.prototype,{constructor:{value:e,writable:!0,configurable:!0}}),t&&b(e,t)}(t,d),n=t,(o=[{key:"setProperties",value:function(){this.menu=null,this.weapon=null,this.enemies=[]}},{key:"setupAssets",value:function(){this.assets.addMergedMesh("shotgun","/assets/models/weapons/shotgun.obj")}},{key:"buildScene",value:function(){this.scene.clearColor=new BABYLON.Color3.FromHexString(GAME.options.backgroundColor);new BABYLON.DirectionalLight("DirectionalLight",new BABYLON.Vector3(0,-1,0),this.scene);this.scene.gravity=new BABYLON.Vector3(0,-9.81,0),this.scene.collisionsEnabled=!0,this.createMenus(),this.camera=this.createCamera(),this.enablePointerLock(),this.createGround(),this.addWeapon(),this.addEnemies(),this.setupEventListeners()}},{key:"createGround",value:function(){var e=BABYLON.Mesh.CreateGround("ground",100,100,2,this.scene);e.checkCollisions=!0;var t=new BABYLON.StandardMaterial("groundMaterial",this.scene);t.diffuseTexture=new BABYLON.Texture("/assets/images/sand.jpg",this.scene),t.specularColor=new BABYLON.Color3(0,0,0),e.material=t}},{key:"addWeapon",value:function(){this.weapon=new u(this),this.weapon.create()}},{key:"addEnemies",value:function(){for(var e=0;e<10;e++){var t=new p(this).create();this.enemies.push(t)}}},{key:"setupEventListeners",value:function(){var e=this;GAME.canvas.addEventListener("click",function(){e.weapon.fire()},!1)}},{key:"createMenus",value:function(){}},{key:"createCamera",value:function(){var e=new BABYLON.UniversalCamera("UniversalCamera",new BABYLON.Vector3(0,2,-10),this.scene);return e.setTarget(new BABYLON.Vector3(0,2,0)),e.attachControl(GAME.canvas,!0),e.applyGravity=!0,e.ellipsoid=new BABYLON.Vector3(1,1,1),e.checkCollisions=!0,e._needMoveForGravity=!0,e.minZ=0,e}},{key:"beforeRender",value:function(){GAME.isPaused()||this.weapon.controlFireRate()}}])&&y(n.prototype,o),i&&y(n,i),t}();function w(e){return(w="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e})(e)}function L(e,t){for(var n=0;n<t.length;n++){var o=t[n];o.enumerable=o.enumerable||!1,o.configurable=!0,"value"in o&&(o.writable=!0),Object.defineProperty(e,o.key,o)}}function A(e,t){return!t||"object"!==w(t)&&"function"!=typeof t?function(e){if(void 0===e)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return e}(e):t}function B(e){return(B=Object.setPrototypeOf?Object.getPrototypeOf:function(e){return e.__proto__||Object.getPrototypeOf(e)})(e)}function O(e,t){return(O=Object.setPrototypeOf||function(e,t){return e.__proto__=t,e})(e,t)}var M=function(e){function t(){return function(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}(this,t),A(this,B(t).apply(this,arguments))}var n,o,i;return function(e,t){if("function"!=typeof t&&null!==t)throw new TypeError("Super expression must either be null or a function");e.prototype=Object.create(t&&t.prototype,{constructor:{value:e,writable:!0,configurable:!0}}),t&&O(e,t)}(t,d),n=t,(o=[{key:"setupAssets",value:function(){}},{key:"buildScene",value:function(){new BABYLON.FreeCamera("camera1",new BABYLON.Vector3(0,5,-10),this.scene);this.scene.clearColor=new BABYLON.Color4(0,0,0,0),this.makeUI()}},{key:"makeUI",value:function(){var e=new s("creditsUI");e.addText("Design and Code by Tiago Silva Pereira Rodrigues\nkingofcode.com.br\n\n\n",{top:"30px",fontSize:"20px",horizontalAlignment:BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_TOP}),e.addText("Music by Eric Matyas\nwww.soundimage.org\n\nPlease check the music license documentation before\nchanging the credits",{top:"140px",fontSize:"20px",horizontalAlignment:BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_TOP}),e.addButton("backButton","Return to Home",{top:"220px",background:GAME.options.backgroundColor,color:"white",onclick:function(){return GAME.goToLevel("HomeMenuLevel")}})}}])&&L(n.prototype,o),i&&L(n,i),t}();function E(e){return(E="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e})(e)}function C(e,t){for(var n=0;n<t.length;n++){var o=t[n];o.enumerable=o.enumerable||!1,o.configurable=!0,"value"in o&&(o.writable=!0),Object.defineProperty(e,o.key,o)}}function T(e,t){return!t||"object"!==E(t)&&"function"!=typeof t?function(e){if(void 0===e)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return e}(e):t}function N(e){return(N=Object.setPrototypeOf?Object.getPrototypeOf:function(e){return e.__proto__||Object.getPrototypeOf(e)})(e)}function P(e,t){return(P=Object.setPrototypeOf||function(e,t){return e.__proto__=t,e})(e,t)}var S=function(e){function t(){return function(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}(this,t),T(this,N(t).apply(this,arguments))}var n,o,i;return function(e,t){if("function"!=typeof t&&null!==t)throw new TypeError("Super expression must either be null or a function");e.prototype=Object.create(t&&t.prototype,{constructor:{value:e,writable:!0,configurable:!0}}),t&&P(e,t)}(t,d),n=t,(o=[{key:"setupAssets",value:function(){}},{key:"buildScene",value:function(){new BABYLON.FreeCamera("camera1",new BABYLON.Vector3(0,5,-10),this.scene);this.scene.clearColor=new BABYLON.Color4(0,0,0,0);var e=new s("homeMenuUI");e.addButton("playButton","Play Game",{background:GAME.options.backgroundColor,color:"white",onclick:function(){return GAME.goToLevel("FirstLevel")}}),e.addButton("creditsButton","Credits",{top:"70px",background:GAME.options.backgroundColor,color:"white",onclick:function(){return GAME.goToLevel("CreditsLevel")}})}}])&&C(n.prototype,o),i&&C(n,i),t}();function G(e,t){for(var n=0;n<t.length;n++){var o=t[n];o.enumerable=o.enumerable||!1,o.configurable=!0,"value"in o&&(o.writable=!0),Object.defineProperty(e,o.key,o)}}var Y=function(){function e(){var t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{};!function(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}(this,e),this.options=t,this.keys={},this.paused=!1,this.log=new i,this.canvas=document.getElementById("renderCanvas"),this.engine=new BABYLON.Engine(this.canvas,!0),this.currentLevel=null,this.currentLevelName="HomeMenuLevel",this.levels={HomeMenuLevel:new S,CreditsLevel:new M,FirstLevel:new k}}var t,n,o;return t=e,(n=[{key:"start",value:function(){this.listenKeys(),this.lintenTouchEvents(),this.listenOtherEvents(),this.startLevel()}},{key:"pause",value:function(){this.paused=!0}},{key:"isPaused",value:function(){return this.paused}},{key:"resume",value:function(){this.paused=!1}},{key:"listenKeys",value:function(){document.addEventListener("keydown",function(e){87==e.keyCode||38==e.keyCode?this.keys.up=1:83==e.keyCode||40==e.keyCode?this.keys.down=1:65==e.keyCode||37==e.keyCode?this.keys.left=1:68!=e.keyCode&&39!=e.keyCode||(this.keys.right=1)}.bind(this)),document.addEventListener("keyup",function(e){87==e.keyCode||38==e.keyCode?this.keys.up=0:83==e.keyCode||40==e.keyCode?this.keys.down=0:65==e.keyCode||37==e.keyCode?this.keys.left=0:68!=e.keyCode&&39!=e.keyCode||(this.keys.right=0)}.bind(this)),this.keys.up=!1,this.keys.down=!1,this.keys.left=!1,this.keys.right=!1}},{key:"lintenTouchEvents",value:function(){var e=this;if("undefined"!=typeof Hammer){var t=new Hammer(document.body);t.get("swipe").set({direction:Hammer.DIRECTION_ALL}),t.on("swipeup",function(t){e.keys.up=1,setTimeout(function(){e.keys.up=0},150)}),t.on("swipedown",function(t){e.keys.down=1,setTimeout(function(){e.keys.down=0},100)}),t.on("swipeleft",function(t){e.keys.left=2,setTimeout(function(){e.keys.left=0},150)}),t.on("swiperight",function(t){e.keys.right=2,setTimeout(function(){e.keys.right=0},150)})}}},{key:"listenOtherEvents",value:function(){var e=this;window.addEventListener("blur",function(){e.pause()}),window.addEventListener("focus",function(){e.resume()})}},{key:"goToLevel",value:function(e){this.levels[e]?(this.currentLevel&&this.currentLevel.exit(),this.currentLevelName=e,this.startLevel()):console.error("A level with name "+e+" does not exists")}},{key:"startLevel",value:function(){this.currentLevel=this.levels[this.currentLevelName],this.currentLevel.start()}},{key:"render",value:function(){var e=this;this.startRenderLoop(),window.addEventListener("resize",function(){e.engine.resize()})}},{key:"startRenderLoop",value:function(){var e=this;this.engine.runRenderLoop(function(){e.currentLevel.scene.render()})}},{key:"stopRenderLoop",value:function(){this.engine.stopRenderLoop()}},{key:"isMobile",value:function(){return!!(navigator.userAgent.match(/Android/i)||navigator.userAgent.match(/webOS/i)||navigator.userAgent.match(/iPhone/i)||navigator.userAgent.match(/iPad/i)||navigator.userAgent.match(/iPod/i)||navigator.userAgent.match(/BlackBerry/i)||navigator.userAgent.match(/Windows Phone/i))}}])&&G(t.prototype,n),o&&G(t,o),e}();window.GAME=null;var x=function(){GAME=new Y(window.initialGameOptions),GAME.start()};window.addEventListener("DOMContentLoaded",function(){x()})}]);
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "/";
+/******/
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ })
+/************************************************************************/
+/******/ ({
+
+/***/ "./src/Game.js":
+/*!*********************!*\
+  !*** ./src/Game.js ***!
+  \*********************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Game; });
+/* harmony import */ var _base_Log_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base/Log.js */ "./src/base/Log.js");
+/* harmony import */ var _game_levels_FirstLevel_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./game/levels/FirstLevel.js */ "./src/game/levels/FirstLevel.js");
+/* harmony import */ var _game_levels_CreditsLevel_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./game/levels/CreditsLevel.js */ "./src/game/levels/CreditsLevel.js");
+/* harmony import */ var _game_levels_HomeMenuLevel_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./game/levels/HomeMenuLevel.js */ "./src/game/levels/HomeMenuLevel.js");
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+// Base
+ // Game Levels
+
+
+
+
+
+var Game =
+/*#__PURE__*/
+function () {
+  function Game() {
+    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+    _classCallCheck(this, Game);
+
+    /**
+     * Sets game options
+     */
+    this.options = options;
+    /**
+     * Keyboard pressed keys
+     */
+
+    this.keys = {};
+    /**
+     * Is game paused?
+     */
+
+    this.paused = false;
+    /**
+     * Can be used to log objects and debug the game
+     */
+
+    this.log = new _base_Log_js__WEBPACK_IMPORTED_MODULE_0__["default"]();
+    /**
+     * Starts the BABYLON engine on the Canvas element
+     */
+
+    this.canvas = document.getElementById("renderCanvas");
+    this.engine = new BABYLON.Engine(this.canvas, true);
+    this.currentLevel = null;
+    this.currentLevelName = 'HomeMenuLevel';
+    this.levels = {
+      'HomeMenuLevel': new _game_levels_HomeMenuLevel_js__WEBPACK_IMPORTED_MODULE_3__["default"](),
+      'CreditsLevel': new _game_levels_CreditsLevel_js__WEBPACK_IMPORTED_MODULE_2__["default"](),
+      'FirstLevel': new _game_levels_FirstLevel_js__WEBPACK_IMPORTED_MODULE_1__["default"]()
+    };
+  }
+
+  _createClass(Game, [{
+    key: "start",
+    value: function start() {
+      this.listenKeys();
+      this.lintenTouchEvents();
+      this.listenOtherEvents();
+      this.startLevel();
+    }
+  }, {
+    key: "pause",
+    value: function pause() {
+      this.paused = true;
+    }
+  }, {
+    key: "isPaused",
+    value: function isPaused() {
+      return this.paused;
+    }
+  }, {
+    key: "resume",
+    value: function resume() {
+      this.paused = false;
+    }
+  }, {
+    key: "listenKeys",
+    value: function listenKeys() {
+      document.addEventListener('keydown', keyDown.bind(this));
+      document.addEventListener('keyup', keyUp.bind(this));
+      this.keys.up = false;
+      this.keys.down = false;
+      this.keys.left = false;
+      this.keys.right = false;
+
+      function keyDown(e) {
+        if (e.keyCode == 87 || e.keyCode == 38) {
+          //Arrow Up
+          this.keys.up = 1;
+        } else if (e.keyCode == 83 || e.keyCode == 40) {
+          //Arrow Down
+          this.keys.down = 1;
+        } else if (e.keyCode == 65 || e.keyCode == 37) {
+          //Arrow Left
+          this.keys.left = 1;
+        } else if (e.keyCode == 68 || e.keyCode == 39) {
+          //Arrow Right
+          this.keys.right = 1;
+        }
+      }
+
+      function keyUp(e) {
+        if (e.keyCode == 87 || e.keyCode == 38) {
+          //Arrow Up
+          this.keys.up = 0;
+        } else if (e.keyCode == 83 || e.keyCode == 40) {
+          //Arrow Down
+          this.keys.down = 0;
+        } else if (e.keyCode == 65 || e.keyCode == 37) {
+          //Arrow Left
+          this.keys.left = 0;
+        } else if (e.keyCode == 68 || e.keyCode == 39) {
+          //Arrow Right
+          this.keys.right = 0;
+        }
+      }
+    }
+  }, {
+    key: "lintenTouchEvents",
+    value: function lintenTouchEvents() {
+      var _this = this;
+
+      if (typeof Hammer == 'undefined') return;
+      var hammertime = new Hammer(document.body);
+      hammertime.get('swipe').set({
+        direction: Hammer.DIRECTION_ALL
+      });
+      hammertime.on('swipeup', function (ev) {
+        _this.keys.up = 1; // Resets the key after some milleseconds
+
+        setTimeout(function () {
+          _this.keys.up = 0;
+        }, 150);
+      });
+      hammertime.on('swipedown', function (ev) {
+        _this.keys.down = 1;
+        setTimeout(function () {
+          _this.keys.down = 0;
+        }, 100);
+      });
+      hammertime.on('swipeleft', function (ev) {
+        _this.keys.left = 2;
+        setTimeout(function () {
+          _this.keys.left = 0;
+        }, 150);
+      });
+      hammertime.on('swiperight', function (ev) {
+        _this.keys.right = 2;
+        setTimeout(function () {
+          _this.keys.right = 0;
+        }, 150);
+      });
+    }
+  }, {
+    key: "listenOtherEvents",
+    value: function listenOtherEvents() {
+      var _this2 = this;
+
+      window.addEventListener('blur', function () {
+        _this2.pause();
+      });
+      window.addEventListener('focus', function () {
+        _this2.resume();
+      });
+    }
+  }, {
+    key: "goToLevel",
+    value: function goToLevel(levelName) {
+      if (!this.levels[levelName]) {
+        console.error('A level with name ' + levelName + ' does not exists');
+        return;
+      }
+
+      if (this.currentLevel) {
+        this.currentLevel.exit();
+      }
+
+      this.currentLevelName = levelName;
+      this.startLevel();
+    }
+  }, {
+    key: "startLevel",
+    value: function startLevel() {
+      this.currentLevel = this.levels[this.currentLevelName];
+      this.currentLevel.start();
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var _this3 = this;
+
+      this.startRenderLoop();
+      window.addEventListener("resize", function () {
+        _this3.engine.resize();
+      });
+    }
+  }, {
+    key: "startRenderLoop",
+    value: function startRenderLoop() {
+      var _this4 = this;
+
+      this.engine.runRenderLoop(function () {
+        _this4.currentLevel.scene.render();
+      });
+    }
+  }, {
+    key: "stopRenderLoop",
+    value: function stopRenderLoop() {
+      this.engine.stopRenderLoop();
+    }
+  }, {
+    key: "isMobile",
+    value: function isMobile() {
+      if (navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/webOS/i) || navigator.userAgent.match(/iPhone/i) || navigator.userAgent.match(/iPad/i) || navigator.userAgent.match(/iPod/i) || navigator.userAgent.match(/BlackBerry/i) || navigator.userAgent.match(/Windows Phone/i)) {
+        return true;
+      }
+
+      return false;
+    }
+  }]);
+
+  return Game;
+}();
+
+
+
+/***/ }),
+
+/***/ "./src/app.js":
+/*!********************!*\
+  !*** ./src/app.js ***!
+  \********************/
+/*! no exports provided */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Game_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Game.js */ "./src/Game.js");
+// The Game main class
+
+window.GAME = null;
+var app = {
+  init: function init() {
+    GAME = new _Game_js__WEBPACK_IMPORTED_MODULE_0__["default"](window.initialGameOptions);
+    GAME.start();
+  }
+};
+window.addEventListener('DOMContentLoaded', function () {
+  app.init();
+});
+
+/***/ }),
+
+/***/ "./src/base/AssetsDatabase.js":
+/*!************************************!*\
+  !*** ./src/base/AssetsDatabase.js ***!
+  \************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return AssetsDatabase; });
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var AssetsDatabase =
+/*#__PURE__*/
+function () {
+  function AssetsDatabase(scene, finishCallback) {
+    _classCallCheck(this, AssetsDatabase);
+
+    this.scene = scene;
+    this.meshes = [];
+    this.sounds = [];
+    this.manager = new BABYLON.AssetsManager(this.scene);
+
+    this.manager.onFinish = function (tasks) {
+      if (finishCallback) finishCallback(tasks);
+    };
+  }
+  /**
+   * Adds a sound to be loaded
+   * @param {*} name 
+   * @param {*} file 
+   * @param {*} options 
+   */
+
+
+  _createClass(AssetsDatabase, [{
+    key: "addSound",
+    value: function addSound(name, file, options) {
+      var _this = this;
+
+      var fileTask = this.manager.addBinaryFileTask(name + '__SoundTask', file);
+
+      fileTask.onSuccess = function (task) {
+        _this.sounds[name] = new BABYLON.Sound(name, task.data, _this.scene, null, options); // Execute a success callback
+
+        if (options.onSuccess) {
+          options.onSuccess(_this.sounds[name]);
+        }
+      };
+
+      return this.sounds[name];
+    }
+    /**
+     * Adds a music (sound with some predefined parametes that can be overwriten)
+     * By default, musics are automatically played in loop
+     * @param {*} name 
+     * @param {*} file 
+     * @param {*} options 
+     */
+
+  }, {
+    key: "addMusic",
+    value: function addMusic(name, file) {
+      var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+      options.loop = typeof options.loop !== 'undefined' ? options.loop : true;
+      options.volume = typeof options.volume !== 'undefined' ? options.volume : 0.5;
+      options.autoplay = typeof options.autoplay !== 'undefined' ? options.autoplay : true;
+      return this.addSound(name, file, options);
+    }
+  }, {
+    key: "addMergedMesh",
+    value: function addMergedMesh(name, file, options) {
+      return this.addMesh(name, file, options, true);
+    }
+  }, {
+    key: "addMesh",
+    value: function addMesh(name, file) {
+      var _this2 = this;
+
+      var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+      var mergeMeshes = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+      var fileTask = this.manager.addMeshTask(name + '__MeshTask', '', file);
+
+      fileTask.onSuccess = function (task) {
+        var mesh = task.loadedMeshes;
+
+        if (mergeMeshes) {
+          mesh = BABYLON.Mesh.MergeMeshes(task.loadedMeshes);
+        }
+
+        _this2.meshes[name] = mesh; // Execute a success callback
+
+        if (options.onSuccess) {
+          options.onSuccess(_this2.meshes[name]);
+        }
+      };
+
+      return this.meshes[name];
+    }
+  }, {
+    key: "getMesh",
+    value: function getMesh(name) {
+      return this.meshes[name];
+    }
+  }, {
+    key: "getSound",
+    value: function getSound(name) {
+      return this.sounds[name];
+    }
+  }, {
+    key: "load",
+    value: function load() {
+      this.manager.load();
+    }
+  }]);
+
+  return AssetsDatabase;
+}();
+
+
+
+/***/ }),
+
+/***/ "./src/base/Level.js":
+/*!***************************!*\
+  !*** ./src/base/Level.js ***!
+  \***************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Level; });
+/* harmony import */ var _AssetsDatabase__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AssetsDatabase */ "./src/base/AssetsDatabase.js");
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+
+
+var Level =
+/*#__PURE__*/
+function () {
+  function Level() {
+    _classCallCheck(this, Level);
+
+    /**
+     * We can use this object to store materials that can be reused along the game
+     */
+    this.materials = {};
+    this.scene = null;
+    this.assets = null;
+  }
+
+  _createClass(Level, [{
+    key: "start",
+    value: function start() {
+      GAME.resume();
+      GAME.stopRenderLoop();
+
+      if (this.setProperties) {
+        this.setProperties();
+      } else {
+        GAME.log.debugWarning('The setProperties method is recommended to initialize the Level properties');
+      }
+
+      this.createScene();
+    }
+  }, {
+    key: "createScene",
+    value: function createScene() {
+      var _this = this;
+
+      // Create the scene space
+      this.scene = new BABYLON.Scene(GAME.engine); // Add assets management and execute beforeRender after finish
+
+      this.assets = new _AssetsDatabase__WEBPACK_IMPORTED_MODULE_0__["default"](this.scene, function () {
+        GAME.log.debug('Level Assets loaded');
+
+        if (_this.buildScene) {
+          _this.buildScene();
+        } else {
+          GAME.log.debugWarning('You can add the buildScene method to your level to define your scene');
+        } // If has the beforeRender method
+
+
+        if (_this.beforeRender) {
+          _this.scene.registerBeforeRender(_this.beforeRender.bind(_this));
+        } else {
+          GAME.log.debugWarning('You can define animations and other game logics that happends inside the main loop on the beforeRender method');
+        }
+
+        GAME.startRenderLoop();
+      });
+
+      if (this.setupAssets) {
+        this.setupAssets();
+      } // Load the assets
+
+
+      this.assets.load();
+      return this.scene;
+    }
+  }, {
+    key: "exit",
+    value: function exit() {
+      this.scene.dispose();
+      this.scene = null;
+    }
+    /**
+     * Adds a collider to the level scene. It will fire the options.onCollide callback
+     * when the collider intersects options.collisionMesh. It can be used to fire actions when
+     * player enters an area for example.
+     * @param {*} name 
+     * @param {*} options 
+     */
+
+  }, {
+    key: "addCollider",
+    value: function addCollider(name, options) {
+      var collider = BABYLON.MeshBuilder.CreateBox(name, {
+        width: options.width || 1,
+        height: options.height || 1,
+        depth: options.depth || 1
+      }, this.scene); // Add a tag to identify the object as collider and to simplify group operations (like dispose)
+
+      BABYLON.Tags.AddTagsTo(collider, 'collider boxCollider');
+      collider.position.x = options.positionX || 0;
+      collider.position.y = options.positionY || 0;
+      collider.position.z = options.positionZ || 0;
+      collider.isVisible = options.visible ? options.visible : false;
+
+      if (collider.isVisible) {
+        var colliderMaterial = new BABYLON.StandardMaterial(name + 'Material');
+        colliderMaterial.diffuseColor = new BABYLON.Color3(0.5, 0.5, 0);
+        colliderMaterial.alpha = 0.5;
+        collider.material = colliderMaterial;
+      }
+
+      options.timeToDispose = options.timeToDispose ? options.timeToDispose : 0;
+      collider.actionManager = new BABYLON.ActionManager(this.scene);
+      collider.actionManager.registerAction(new BABYLON.ExecuteCodeAction({
+        trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
+        parameter: options.collisionMesh
+      }, function () {
+        // Runs onCollide callback if exists
+        if (options.onCollide) {
+          options.onCollide();
+        } // If true, will dispose the collider after timeToDispose
+
+
+        if (options.disposeAfterCollision) {
+          setTimeout(function () {
+            collider.dispose();
+          }, options.timeToDispose);
+        }
+      }));
+      return collider;
+    }
+  }, {
+    key: "disposeColliders",
+    value: function disposeColliders() {
+      var colliders = this.scene.getMeshesByTags('collider');
+
+      for (var index = 0; index < colliders.length; index++) {
+        colliders[index].dispose();
+      }
+    }
+  }, {
+    key: "addMaterial",
+    value: function addMaterial(material) {
+      this.materials[material.name] = material;
+    }
+  }, {
+    key: "getMaterial",
+    value: function getMaterial(materialName) {
+      return this.materials[materialName];
+    }
+  }, {
+    key: "removeMaterial",
+    value: function removeMaterial(materialName) {
+      var material = null;
+
+      if (material = this.materials[materialName]) {
+        material.dispose();
+        delete this.materials[materialName];
+      }
+    }
+    /**
+     * Interpolate a value inside the Level Scene using the BABYLON Action Manager
+     * @param {*} target The target object
+     * @param {*} property The property in the object to interpolate
+     * @param {*} toValue The final value of interpolation
+     * @param {*} duration The interpolation duration in milliseconds
+     * @param {*} afterExecutionCallback Callback executed after ther interpolation ends
+     */
+
+  }, {
+    key: "interpolate",
+    value: function interpolate(target, property, toValue, duration) {
+      var afterExecutionCallback = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : null;
+
+      if (!this.scene.actionManager) {
+        this.scene.actionManager = new BABYLON.ActionManager(this.scene);
+      }
+
+      var interpolateAction = new BABYLON.InterpolateValueAction(BABYLON.ActionManager.NothingTrigger, target, property, toValue, duration);
+      interpolateAction.onInterpolationDoneObservable.add(function () {
+        GAME.log.debug('Interpolation done');
+        if (afterExecutionCallback) afterExecutionCallback();
+      });
+      this.scene.actionManager.registerAction(interpolateAction);
+      interpolateAction.execute();
+    }
+    /**
+     * Enable pointer lock
+     */
+
+  }, {
+    key: "enablePointerLock",
+    value: function enablePointerLock() {
+      var _this2 = this;
+
+      var canvas = GAME.canvas;
+
+      if (!this.camera) {
+        console.error('You need to add a camera to the level to enable pointer lock');
+      } // On click event, request pointer lock
+
+
+      canvas.addEventListener("click", function (evt) {
+        canvas.requestPointerLock = canvas.requestPointerLock || canvas.msRequestPointerLock || canvas.mozRequestPointerLock || canvas.webkitRequestPointerLock;
+
+        if (canvas.requestPointerLock) {
+          canvas.requestPointerLock();
+        }
+      }, false); // Event listener when the pointerlock is updated (or removed by pressing ESC for example).
+
+      var pointerlockchange = function pointerlockchange(event) {
+        _this2.controlEnabled = document.mozPointerLockElement === canvas || document.webkitPointerLockElement === canvas || document.msPointerLockElement === canvas || document.pointerLockElement === canvas; // If the user is alreday locked
+
+        if (!_this2.controlEnabled) {
+          _this2.camera.detachControl(canvas);
+        } else {
+          _this2.camera.attachControl(canvas);
+        }
+      }; // Attach events to the document
+
+
+      document.addEventListener("pointerlockchange", pointerlockchange, false);
+      document.addEventListener("mspointerlockchange", pointerlockchange, false);
+      document.addEventListener("mozpointerlockchange", pointerlockchange, false);
+      document.addEventListener("webkitpointerlockchange", pointerlockchange, false);
+    }
+  }]);
+
+  return Level;
+}();
+
+
+
+/***/ }),
+
+/***/ "./src/base/Log.js":
+/*!*************************!*\
+  !*** ./src/base/Log.js ***!
+  \*************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Log; });
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var Log =
+/*#__PURE__*/
+function () {
+  function Log() {
+    var enabled = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
+    _classCallCheck(this, Log);
+
+    this.currentID = 0;
+    this.logs = [];
+    this.enabled = enabled;
+  }
+
+  _createClass(Log, [{
+    key: "push",
+    value: function push() {
+      var log = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      if (!this.enabled) return;
+      log.ID = ++this.currentID;
+      this.logs.push(log);
+    }
+    /**
+     * Simple log method to show what something is doing at moment
+     * @param {*} what 
+     */
+
+  }, {
+    key: "doing",
+    value: function doing() {
+      var what = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+      this.push({
+        'doing': what
+      });
+    }
+  }, {
+    key: "getLast",
+    value: function getLast() {
+      var quantity = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+      return this.logs.slice(-quantity);
+    }
+  }, {
+    key: "logLast",
+    value: function logLast() {
+      var quantity = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+      console.log(this.getLast(quantity));
+    }
+  }, {
+    key: "get",
+    value: function get() {
+      return this.logs;
+    }
+  }, {
+    key: "log",
+    value: function log() {
+      console.log(this.logs);
+    }
+  }, {
+    key: "debug",
+    value: function debug(data) {
+      if (GAME.options.debugMode) {
+        console.log('DEBUG LOG: ' + data);
+      }
+    }
+  }, {
+    key: "debugWarning",
+    value: function debugWarning(data) {
+      if (GAME.options.debugMode) {
+        console.warn('DEBUG LOG: ' + data);
+      }
+    }
+  }, {
+    key: "debugError",
+    value: function debugError(data) {
+      if (GAME.options.debugMode) {
+        console.error('DEBUG LOG: ' + data);
+      }
+    }
+  }]);
+
+  return Log;
+}();
+
+
+
+/***/ }),
+
+/***/ "./src/base/UI.js":
+/*!************************!*\
+  !*** ./src/base/UI.js ***!
+  \************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return UI; });
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var UI =
+/*#__PURE__*/
+function () {
+  function UI(uiName) {
+    _classCallCheck(this, UI);
+
+    this.currentControlID = 0;
+    this.controls = [];
+    this.menuTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI(uiName);
+  }
+
+  _createClass(UI, [{
+    key: "addButton",
+    value: function addButton(name, text) {
+      var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+      var button = BABYLON.GUI.Button.CreateSimpleButton(name, text);
+      button.width = options.width || 0.5;
+      button.height = options.height || '60px';
+      button.color = options.color || 'black';
+      button.outlineWidth = options.outlineWidth || 0;
+      button.outlineColor = options.outlineColor || button.color;
+      button.background = options.background || 'white';
+      button.left = options.left || '0px';
+      button.top = options.top || '0px';
+      button.textHorizontalAlignment = typeof options.horizontalAlignment !== 'undefined' ? options.horizontalAlignment : BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+      button.textVerticalAlignment = typeof options.verticalAlignment !== 'undefined' ? options.verticalAlignment : BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+
+      if (options.onclick) {
+        button.onPointerUpObservable.add(options.onclick);
+      }
+
+      this.menuTexture.addControl(button);
+      this.add(button);
+      return button;
+    }
+  }, {
+    key: "addText",
+    value: function addText(text) {
+      var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      var textControl = new BABYLON.GUI.TextBlock();
+      textControl.text = text;
+      textControl.color = options.color || 'white';
+      textControl.fontSize = options.fontSize || 28;
+      textControl.outlineWidth = options.outlineWidth || 0;
+      textControl.outlineColor = options.outlineColor || "black";
+      textControl.lineSpacing = options.lineSpacing || '5px';
+      textControl.left = options.left || '0px';
+      textControl.top = options.top || '0px';
+      textControl.textHorizontalAlignment = typeof options.horizontalAlignment !== 'undefined' ? options.horizontalAlignment : BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+      textControl.textVerticalAlignment = typeof options.verticalAlignment !== 'undefined' ? options.verticalAlignment : BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+      textControl.textWrapping = options.wrapping || true;
+      this.menuTexture.addControl(textControl);
+      this.add(textControl);
+      return textControl;
+    }
+  }, {
+    key: "add",
+    value: function add(control) {
+      control.uiControlID = this.currentControlID++;
+      this.controls.push(control);
+    }
+  }, {
+    key: "remove",
+    value: function remove(control) {
+      control.isVisible = false;
+      this.controls.splice(control.uiControlID, 1);
+    }
+  }, {
+    key: "show",
+    value: function show() {
+      this.controls.forEach(function (control) {
+        return control.isVisible = true;
+      });
+    }
+  }, {
+    key: "hide",
+    value: function hide() {
+      this.controls.forEach(function (control) {
+        return control.isVisible = false;
+      });
+    }
+  }]);
+
+  return UI;
+}();
+
+
+
+/***/ }),
+
+/***/ "./src/game/Enemy.js":
+/*!***************************!*\
+  !*** ./src/game/Enemy.js ***!
+  \***************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Enemy; });
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var Enemy =
+/*#__PURE__*/
+function () {
+  function Enemy(level) {
+    _classCallCheck(this, Enemy);
+
+    this.level = level;
+    this.scene = level.scene;
+    this.mesh = null;
+  }
+
+  _createClass(Enemy, [{
+    key: "create",
+    value: function create() {
+      this.mesh = BABYLON.MeshBuilder.CreateSphere("enemy", {
+        diameter: 1.5,
+        segments: 2
+      }, this.scene);
+      this.mesh.position.x = Math.floor(Math.random() * 100) - 50;
+      this.mesh.position.z = Math.floor(Math.random() * 100) - 50;
+      this.mesh.position.y = 2;
+      this.addEnemyMaterial();
+      return this;
+    }
+  }, {
+    key: "addEnemyMaterial",
+    value: function addEnemyMaterial() {
+      this.meshMaterial = new BABYLON.StandardMaterial('meshMaterial', this.scene);
+      this.meshMaterial.diffuseColor = new BABYLON.Color3.FromHexString('#6ab04c');
+      this.meshMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+      this.mesh.material = this.meshMaterial;
+    }
+  }, {
+    key: "move",
+    value: function move() {}
+  }]);
+
+  return Enemy;
+}();
+
+
+
+/***/ }),
+
+/***/ "./src/game/Weapon.js":
+/*!****************************!*\
+  !*** ./src/game/Weapon.js ***!
+  \****************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Weapon; });
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var Weapon =
+/*#__PURE__*/
+function () {
+  function Weapon(level) {
+    _classCallCheck(this, Weapon);
+
+    this.level = level;
+    this.scene = level.scene;
+    this.fireRate = 1;
+    this.canFire = true;
+    this.currentFireRate = 0;
+  }
+
+  _createClass(Weapon, [{
+    key: "create",
+    value: function create() {
+      this.mesh = this.level.assets.getMesh('shotgun');
+      this.mesh.isVisible = true;
+      this.mesh.rotationQuaternion = null;
+      this.mesh.rotation.y = -Math.PI / 2;
+      this.mesh.parent = this.level.camera;
+      this.mesh.position = new BABYLON.Vector3(0.7, -0.45, 1.3);
+      this.mesh.scaling = new BABYLON.Vector3(2, 2, 2);
+      this.controlFireRate();
+    }
+  }, {
+    key: "fire",
+    value: function fire() {
+      var width = this.scene.getEngine().getRenderWidth();
+      var height = this.scene.getEngine().getRenderHeight(); // Is the player control enabled?
+
+      if (this.level.controlEnabled) {
+        var pickInfo = this.scene.pick(width / 2, height / 2, null, false, this.camera);
+        this.doFire(pickInfo);
+      }
+    }
+  }, {
+    key: "doFire",
+    value: function doFire(pickInfo) {
+      if (this.canFire) {
+        if (pickInfo.hit && pickInfo.pickedMesh.name === "enemy") {
+          pickInfo.pickedMesh.dispose();
+        } else {
+          if (pickInfo.pickedPoint) {
+            var b = BABYLON.Mesh.CreateBox("box", 0.1, this.scene);
+            b.position = pickInfo.pickedPoint.clone();
+          }
+        }
+
+        this.animateFire();
+        this.canFire = false;
+      }
+    }
+  }, {
+    key: "animateFire",
+    value: function animateFire() {
+      var _this = this;
+
+      this.level.interpolate(this.mesh.position, 'z', 1, 100);
+      setTimeout(function () {
+        _this.level.interpolate(_this.mesh.position, 'z', 1.3, 100);
+      }, 100);
+    }
+  }, {
+    key: "controlFireRate",
+    value: function controlFireRate() {
+      if (!this.canFire) {
+        this.currentFireRate -= GAME.engine.getDeltaTime();
+
+        if (this.currentFireRate <= 0) {
+          this.canFire = true;
+          this.currentFireRate = this.fireRate;
+        }
+      }
+    }
+  }]);
+
+  return Weapon;
+}();
+
+
+
+/***/ }),
+
+/***/ "./src/game/levels/CreditsLevel.js":
+/*!*****************************************!*\
+  !*** ./src/game/levels/CreditsLevel.js ***!
+  \*****************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return CreditsLevel; });
+/* harmony import */ var _base_UI__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../base/UI */ "./src/base/UI.js");
+/* harmony import */ var _base_Level__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../base/Level */ "./src/base/Level.js");
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+
+
+
+var CreditsLevel =
+/*#__PURE__*/
+function (_Level) {
+  _inherits(CreditsLevel, _Level);
+
+  function CreditsLevel() {
+    _classCallCheck(this, CreditsLevel);
+
+    return _possibleConstructorReturn(this, _getPrototypeOf(CreditsLevel).apply(this, arguments));
+  }
+
+  _createClass(CreditsLevel, [{
+    key: "setupAssets",
+    value: function setupAssets() {//this.assets.addMusic('music', '/assets/musics/music.mp3');
+    }
+  }, {
+    key: "buildScene",
+    value: function buildScene() {
+      var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), this.scene); // Make this scene transparent to see the background
+
+      this.scene.clearColor = new BABYLON.Color4(0, 0, 0, 0);
+      this.makeUI();
+    }
+  }, {
+    key: "makeUI",
+    value: function makeUI() {
+      var ui = new _base_UI__WEBPACK_IMPORTED_MODULE_0__["default"]('creditsUI');
+      ui.addText('Design and Code by Tiago Silva Pereira Rodrigues\nkingofcode.com.br\n\n\n', {
+        'top': '30px',
+        'fontSize': '20px',
+        'horizontalAlignment': BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_TOP
+      });
+      ui.addText('Music by Eric Matyas\nwww.soundimage.org\n\nPlease check the music license documentation before\nchanging the credits', {
+        'top': '140px',
+        'fontSize': '20px',
+        'horizontalAlignment': BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_TOP
+      });
+      ui.addButton('backButton', 'Return to Home', {
+        'top': '220px',
+        'background': GAME.options.backgroundColor,
+        'color': 'white',
+        'onclick': function onclick() {
+          return GAME.goToLevel('HomeMenuLevel');
+        }
+      });
+    }
+  }]);
+
+  return CreditsLevel;
+}(_base_Level__WEBPACK_IMPORTED_MODULE_1__["default"]);
+
+
+
+/***/ }),
+
+/***/ "./src/game/levels/FirstLevel.js":
+/*!***************************************!*\
+  !*** ./src/game/levels/FirstLevel.js ***!
+  \***************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return FirstLevel; });
+/* harmony import */ var _Enemy__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../Enemy */ "./src/game/Enemy.js");
+/* harmony import */ var _base_UI__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../base/UI */ "./src/base/UI.js");
+/* harmony import */ var _Weapon__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../Weapon */ "./src/game/Weapon.js");
+/* harmony import */ var _base_Level__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../base/Level */ "./src/base/Level.js");
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+
+
+
+
+
+var FirstLevel =
+/*#__PURE__*/
+function (_Level) {
+  _inherits(FirstLevel, _Level);
+
+  function FirstLevel() {
+    _classCallCheck(this, FirstLevel);
+
+    return _possibleConstructorReturn(this, _getPrototypeOf(FirstLevel).apply(this, arguments));
+  }
+
+  _createClass(FirstLevel, [{
+    key: "setProperties",
+    value: function setProperties() {
+      // Menu
+      this.menu = null;
+      this.weapon = null;
+      this.enemies = [];
+    }
+  }, {
+    key: "setupAssets",
+    value: function setupAssets() {
+      this.assets.addMergedMesh('shotgun', '/assets/models/weapons/shotgun.obj'); // this.assets.addMusic('music', '/assets/musics/music.mp3');
+      // this.assets.addSound('sound', '/assets/sounds/sound.mp3', { volume: 0.4 });
+    }
+  }, {
+    key: "buildScene",
+    value: function buildScene() {
+      this.scene.clearColor = new BABYLON.Color3.FromHexString(GAME.options.backgroundColor);
+      var light = new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 0), this.scene);
+      this.scene.gravity = new BABYLON.Vector3(0, -9.81, 0);
+      this.scene.collisionsEnabled = true;
+      this.createMenus(); // Sets the active camera
+
+      this.camera = this.createCamera(); //this.scene.activeCamera = this.camera;
+
+      this.enablePointerLock();
+      this.createGround();
+      this.addWeapon();
+      this.addEnemies();
+      this.setupEventListeners();
+    }
+  }, {
+    key: "createGround",
+    value: function createGround() {
+      var ground = BABYLON.Mesh.CreateGround("ground", 100, 100, 2, this.scene);
+      ground.checkCollisions = true;
+      var groundMaterial = new BABYLON.StandardMaterial("groundMaterial", this.scene);
+      groundMaterial.diffuseTexture = new BABYLON.Texture("/assets/images/sand.jpg", this.scene);
+      groundMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+      ground.material = groundMaterial;
+    }
+  }, {
+    key: "addWeapon",
+    value: function addWeapon() {
+      this.weapon = new _Weapon__WEBPACK_IMPORTED_MODULE_2__["default"](this);
+      this.weapon.create();
+    }
+  }, {
+    key: "addEnemies",
+    value: function addEnemies() {
+      for (var enemiesQuantity = 0; enemiesQuantity < 10; enemiesQuantity++) {
+        var enemy = new _Enemy__WEBPACK_IMPORTED_MODULE_0__["default"](this).create();
+        this.enemies.push(enemy);
+      }
+    }
+  }, {
+    key: "setupEventListeners",
+    value: function setupEventListeners() {
+      var _this = this;
+
+      GAME.canvas.addEventListener('click', function () {
+        _this.weapon.fire();
+      }, false);
+    }
+  }, {
+    key: "createMenus",
+    value: function createMenus() {}
+  }, {
+    key: "createCamera",
+    value: function createCamera() {
+      var camera = new BABYLON.UniversalCamera("UniversalCamera", new BABYLON.Vector3(0, 2, -10), this.scene);
+      camera.setTarget(new BABYLON.Vector3(0, 2, 0));
+      camera.attachControl(GAME.canvas, true);
+      camera.applyGravity = true;
+      camera.ellipsoid = new BABYLON.Vector3(1, 1, 1);
+      camera.checkCollisions = true;
+      camera._needMoveForGravity = true; // Reducing the minimum visible FOV to show the Weapon correctly 
+
+      camera.minZ = 0; // Remap keys to move with WASD
+
+      camera.keysUp = [87]; // W
+
+      camera.keysDown = [83]; // S
+
+      camera.keysLeft = [65]; // A
+
+      camera.keysRight = [68]; // D
+      // camera.speed = 10;
+      // camera.inertia = 5;
+      // camera.angularSensibility = 1000;
+
+      return camera;
+    }
+  }, {
+    key: "beforeRender",
+    value: function beforeRender() {
+      if (!GAME.isPaused()) {
+        this.weapon.controlFireRate();
+      }
+    }
+  }]);
+
+  return FirstLevel;
+}(_base_Level__WEBPACK_IMPORTED_MODULE_3__["default"]);
+
+
+
+/***/ }),
+
+/***/ "./src/game/levels/HomeMenuLevel.js":
+/*!******************************************!*\
+  !*** ./src/game/levels/HomeMenuLevel.js ***!
+  \******************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return HomeMenuLevel; });
+/* harmony import */ var _base_UI__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../base/UI */ "./src/base/UI.js");
+/* harmony import */ var _base_Level__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../base/Level */ "./src/base/Level.js");
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+
+
+
+var HomeMenuLevel =
+/*#__PURE__*/
+function (_Level) {
+  _inherits(HomeMenuLevel, _Level);
+
+  function HomeMenuLevel() {
+    _classCallCheck(this, HomeMenuLevel);
+
+    return _possibleConstructorReturn(this, _getPrototypeOf(HomeMenuLevel).apply(this, arguments));
+  }
+
+  _createClass(HomeMenuLevel, [{
+    key: "setupAssets",
+    value: function setupAssets() {//this.assets.addMusic('music', '/assets/musics/music.mp3');
+    }
+  }, {
+    key: "buildScene",
+    value: function buildScene() {
+      var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), this.scene); // Make this scene transparent to see the document background
+
+      this.scene.clearColor = new BABYLON.Color4(0, 0, 0, 0);
+      var menu = new _base_UI__WEBPACK_IMPORTED_MODULE_0__["default"]('homeMenuUI');
+      menu.addButton('playButton', 'Play Game', {
+        'background': GAME.options.backgroundColor,
+        'color': 'white',
+        'onclick': function onclick() {
+          return GAME.goToLevel('FirstLevel');
+        }
+      });
+      menu.addButton('creditsButton', 'Credits', {
+        'top': '70px',
+        'background': GAME.options.backgroundColor,
+        'color': 'white',
+        'onclick': function onclick() {
+          return GAME.goToLevel('CreditsLevel');
+        }
+      });
+    }
+  }]);
+
+  return HomeMenuLevel;
+}(_base_Level__WEBPACK_IMPORTED_MODULE_1__["default"]);
+
+
+
+/***/ }),
+
+/***/ 0:
+/*!**************************!*\
+  !*** multi ./src/app.js ***!
+  \**************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(/*! /home/kingofcode/code/games/fps/src/app.js */"./src/app.js");
+
+
+/***/ })
+
+/******/ });
