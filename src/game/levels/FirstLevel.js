@@ -8,6 +8,7 @@ export default class FirstLevel extends Level {
         // Menu
         this.menu = null;
         this.canFire = true;
+        this.currentFireRate = 0;
         this.fireRate = 1;
         
     }
@@ -48,7 +49,7 @@ export default class FirstLevel extends Level {
         this.pointerLock();
 
         this.addWeapon();
-        
+        this.addTargets();
 
         this.setupEventListeners();
     }
@@ -60,12 +61,28 @@ export default class FirstLevel extends Level {
         // weapon.rotation.x = -Math.PI/2;
         this.weapon.rotation.y = -Math.PI/2;
         this.weapon.parent = this.camera;
-        this.weapon.position = new BABYLON.Vector3(0.7,-0.45,1.1);
+        this.weapon.position = new BABYLON.Vector3(0.7,-0.45,1.3);
         this.weapon.scaling = new BABYLON.Vector3(2, 2, 2);
     }
 
+    addTargets() {
+        for(var targetsQuantity = 0; targetsQuantity < 10; targetsQuantity++) {
+            let target = BABYLON.MeshBuilder.CreateSphere("target", {diameter: 1.5, segments: 2}, this.scene);
+
+            target.position.x = Math.floor((Math.random() * 50));
+            target.position.z = Math.floor((Math.random() * 50));
+            target.position.y = 2;
+
+            this.targetMaterial = new BABYLON.StandardMaterial('targetMaterial', this.scene);
+            this.targetMaterial.diffuseColor = new BABYLON.Color3.FromHexString('#6ab04c');
+            this.targetMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+
+            target.material = this.targetMaterial;
+        }
+    }
+
     setupEventListeners() {
-        GAME.canvas.addEventListener("click", () => {
+        GAME.canvas.addEventListener('click', () => {
             var width = this.scene.getEngine().getRenderWidth();
             var height = this.scene.getEngine().getRenderHeight();
             
@@ -77,14 +94,24 @@ export default class FirstLevel extends Level {
     }
 
     fire(pickInfo) {
+        console.log(pickInfo.pickedMesh, this.canFire);
         if (this.canFire) {
             if (pickInfo.hit && pickInfo.pickedMesh.name === "target") {
-                pickInfo.pickedMesh.explode();
+                console.log(pickInfo.pickedMesh);
+                pickInfo.pickedMesh.dispose();
             } else {
-                var b = BABYLON.Mesh.CreateBox("box", 0.1, this.game.scene);
-                b.position = pickInfo.pickedPoint.clone();
+                if(pickInfo.pickedPoint) {
+                    var b = BABYLON.Mesh.CreateBox("box", 0.1, this.scene);
+                    b.position = pickInfo.pickedPoint.clone();
+                }
             }
-            //this.animate();
+            
+            this.interpolate(this.weapon.position, 'z', 1, 100);
+            
+            setTimeout(() => {
+                this.interpolate(this.weapon.position, 'z', 1.3, 100);
+            }, 100);
+
             this.canFire = false;
         }
     }
@@ -133,7 +160,8 @@ export default class FirstLevel extends Level {
     beforeRender() {
         if(!GAME.isPaused()) {
             if (!this.canFire) {
-                this.currentFireRate -= BABYLON.Tools.GetDeltaTime();
+                this.currentFireRate -= GAME.engine.getDeltaTime();
+                console.log(this.currentFireRate);
                 if (this.currentFireRate <= 0) {
                     this.canFire = true;
                     this.currentFireRate = this.fireRate;

@@ -27,6 +27,16 @@
                 height: 100%;
                 touch-action: none;
             }
+
+            #gunsight {
+                position:absolute;
+                top:50%;
+                left:50%;
+                margin-top:-37px;
+                margin-left:-37px;
+                width: 1em;
+                height: auto;
+            }
         </style>
 
         <script src="options.js"></script>  
@@ -37,6 +47,8 @@
     </head>
 
     <body>
+        <img id="gunsight" src="assets/images/gunsight.png" />
+
         <!-- Main game canvas -->
         <canvas id="renderCanvas" touch-action="none"></canvas>
     </body>
