@@ -11,6 +11,6 @@ window.initialGameOptions = {
      */
 
     // Object Colors
-    'backgroundColor': '#636e72',
+    'backgroundColor': '#7ed6df',
 
 };
