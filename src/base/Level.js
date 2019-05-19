@@ -189,4 +189,44 @@ export default class Level {
         
     }
 
+    /**
+     * Enable pointer lock
+     */
+    enablePointerLock() {
+        let canvas = GAME.canvas;
+        
+        if(!this.camera) {
+            console.error('You need to add a camera to the level to enable pointer lock');
+        }
+
+        // On click event, request pointer lock
+        canvas.addEventListener("click", function(evt) {
+            canvas.requestPointerLock = canvas.requestPointerLock || canvas.msRequestPointerLock || canvas.mozRequestPointerLock || canvas.webkitRequestPointerLock;
+            if (canvas.requestPointerLock) {
+                canvas.requestPointerLock();
+            }
+        }, false);
+
+        // Event listener when the pointerlock is updated (or removed by pressing ESC for example).
+        var pointerlockchange = (event) => {
+            this.controlEnabled = (
+                            document.mozPointerLockElement === canvas
+                            || document.webkitPointerLockElement === canvas
+                            || document.msPointerLockElement === canvas
+                            || document.pointerLockElement === canvas);
+            // If the user is alreday locked
+            if (!this.controlEnabled) {
+                this.camera.detachControl(canvas);
+            } else {
+                this.camera.attachControl(canvas);
+            }
+        };
+
+        // Attach events to the document
+        document.addEventListener("pointerlockchange", pointerlockchange, false);
+        document.addEventListener("mspointerlockchange", pointerlockchange, false);
+        document.addEventListener("mozpointerlockchange", pointerlockchange, false);
+        document.addEventListener("webkitpointerlockchange", pointerlockchange, false);
+    }
+
 }

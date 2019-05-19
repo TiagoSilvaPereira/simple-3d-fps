@@ -675,6 +675,46 @@ function () {
       this.scene.actionManager.registerAction(interpolateAction);
       interpolateAction.execute();
     }
+    /**
+     * Enable pointer lock
+     */
+
+  }, {
+    key: "enablePointerLock",
+    value: function enablePointerLock() {
+      var _this2 = this;
+
+      var canvas = GAME.canvas;
+
+      if (!this.camera) {
+        console.error('You need to add a camera to the level to enable pointer lock');
+      } // On click event, request pointer lock
+
+
+      canvas.addEventListener("click", function (evt) {
+        canvas.requestPointerLock = canvas.requestPointerLock || canvas.msRequestPointerLock || canvas.mozRequestPointerLock || canvas.webkitRequestPointerLock;
+
+        if (canvas.requestPointerLock) {
+          canvas.requestPointerLock();
+        }
+      }, false); // Event listener when the pointerlock is updated (or removed by pressing ESC for example).
+
+      var pointerlockchange = function pointerlockchange(event) {
+        _this2.controlEnabled = document.mozPointerLockElement === canvas || document.webkitPointerLockElement === canvas || document.msPointerLockElement === canvas || document.pointerLockElement === canvas; // If the user is alreday locked
+
+        if (!_this2.controlEnabled) {
+          _this2.camera.detachControl(canvas);
+        } else {
+          _this2.camera.attachControl(canvas);
+        }
+      }; // Attach events to the document
+
+
+      document.addEventListener("pointerlockchange", pointerlockchange, false);
+      document.addEventListener("mspointerlockchange", pointerlockchange, false);
+      document.addEventListener("mozpointerlockchange", pointerlockchange, false);
+      document.addEventListener("webkitpointerlockchange", pointerlockchange, false);
+    }
   }]);
 
   return Level;
@@ -892,6 +932,163 @@ function () {
 
 /***/ }),
 
+/***/ "./src/game/Enemy.js":
+/*!***************************!*\
+  !*** ./src/game/Enemy.js ***!
+  \***************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Enemy; });
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var Enemy =
+/*#__PURE__*/
+function () {
+  function Enemy(level) {
+    _classCallCheck(this, Enemy);
+
+    this.level = level;
+    this.scene = level.scene;
+    this.mesh = null;
+  }
+
+  _createClass(Enemy, [{
+    key: "create",
+    value: function create() {
+      this.mesh = BABYLON.MeshBuilder.CreateSphere("enemy", {
+        diameter: 1.5,
+        segments: 2
+      }, this.scene);
+      this.mesh.position.x = Math.floor(Math.random() * 100) - 50;
+      this.mesh.position.z = Math.floor(Math.random() * 100) - 50;
+      this.mesh.position.y = 2;
+      this.addEnemyMaterial();
+      return this;
+    }
+  }, {
+    key: "addEnemyMaterial",
+    value: function addEnemyMaterial() {
+      this.meshMaterial = new BABYLON.StandardMaterial('meshMaterial', this.scene);
+      this.meshMaterial.diffuseColor = new BABYLON.Color3.FromHexString('#6ab04c');
+      this.meshMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+      this.mesh.material = this.meshMaterial;
+    }
+  }]);
+
+  return Enemy;
+}();
+
+
+
+/***/ }),
+
+/***/ "./src/game/Weapon.js":
+/*!****************************!*\
+  !*** ./src/game/Weapon.js ***!
+  \****************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Weapon; });
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var Weapon =
+/*#__PURE__*/
+function () {
+  function Weapon(level) {
+    _classCallCheck(this, Weapon);
+
+    this.level = level;
+    this.scene = level.scene;
+    this.fireRate = 1;
+    this.canFire = true;
+    this.currentFireRate = 0;
+  }
+
+  _createClass(Weapon, [{
+    key: "create",
+    value: function create() {
+      this.mesh = this.level.assets.getMesh('shotgun');
+      this.mesh.isVisible = true;
+      this.mesh.rotationQuaternion = null;
+      this.mesh.rotation.y = -Math.PI / 2;
+      this.mesh.parent = this.level.camera;
+      this.mesh.position = new BABYLON.Vector3(0.7, -0.45, 1.3);
+      this.mesh.scaling = new BABYLON.Vector3(2, 2, 2);
+      this.controlFireRate();
+    }
+  }, {
+    key: "fire",
+    value: function fire() {
+      var width = this.scene.getEngine().getRenderWidth();
+      var height = this.scene.getEngine().getRenderHeight(); // Is the player control enabled?
+
+      if (this.level.controlEnabled) {
+        var pickInfo = this.scene.pick(width / 2, height / 2, null, false, this.camera);
+        this.doFire(pickInfo);
+      }
+    }
+  }, {
+    key: "doFire",
+    value: function doFire(pickInfo) {
+      if (this.canFire) {
+        if (pickInfo.hit && pickInfo.pickedMesh.name === "enemy") {
+          pickInfo.pickedMesh.dispose();
+        } else {
+          if (pickInfo.pickedPoint) {
+            var b = BABYLON.Mesh.CreateBox("box", 0.1, this.scene);
+            b.position = pickInfo.pickedPoint.clone();
+          }
+        }
+
+        this.animateFire();
+        this.canFire = false;
+      }
+    }
+  }, {
+    key: "animateFire",
+    value: function animateFire() {
+      var _this = this;
+
+      this.level.interpolate(this.mesh.position, 'z', 1, 100);
+      setTimeout(function () {
+        _this.level.interpolate(_this.mesh.position, 'z', 1.3, 100);
+      }, 100);
+    }
+  }, {
+    key: "controlFireRate",
+    value: function controlFireRate() {
+      if (!this.canFire) {
+        this.currentFireRate -= GAME.engine.getDeltaTime();
+
+        if (this.currentFireRate <= 0) {
+          this.canFire = true;
+          this.currentFireRate = this.fireRate;
+        }
+      }
+    }
+  }]);
+
+  return Weapon;
+}();
+
+
+
+/***/ }),
+
 /***/ "./src/game/levels/CreditsLevel.js":
 /*!*****************************************!*\
   !*** ./src/game/levels/CreditsLevel.js ***!
@@ -991,7 +1188,9 @@ function (_Level) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return FirstLevel; });
 /* harmony import */ var _base_UI__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../base/UI */ "./src/base/UI.js");
-/* harmony import */ var _base_Level__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../base/Level */ "./src/base/Level.js");
+/* harmony import */ var _Weapon__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../Weapon */ "./src/game/Weapon.js");
+/* harmony import */ var _base_Level__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../base/Level */ "./src/base/Level.js");
+/* harmony import */ var _Enemy__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../Enemy */ "./src/game/Enemy.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1013,6 +1212,8 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
+
+
 var FirstLevel =
 /*#__PURE__*/
 function (_Level) {
@@ -1029,9 +1230,8 @@ function (_Level) {
     value: function setProperties() {
       // Menu
       this.menu = null;
-      this.canFire = true;
-      this.currentFireRate = 0;
-      this.fireRate = 1;
+      this.weapon = null;
+      this.enemies = [];
     }
   }, {
     key: "setupAssets",
@@ -1051,44 +1251,34 @@ function (_Level) {
       this.camera = this.createCamera();
       this.scene.activeCamera = this.camera;
       this.camera.attachControl(GAME.canvas, true);
+      this.enablePointerLock();
+      this.createGround();
+      this.addWeapon();
+      this.addEnemies();
+      this.setupEventListeners();
+    }
+  }, {
+    key: "createGround",
+    value: function createGround() {
       var ground = BABYLON.Mesh.CreateGround("ground", 100, 100, 2, this.scene);
       ground.checkCollisions = true;
       var groundMaterial = new BABYLON.StandardMaterial("groundMaterial", this.scene);
       groundMaterial.diffuseTexture = new BABYLON.Texture("/assets/images/grass.jpg", this.scene);
       groundMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
       ground.material = groundMaterial;
-      this.pointerLock();
-      this.addWeapon();
-      this.addTargets();
-      this.setupEventListeners();
     }
   }, {
     key: "addWeapon",
     value: function addWeapon() {
-      this.weapon = this.assets.getMesh('shotgun');
-      this.weapon.isVisible = true;
-      this.weapon.rotationQuaternion = null; // weapon.rotation.x = -Math.PI/2;
-
-      this.weapon.rotation.y = -Math.PI / 2;
-      this.weapon.parent = this.camera;
-      this.weapon.position = new BABYLON.Vector3(0.7, -0.45, 1.3);
-      this.weapon.scaling = new BABYLON.Vector3(2, 2, 2);
+      this.weapon = new _Weapon__WEBPACK_IMPORTED_MODULE_1__["default"](this);
+      this.weapon.create();
     }
   }, {
-    key: "addTargets",
-    value: function addTargets() {
-      for (var targetsQuantity = 0; targetsQuantity < 10; targetsQuantity++) {
-        var target = BABYLON.MeshBuilder.CreateSphere("target", {
-          diameter: 1.5,
-          segments: 2
-        }, this.scene);
-        target.position.x = Math.floor(Math.random() * 50);
-        target.position.z = Math.floor(Math.random() * 50);
-        target.position.y = 2;
-        this.targetMaterial = new BABYLON.StandardMaterial('targetMaterial', this.scene);
-        this.targetMaterial.diffuseColor = new BABYLON.Color3.FromHexString('#6ab04c');
-        this.targetMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
-        target.material = this.targetMaterial;
+    key: "addEnemies",
+    value: function addEnemies() {
+      for (var enemiesQuantity = 0; enemiesQuantity < 10; enemiesQuantity++) {
+        var enemy = new _Enemy__WEBPACK_IMPORTED_MODULE_3__["default"](this).create();
+        this.enemies.push(enemy);
       }
     }
   }, {
@@ -1097,41 +1287,8 @@ function (_Level) {
       var _this = this;
 
       GAME.canvas.addEventListener('click', function () {
-        var width = _this.scene.getEngine().getRenderWidth();
-
-        var height = _this.scene.getEngine().getRenderHeight();
-
-        if (_this.controlEnabled) {
-          var pickInfo = _this.scene.pick(width / 2, height / 2, null, false, _this.camera);
-
-          _this.fire(pickInfo);
-        }
+        _this.weapon.fire();
       }, false);
-    }
-  }, {
-    key: "fire",
-    value: function fire(pickInfo) {
-      var _this2 = this;
-
-      console.log(pickInfo.pickedMesh, this.canFire);
-
-      if (this.canFire) {
-        if (pickInfo.hit && pickInfo.pickedMesh.name === "target") {
-          console.log(pickInfo.pickedMesh);
-          pickInfo.pickedMesh.dispose();
-        } else {
-          if (pickInfo.pickedPoint) {
-            var b = BABYLON.Mesh.CreateBox("box", 0.1, this.scene);
-            b.position = pickInfo.pickedPoint.clone();
-          }
-        }
-
-        this.interpolate(this.weapon.position, 'z', 1, 100);
-        setTimeout(function () {
-          _this2.interpolate(_this2.weapon.position, 'z', 1.3, 100);
-        }, 100);
-        this.canFire = false;
-      }
     }
   }, {
     key: "createMenus",
@@ -1171,52 +1328,13 @@ function (_Level) {
     key: "beforeRender",
     value: function beforeRender() {
       if (!GAME.isPaused()) {
-        if (!this.canFire) {
-          this.currentFireRate -= GAME.engine.getDeltaTime();
-          console.log(this.currentFireRate);
-
-          if (this.currentFireRate <= 0) {
-            this.canFire = true;
-            this.currentFireRate = this.fireRate;
-          }
-        }
+        this.weapon.controlFireRate();
       }
-    }
-  }, {
-    key: "pointerLock",
-    value: function pointerLock() {
-      var _this3 = this;
-
-      var canvas = GAME.canvas; // On click event, request pointer lock
-
-      canvas.addEventListener("click", function (evt) {
-        canvas.requestPointerLock = canvas.requestPointerLock || canvas.msRequestPointerLock || canvas.mozRequestPointerLock || canvas.webkitRequestPointerLock;
-
-        if (canvas.requestPointerLock) {
-          canvas.requestPointerLock();
-        }
-      }, false); // Event listener when the pointerlock is updated (or removed by pressing ESC for example).
-
-      var pointerlockchange = function pointerlockchange(event) {
-        _this3.controlEnabled = document.mozPointerLockElement === canvas || document.webkitPointerLockElement === canvas || document.msPointerLockElement === canvas || document.pointerLockElement === canvas; // If the user is alreday locked
-
-        if (!_this3.controlEnabled) {
-          _this3.camera.detachControl(canvas);
-        } else {
-          _this3.camera.attachControl(canvas);
-        }
-      }; // Attach events to the document
-
-
-      document.addEventListener("pointerlockchange", pointerlockchange, false);
-      document.addEventListener("mspointerlockchange", pointerlockchange, false);
-      document.addEventListener("mozpointerlockchange", pointerlockchange, false);
-      document.addEventListener("webkitpointerlockchange", pointerlockchange, false);
     }
   }]);
 
   return FirstLevel;
-}(_base_Level__WEBPACK_IMPORTED_MODULE_1__["default"]);
+}(_base_Level__WEBPACK_IMPORTED_MODULE_2__["default"]);
 
 
 

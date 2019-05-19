@@ -1,5 +1,7 @@
 import UI from '../../base/UI';
+import Weapon from '../Weapon';
 import Level from '../../base/Level';
+import Enemy from '../Enemy';
 
 export default class FirstLevel extends Level {
 
@@ -7,10 +9,9 @@ export default class FirstLevel extends Level {
 
         // Menu
         this.menu = null;
-        this.canFire = true;
-        this.currentFireRate = 0;
-        this.fireRate = 1;
-        
+        this.weapon = null;
+        this.enemies = [];
+
     }
 
     setupAssets() {
@@ -37,7 +38,16 @@ export default class FirstLevel extends Level {
         this.scene.activeCamera = this.camera;
 
         this.camera.attachControl(GAME.canvas, true);
+        this.enablePointerLock();
+        
+        this.createGround();
+        this.addWeapon();
+        this.addEnemies();
 
+        this.setupEventListeners();
+    }
+
+    createGround() {
         let ground = BABYLON.Mesh.CreateGround("ground",  100,  100, 2, this.scene);
         ground.checkCollisions = true;
         let groundMaterial = new BABYLON.StandardMaterial("groundMaterial", this.scene);
@@ -45,75 +55,25 @@ export default class FirstLevel extends Level {
         groundMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
 
         ground.material = groundMaterial;
-
-        this.pointerLock();
-
-        this.addWeapon();
-        this.addTargets();
-
-        this.setupEventListeners();
     }
 
     addWeapon() {
-        this.weapon = this.assets.getMesh('shotgun');
-        this.weapon.isVisible = true;
-        this.weapon.rotationQuaternion = null;
-        // weapon.rotation.x = -Math.PI/2;
-        this.weapon.rotation.y = -Math.PI/2;
-        this.weapon.parent = this.camera;
-        this.weapon.position = new BABYLON.Vector3(0.7,-0.45,1.3);
-        this.weapon.scaling = new BABYLON.Vector3(2, 2, 2);
+        this.weapon = new Weapon(this);
+        this.weapon.create();
     }
 
-    addTargets() {
-        for(var targetsQuantity = 0; targetsQuantity < 10; targetsQuantity++) {
-            let target = BABYLON.MeshBuilder.CreateSphere("target", {diameter: 1.5, segments: 2}, this.scene);
+    addEnemies() {
+        for(var enemiesQuantity = 0; enemiesQuantity < 10; enemiesQuantity++) {
+            let enemy = new Enemy(this).create();
 
-            target.position.x = Math.floor((Math.random() * 50));
-            target.position.z = Math.floor((Math.random() * 50));
-            target.position.y = 2;
-
-            this.targetMaterial = new BABYLON.StandardMaterial('targetMaterial', this.scene);
-            this.targetMaterial.diffuseColor = new BABYLON.Color3.FromHexString('#6ab04c');
-            this.targetMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
-
-            target.material = this.targetMaterial;
+            this.enemies.push(enemy);
         }
     }
 
     setupEventListeners() {
         GAME.canvas.addEventListener('click', () => {
-            var width = this.scene.getEngine().getRenderWidth();
-            var height = this.scene.getEngine().getRenderHeight();
-            
-            if (this.controlEnabled) {
-                var pickInfo = this.scene.pick(width/2, height/2, null, false, this.camera);
-                this.fire(pickInfo);
-            }
+            this.weapon.fire();
         }, false);
-    }
-
-    fire(pickInfo) {
-        console.log(pickInfo.pickedMesh, this.canFire);
-        if (this.canFire) {
-            if (pickInfo.hit && pickInfo.pickedMesh.name === "target") {
-                console.log(pickInfo.pickedMesh);
-                pickInfo.pickedMesh.dispose();
-            } else {
-                if(pickInfo.pickedPoint) {
-                    var b = BABYLON.Mesh.CreateBox("box", 0.1, this.scene);
-                    b.position = pickInfo.pickedPoint.clone();
-                }
-            }
-            
-            this.interpolate(this.weapon.position, 'z', 1, 100);
-            
-            setTimeout(() => {
-                this.interpolate(this.weapon.position, 'z', 1.3, 100);
-            }, 100);
-
-            this.canFire = false;
-        }
     }
 
     createMenus() {
@@ -159,48 +119,8 @@ export default class FirstLevel extends Level {
 
     beforeRender() {
         if(!GAME.isPaused()) {
-            if (!this.canFire) {
-                this.currentFireRate -= GAME.engine.getDeltaTime();
-                console.log(this.currentFireRate);
-                if (this.currentFireRate <= 0) {
-                    this.canFire = true;
-                    this.currentFireRate = this.fireRate;
-                }
-            }
+            this.weapon.controlFireRate();
         }
-    }
-
-    pointerLock() {
-        let canvas = GAME.canvas;
-        
-        // On click event, request pointer lock
-        canvas.addEventListener("click", function(evt) {
-            canvas.requestPointerLock = canvas.requestPointerLock || canvas.msRequestPointerLock || canvas.mozRequestPointerLock || canvas.webkitRequestPointerLock;
-            if (canvas.requestPointerLock) {
-                canvas.requestPointerLock();
-            }
-        }, false);
-
-        // Event listener when the pointerlock is updated (or removed by pressing ESC for example).
-        var pointerlockchange = (event) => {
-            this.controlEnabled = (
-                            document.mozPointerLockElement === canvas
-                            || document.webkitPointerLockElement === canvas
-                            || document.msPointerLockElement === canvas
-                            || document.pointerLockElement === canvas);
-            // If the user is alreday locked
-            if (!this.controlEnabled) {
-                this.camera.detachControl(canvas);
-            } else {
-                this.camera.attachControl(canvas);
-            }
-        };
-
-        // Attach events to the document
-        document.addEventListener("pointerlockchange", pointerlockchange, false);
-        document.addEventListener("mspointerlockchange", pointerlockchange, false);
-        document.addEventListener("mozpointerlockchange", pointerlockchange, false);
-        document.addEventListener("webkitpointerlockchange", pointerlockchange, false);
     }
     
 }
