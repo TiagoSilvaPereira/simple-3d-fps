@@ -430,7 +430,21 @@ function () {
     }
   }, {
     key: "addMesh",
-    value: function addMesh() {// To be implemented
+    value: function addMesh(name, file) {
+      var _this2 = this;
+
+      var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+      var fileTask = this.manager.addMeshFileTask(name + '__MeshTask', file);
+
+      fileTask.onSuccess = function (task) {
+        _this2.meshes[name] = task.loadedMeshes[0]; // Execute a success callback
+
+        if (options.onSuccess) {
+          options.onSuccess(_this2.meshes[name]);
+        }
+      };
+
+      return this.meshes[name];
     }
   }, {
     key: "getMesh",
@@ -931,7 +945,7 @@ function (_Level) {
         'fontSize': '20px',
         'horizontalAlignment': BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_TOP
       });
-      ui.addText('Music by Eric Matyas\nwww.soundimage.org\n\nPlease check the musics license documentation before\nchanging the credits', {
+      ui.addText('Music by Eric Matyas\nwww.soundimage.org\n\nPlease check the music license documentation before\nchanging the credits', {
         'top': '140px',
         'fontSize': '20px',
         'horizontalAlignment': BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_TOP
@@ -1006,42 +1020,59 @@ function (_Level) {
     }
   }, {
     key: "setupAssets",
-    value: function setupAssets() {
-      this.assets.addMusic('music', '/assets/musics/music.mp3'); // this.assets.addSound('sound', '/assets/sounds/sound.mp3', { volume: 0.4 });
+    value: function setupAssets() {// this.assets.addMusic('music', '/assets/musics/music.mp3');
+      // this.assets.addSound('sound', '/assets/sounds/sound.mp3', { volume: 0.4 });
     }
   }, {
     key: "buildScene",
     value: function buildScene() {
       this.scene.clearColor = new BABYLON.Color3.FromHexString(GAME.options.backgroundColor);
+      var light = new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 0), this.scene);
+      this.scene.gravity = new BABYLON.Vector3(0, -9.81, 0);
+      this.scene.collisionsEnabled = true;
       this.createMenus(); // Sets the active camera
 
-      var camera = this.createArcCamera();
-      this.scene.activeCamera = camera;
-      camera.attachControl(GAME.canvas, true);
+      this.camera = this.createCamera();
+      this.scene.activeCamera = this.camera;
+      this.camera.attachControl(GAME.canvas, true);
+      var ground = BABYLON.Mesh.CreateGround("ground", 100, 100, 2, this.scene);
+      ground.checkCollisions = true;
+      var groundMaterial = new BABYLON.StandardMaterial("groundMaterial", this.scene);
+      groundMaterial.diffuseTexture = new BABYLON.Texture("/assets/images/grass.jpg", this.scene);
+      groundMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+      ground.material = groundMaterial;
+      this.pointerLock();
     }
   }, {
     key: "createMenus",
-    value: function createMenus() {
-      this.menu = new _base_UI__WEBPACK_IMPORTED_MODULE_0__["default"]('runnerMenuUI');
-      var text = GAME.isMobile() ? 'You are in a mobile device' : 'You are not in a mobile device'; // Small tutorial text
-
-      this.menu.addText(text, {
-        'verticalAlignment': BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER
-      });
-      this.menu.addButton('backButton', 'Return to Home', {
-        'top': '70px',
-        'onclick': function onclick() {
-          return GAME.goToLevel('HomeMenuLevel');
-        }
-      });
+    value: function createMenus() {// this.menu = new UI('runnerMenuUI');
+      // let text = GAME.isMobile() ? 'You are in a mobile device' : 'You are not in a mobile device';
+      // // Small tutorial text
+      // this.menu.addText(text, {
+      //     'verticalAlignment': BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER
+      // });
+      // this.menu.addButton('backButton', 'Return to Home', {
+      //     'top': '70px',
+      //     'onclick': () => GAME.goToLevel('HomeMenuLevel')
+      // });
     }
   }, {
-    key: "createArcCamera",
-    value: function createArcCamera() {
-      var camera = new BABYLON.ArcRotateCamera("arcCamera", 0, 0, 0, BABYLON.Vector3.Zero(), this.scene);
-      camera.ctype = 1;
-      camera.setPosition(new BABYLON.Vector3(0, 1, -3));
-      camera.radius = 2;
+    key: "createCamera",
+    value: function createCamera() {
+      var camera = new BABYLON.UniversalCamera("UniversalCamera", new BABYLON.Vector3(0, 100, 0), this.scene);
+      camera.setTarget(BABYLON.Vector3.Zero());
+      camera.applyGravity = true;
+      camera.ellipsoid = new BABYLON.Vector3(1, 1, 1);
+      camera.checkCollisions = true;
+      camera._needMoveForGravity = true; // Remap keys to move with ZQSD
+      // camera.keysUp = [87]; // W
+      // camera.keysDown = [83]; // S
+      // camera.keysLeft = [65]; // A
+      // camera.keysRight = [68]; // D
+      // camera.speed = 10;
+      // camera.inertia = 5;
+      // camera.angularSensibility = 1000;
+
       return camera;
     }
   }, {
@@ -1049,6 +1080,37 @@ function (_Level) {
     value: function beforeRender() {
       if (!GAME.isPaused()) {// Do something
       }
+    }
+  }, {
+    key: "pointerLock",
+    value: function pointerLock() {
+      var _this = this;
+
+      var canvas = GAME.canvas; // On click event, request pointer lock
+
+      canvas.addEventListener("click", function (evt) {
+        canvas.requestPointerLock = canvas.requestPointerLock || canvas.msRequestPointerLock || canvas.mozRequestPointerLock || canvas.webkitRequestPointerLock;
+
+        if (canvas.requestPointerLock) {
+          canvas.requestPointerLock();
+        }
+      }, false); // Event listener when the pointerlock is updated (or removed by pressing ESC for example).
+
+      var pointerlockchange = function pointerlockchange(event) {
+        _this.controlEnabled = document.mozPointerLockElement === canvas || document.webkitPointerLockElement === canvas || document.msPointerLockElement === canvas || document.pointerLockElement === canvas; // If the user is alreday locked
+
+        if (!_this.controlEnabled) {
+          _this.camera.detachControl(canvas);
+        } else {
+          _this.camera.attachControl(canvas);
+        }
+      }; // Attach events to the document
+
+
+      document.addEventListener("pointerlockchange", pointerlockchange, false);
+      document.addEventListener("mspointerlockchange", pointerlockchange, false);
+      document.addEventListener("mozpointerlockchange", pointerlockchange, false);
+      document.addEventListener("webkitpointerlockchange", pointerlockchange, false);
     }
   }]);
 
@@ -1146,7 +1208,7 @@ function (_Level) {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /home/kingofcode/code/games/base/src/app.js */"./src/app.js");
+module.exports = __webpack_require__(/*! /home/kingofcode/code/games/fps/src/app.js */"./src/app.js");
 
 
 /***/ })

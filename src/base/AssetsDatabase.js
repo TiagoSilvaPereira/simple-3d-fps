@@ -53,8 +53,19 @@ export default class AssetsDatabase {
 
     }
 
-    addMesh() {
-        // To be implemented
+    addMesh(name, file, options = {}) {
+        let fileTask = this.manager.addMeshFileTask(name + '__MeshTask', file);
+
+        fileTask.onSuccess = (task) => {
+            this.meshes[name] = task.loadedMeshes[0];
+            
+            // Execute a success callback
+            if(options.onSuccess) {
+                options.onSuccess(this.meshes[name]);
+            }
+        }
+
+        return this.meshes[name];
     }
 
     getMesh(name) {
