@@ -166,6 +166,7 @@ function () {
   }, {
     key: "pause",
     value: function pause() {
+      console.log('pause');
       this.paused = true;
     }
   }, {
@@ -176,6 +177,7 @@ function () {
   }, {
     key: "resume",
     value: function resume() {
+      console.log('resume');
       this.paused = false;
     }
   }, {
@@ -302,9 +304,11 @@ function () {
     value: function startRenderLoop() {
       var _this3 = this;
 
-      this.engine.runRenderLoop(function () {
-        _this3.currentLevel.scene.render();
-      });
+      setTimeout(function () {
+        _this3.engine.runRenderLoop(function () {
+          _this3.currentLevel.scene.render();
+        });
+      }, 50);
     }
   }, {
     key: "stopRenderLoop",
@@ -517,9 +521,6 @@ function () {
   _createClass(Level, [{
     key: "start",
     value: function start() {
-      GAME.resume();
-      GAME.stopRenderLoop();
-
       if (this.setProperties) {
         this.setProperties();
       } else {
@@ -552,6 +553,7 @@ function () {
           GAME.log.debugWarning('You can define animations and other game logics that happens inside the main loop on the beforeRender method');
         }
 
+        GAME.resume();
         GAME.startRenderLoop();
       });
 
@@ -566,6 +568,9 @@ function () {
   }, {
     key: "exit",
     value: function exit() {
+      // Fix to blur the canvas to avoid issues with keyboard input
+      GAME.canvas.blur();
+      GAME.stopRenderLoop();
       this.scene.dispose();
       this.scene = null;
     }
@@ -1244,6 +1249,7 @@ function (_Level) {
   }, {
     key: "buildScene",
     value: function buildScene() {
+      // this.scene.debugLayer.show();
       this.scene.clearColor = new BABYLON.Color3.FromHexString(GAME.options.backgroundColor);
       var light = new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 0), this.scene);
       this.scene.gravity = new BABYLON.Vector3(0, -9.81, 0);

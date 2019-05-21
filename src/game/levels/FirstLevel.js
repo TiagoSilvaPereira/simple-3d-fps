@@ -25,6 +25,7 @@ export default class FirstLevel extends Level {
 
     buildScene() {
         
+        // this.scene.debugLayer.show();
         this.scene.clearColor = new BABYLON.Color3.FromHexString(GAME.options.backgroundColor);
         var light = new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 0), this.scene);
 

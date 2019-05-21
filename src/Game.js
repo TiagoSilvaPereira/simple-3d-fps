@@ -56,6 +56,7 @@ export default class Game {
     }
 
     pause() {
+        console.log('pause')
         this.paused = true;
     }
 
@@ -64,6 +65,7 @@ export default class Game {
     }
 
     resume() {
+        console.log('resume')
         this.paused = false;
     }
 
@@ -186,9 +188,11 @@ export default class Game {
     }
 
     startRenderLoop() {
-        this.engine.runRenderLoop(() => {
-            this.currentLevel.scene.render();
-        });
+        setTimeout(() => {
+            this.engine.runRenderLoop(() => {
+                this.currentLevel.scene.render();
+            });
+        }, 50);
     }
 
     stopRenderLoop() {

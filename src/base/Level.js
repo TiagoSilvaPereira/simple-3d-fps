@@ -16,8 +16,6 @@ export default class Level {
     }
 
     start() {
-        GAME.resume();
-        GAME.stopRenderLoop();
         
         if(this.setProperties) {
             this.setProperties();
@@ -52,6 +50,7 @@ export default class Level {
                 GAME.log.debugWarning('You can define animations and other game logics that happens inside the main loop on the beforeRender method');
             }
 
+            GAME.resume();
             GAME.startRenderLoop();
 
         });
@@ -67,6 +66,10 @@ export default class Level {
     }
 
     exit() {
+        // Fix to blur the canvas to avoid issues with keyboard input
+        GAME.canvas.blur();
+
+        GAME.stopRenderLoop();
         this.scene.dispose();
         this.scene = null;
     }
