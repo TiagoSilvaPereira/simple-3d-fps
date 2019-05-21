@@ -56,7 +56,6 @@ export default class Game {
     }
 
     pause() {
-        console.log('pause')
         this.paused = true;
     }
 
@@ -65,7 +64,6 @@ export default class Game {
     }
 
     resume() {
-        console.log('resume')
         this.paused = false;
     }
 

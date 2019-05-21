@@ -166,7 +166,6 @@ function () {
   }, {
     key: "pause",
     value: function pause() {
-      console.log('pause');
       this.paused = true;
     }
   }, {
@@ -177,7 +176,6 @@ function () {
   }, {
     key: "resume",
     value: function resume() {
-      console.log('resume');
       this.paused = false;
     }
   }, {
