@@ -959,32 +959,88 @@ function () {
     this.level = level;
     this.scene = level.scene;
     this.mesh = null;
+    this.defaultAltitude = 2.5;
+    this.maxSpeed = 0.4; // this.dieSound = this.level.assets.getSound('robotOff');
+
+    this.states = {
+      'DESTROYED': false
+    };
   }
 
   _createClass(Enemy, [{
     key: "create",
     value: function create() {
-      this.mesh = BABYLON.MeshBuilder.CreateSphere("enemy", {
+      var meshParent = BABYLON.Mesh.CreateBox("enemy", 1.6, this.scene);
+      meshParent.visibility = 0;
+      var bigSphere = BABYLON.MeshBuilder.CreateSphere("bigSphere", {
         diameter: 1.5,
         segments: 2
       }, this.scene);
+      bigSphere.parent = meshParent;
+      var smallSphere = BABYLON.MeshBuilder.CreateSphere("smallSphere", {
+        diameter: 0.5,
+        segments: 2
+      }, this.scene);
+      smallSphere.parent = meshParent;
+      smallSphere.position.z = -1;
+      BABYLON.Tags.AddTagsTo(meshParent, 'enemy');
+      BABYLON.Tags.AddTagsTo(bigSphere, 'enemy');
+      BABYLON.Tags.AddTagsTo(smallSphere, 'enemy');
+      this.mesh = meshParent;
+      this.mesh.enemyObject = this;
       this.mesh.position.x = Math.floor(Math.random() * 100) - 50;
       this.mesh.position.z = Math.floor(Math.random() * 100) - 50;
-      this.mesh.position.y = 2;
+      this.mesh.position.y = this.defaultAltitude;
+      this.initSpeed();
       this.addEnemyMaterial();
+      this.generateRandomPosition();
       return this;
     }
   }, {
     key: "addEnemyMaterial",
     value: function addEnemyMaterial() {
-      this.meshMaterial = new BABYLON.StandardMaterial('meshMaterial', this.scene);
-      this.meshMaterial.diffuseColor = new BABYLON.Color3.FromHexString('#6ab04c');
-      this.meshMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
-      this.mesh.material = this.meshMaterial;
+      var meshMaterial = new BABYLON.StandardMaterial('meshMaterial', this.scene);
+      meshMaterial.diffuseColor = new BABYLON.Color3(0.5, 0, 0);
+      meshMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+      this.mesh.getChildren().forEach(function (mesh) {
+        return mesh.material = meshMaterial;
+      });
     }
   }, {
     key: "move",
-    value: function move() {}
+    value: function move() {
+      if (this.states.DESTROYED) return;
+      var direction = this.randPosition.subtract(this.mesh.position).normalize(),
+          alpha = Math.atan2(-1 * direction.x, -1 * direction.z);
+      this.mesh.rotation.y = alpha;
+      this.mesh.moveWithCollisions(direction.multiplyByFloats(this.speed, this.speed, this.speed)); // If is close to the destination, generates a new position
+      // console.log(direction)
+
+      if (this.randPosition.subtract(this.mesh.position).length() <= 1) {
+        this.generateRandomPosition();
+      }
+    }
+  }, {
+    key: "initSpeed",
+    value: function initSpeed() {
+      this.speed = Math.random();
+      this.speed = this.speed <= this.maxSpeed ? this.speed : this.maxSpeed;
+    }
+  }, {
+    key: "generateRandomPosition",
+    value: function generateRandomPosition() {
+      var randomPositionX = Math.floor(Math.random() * 100) - 50;
+      var randomPositionZ = Math.floor(Math.random() * 100) - 50;
+      var altitude = Math.floor(Math.random() * 7);
+      this.randPosition = new BABYLON.Vector3(randomPositionX, 5, randomPositionZ);
+    }
+  }, {
+    key: "destroy",
+    value: function destroy() {
+      this.states.DESTROYED = true; // this.dieSound.play();
+
+      this.level.interpolate(this.mesh.position, 'y', 0.5, 100 * this.mesh.position.y); //this.mesh.dispose();
+    }
   }]);
 
   return Enemy;
@@ -1018,9 +1074,11 @@ function () {
 
     this.level = level;
     this.scene = level.scene;
-    this.fireRate = 1;
+    this.fireRate = 350; // Milliseconds between each fire
+
     this.canFire = true;
     this.currentFireRate = 0;
+    this.fireSound = this.level.assets.getSound('shotgun');
   }
 
   _createClass(Weapon, [{
@@ -1031,7 +1089,7 @@ function () {
       this.mesh.rotationQuaternion = null;
       this.mesh.rotation.y = -Math.PI / 2;
       this.mesh.parent = this.level.camera;
-      this.mesh.position = new BABYLON.Vector3(0.7, -0.45, 1.3);
+      this.mesh.position = new BABYLON.Vector3(0.4, -0.45, 1.1);
       this.mesh.scaling = new BABYLON.Vector3(2, 2, 2);
       this.controlFireRate();
     }
@@ -1050,12 +1108,15 @@ function () {
     key: "doFire",
     value: function doFire(pickInfo) {
       if (this.canFire) {
-        if (pickInfo.hit && pickInfo.pickedMesh.name === "enemy") {
-          pickInfo.pickedMesh.dispose();
+        this.fireSound.play(); // If we hit an enemy
+
+        if (pickInfo.hit && BABYLON.Tags.HasTags(pickInfo.pickedMesh) && pickInfo.pickedMesh.matchesTagsQuery('enemy')) {
+          var mainMesh = pickInfo.pickedMesh.parent ? pickInfo.pickedMesh.parent : pickInfo.pickedMesh;
+          mainMesh.enemyObject.destroy();
         } else {
           if (pickInfo.pickedPoint) {
-            var b = BABYLON.Mesh.CreateBox("box", 0.1, this.scene);
-            b.position = pickInfo.pickedPoint.clone();
+            var box = BABYLON.Mesh.CreateBox('box', 0.1, this.scene);
+            box.position = pickInfo.pickedPoint.clone();
           }
         }
 
@@ -1068,9 +1129,9 @@ function () {
     value: function animateFire() {
       var _this = this;
 
-      this.level.interpolate(this.mesh.position, 'z', 1, 100);
+      this.level.interpolate(this.mesh.position, 'z', 0.9, 50);
       setTimeout(function () {
-        _this.level.interpolate(_this.mesh.position, 'z', 1.3, 100);
+        _this.level.interpolate(_this.mesh.position, 'z', 1.1, 50);
       }, 100);
     }
   }, {
@@ -1242,7 +1303,10 @@ function (_Level) {
     key: "setupAssets",
     value: function setupAssets() {
       this.assets.addMergedMesh('shotgun', '/assets/models/weapons/shotgun.obj'); // this.assets.addMusic('music', '/assets/musics/music.mp3');
-      // this.assets.addSound('sound', '/assets/sounds/sound.mp3', { volume: 0.4 });
+
+      this.assets.addSound('shotgun', '/assets/sounds/shotgun.wav', {
+        volume: 0.4
+      }); // this.assets.addSound('robotOff', '/assets/sounds/robot_off.wav', { volume: 0.1 });
     }
   }, {
     key: "buildScene",
@@ -1265,7 +1329,7 @@ function (_Level) {
   }, {
     key: "createGround",
     value: function createGround() {
-      var ground = BABYLON.Mesh.CreateGround("ground", 100, 100, 2, this.scene);
+      var ground = BABYLON.Mesh.CreateGround("ground", 200, 200, 2, this.scene);
       ground.checkCollisions = true;
       var groundMaterial = new BABYLON.StandardMaterial("groundMaterial", this.scene);
       groundMaterial.diffuseTexture = new BABYLON.Texture("/assets/images/sand.jpg", this.scene);
@@ -1301,11 +1365,11 @@ function (_Level) {
   }, {
     key: "createCamera",
     value: function createCamera() {
-      var camera = new BABYLON.UniversalCamera("UniversalCamera", new BABYLON.Vector3(0, 2, -10), this.scene);
+      var camera = new BABYLON.UniversalCamera("UniversalCamera", new BABYLON.Vector3(0, 3.5, -10), this.scene);
       camera.setTarget(new BABYLON.Vector3(0, 2, 0));
       camera.attachControl(GAME.canvas, true);
       camera.applyGravity = true;
-      camera.ellipsoid = new BABYLON.Vector3(1, 1, 1);
+      camera.ellipsoid = new BABYLON.Vector3(1, 1.7, 1);
       camera.checkCollisions = true;
       camera._needMoveForGravity = true; // Reducing the minimum visible FOV to show the Weapon correctly 
 
@@ -1329,6 +1393,9 @@ function (_Level) {
     value: function beforeRender() {
       if (!GAME.isPaused()) {
         this.weapon.controlFireRate();
+        this.enemies.forEach(function (enemy) {
+          return enemy.move();
+        });
       }
     }
   }]);

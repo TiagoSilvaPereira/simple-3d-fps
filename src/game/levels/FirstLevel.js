@@ -19,7 +19,8 @@ export default class FirstLevel extends Level {
         this.assets.addMergedMesh('shotgun', '/assets/models/weapons/shotgun.obj');
 
         // this.assets.addMusic('music', '/assets/musics/music.mp3');
-        // this.assets.addSound('sound', '/assets/sounds/sound.mp3', { volume: 0.4 });
+        this.assets.addSound('shotgun', '/assets/sounds/shotgun.wav', { volume: 0.4 });
+        // this.assets.addSound('robotOff', '/assets/sounds/robot_off.wav', { volume: 0.1 });
         
     }
 
@@ -47,7 +48,7 @@ export default class FirstLevel extends Level {
     }
 
     createGround() {
-        let ground = BABYLON.Mesh.CreateGround("ground",  100,  100, 2, this.scene);
+        let ground = BABYLON.Mesh.CreateGround("ground",  200,  200, 2, this.scene);
         ground.checkCollisions = true;
         let groundMaterial = new BABYLON.StandardMaterial("groundMaterial", this.scene);
         groundMaterial.diffuseTexture = new BABYLON.Texture("/assets/images/sand.jpg", this.scene);
@@ -80,13 +81,13 @@ export default class FirstLevel extends Level {
     }
 
     createCamera() {
-        var camera = new BABYLON.UniversalCamera("UniversalCamera", new BABYLON.Vector3(0, 2, -10), this.scene);
+        var camera = new BABYLON.UniversalCamera("UniversalCamera", new BABYLON.Vector3(0, 3.5, -10), this.scene);
         camera.setTarget(new BABYLON.Vector3(0,2,0));
         
         camera.attachControl(GAME.canvas, true);
         
         camera.applyGravity = true;
-        camera.ellipsoid = new BABYLON.Vector3(1, 1, 1);
+        camera.ellipsoid = new BABYLON.Vector3(1, 1.7, 1);
         camera.checkCollisions = true;
         camera._needMoveForGravity = true;
 
@@ -109,6 +110,8 @@ export default class FirstLevel extends Level {
     beforeRender() {
         if(!GAME.isPaused()) {
             this.weapon.controlFireRate();
+
+            this.enemies.forEach(enemy => enemy.move());
         }
     }
     

@@ -5,9 +5,11 @@ export default class Weapon {
         this.level = level;
         this.scene = level.scene;
 
-        this.fireRate = 1;
+        this.fireRate = 350; // Milliseconds between each fire
         this.canFire = true;
         this.currentFireRate = 0;
+
+        this.fireSound = this.level.assets.getSound('shotgun');
     }
 
     create() {
@@ -18,7 +20,7 @@ export default class Weapon {
         this.mesh.rotation.y = -Math.PI/2;
         
         this.mesh.parent = this.level.camera;
-        this.mesh.position = new BABYLON.Vector3(0.7,-0.45,1.3);
+        this.mesh.position = new BABYLON.Vector3(0.4,-0.45,1.1);
         this.mesh.scaling = new BABYLON.Vector3(2, 2, 2);
 
         this.controlFireRate();
@@ -37,13 +39,18 @@ export default class Weapon {
 
     doFire(pickInfo) {
         if (this.canFire) {
+
+            this.fireSound.play();
             
-            if (pickInfo.hit && pickInfo.pickedMesh.name === "enemy") {
-                pickInfo.pickedMesh.dispose();
+            // If we hit an enemy
+            if (pickInfo.hit && BABYLON.Tags.HasTags(pickInfo.pickedMesh) 
+            && pickInfo.pickedMesh.matchesTagsQuery('enemy')) {
+                let mainMesh = (pickInfo.pickedMesh.parent) ? pickInfo.pickedMesh.parent : pickInfo.pickedMesh;
+                mainMesh.enemyObject.destroy();
             } else {
                 if(pickInfo.pickedPoint) {
-                    var b = BABYLON.Mesh.CreateBox("box", 0.1, this.scene);
-                    b.position = pickInfo.pickedPoint.clone();
+                    let box = BABYLON.Mesh.CreateBox('box', 0.1, this.scene);
+                    box.position = pickInfo.pickedPoint.clone();
                 }
             }
             
@@ -54,10 +61,10 @@ export default class Weapon {
     }
 
     animateFire() {
-        this.level.interpolate(this.mesh.position, 'z', 1, 100);
+        this.level.interpolate(this.mesh.position, 'z', 0.9, 50);
             
         setTimeout(() => {
-            this.level.interpolate(this.mesh.position, 'z', 1.3, 100);
+            this.level.interpolate(this.mesh.position, 'z', 1.1, 50);
         }, 100);
     }
 
