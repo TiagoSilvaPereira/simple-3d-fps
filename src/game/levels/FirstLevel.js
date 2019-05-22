@@ -28,7 +28,10 @@ export default class FirstLevel extends Level {
         
         // this.scene.debugLayer.show();
         this.scene.clearColor = new BABYLON.Color3.FromHexString(GAME.options.backgroundColor);
-        var light = new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 0), this.scene);
+        
+        // Adding lights
+        new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 0), this.scene);
+        new BABYLON.HemisphericLight("HemiLight", new BABYLON.Vector3(0, 1, 0), this.scene);
 
         this.scene.gravity = new BABYLON.Vector3(0, -9.81, 0);
         this.scene.collisionsEnabled = true;

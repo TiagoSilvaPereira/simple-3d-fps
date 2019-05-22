@@ -960,7 +960,7 @@ function () {
     this.scene = level.scene;
     this.mesh = null;
     this.defaultAltitude = 2.5;
-    this.maxSpeed = 0.4; // this.dieSound = this.level.assets.getSound('robotOff');
+    this.maxSpeed = 0.4; // this.dieSound = this.level.assets.getSound('robotOff');this.speed
 
     this.states = {
       'DESTROYED': false
@@ -1000,7 +1000,15 @@ function () {
     key: "addEnemyMaterial",
     value: function addEnemyMaterial() {
       var meshMaterial = new BABYLON.StandardMaterial('meshMaterial', this.scene);
-      meshMaterial.diffuseColor = new BABYLON.Color3(0.5, 0, 0);
+
+      if (this.speed < 0.1) {
+        meshMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0.8);
+      } else if (this.speed < 0.3) {
+        meshMaterial.diffuseColor = new BABYLON.Color3(0, 0.8, 0);
+      } else {
+        meshMaterial.diffuseColor = new BABYLON.Color3(0.8, 0, 0);
+      }
+
       meshMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
       this.mesh.getChildren().forEach(function (mesh) {
         return mesh.material = meshMaterial;
@@ -1019,6 +1027,8 @@ function () {
       if (this.randPosition.subtract(this.mesh.position).length() <= 1) {
         this.generateRandomPosition();
       }
+
+      this.speed;
     }
   }, {
     key: "initSpeed",
@@ -1312,8 +1322,10 @@ function (_Level) {
     key: "buildScene",
     value: function buildScene() {
       // this.scene.debugLayer.show();
-      this.scene.clearColor = new BABYLON.Color3.FromHexString(GAME.options.backgroundColor);
-      var light = new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 0), this.scene);
+      this.scene.clearColor = new BABYLON.Color3.FromHexString(GAME.options.backgroundColor); // Adding lights
+
+      new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 0), this.scene);
+      new BABYLON.HemisphericLight("HemiLight", new BABYLON.Vector3(0, 1, 0), this.scene);
       this.scene.gravity = new BABYLON.Vector3(0, -9.81, 0);
       this.scene.collisionsEnabled = true;
       this.createMenus(); // Sets the active camera

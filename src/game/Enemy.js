@@ -8,7 +8,7 @@ export default class Enemy {
         this.defaultAltitude = 2.5;
         this.maxSpeed = 0.4;
 
-        // this.dieSound = this.level.assets.getSound('robotOff');
+        // this.dieSound = this.level.assets.getSound('robotOff');this.speed
 
         this.states = {
             'DESTROYED': false
@@ -47,7 +47,13 @@ export default class Enemy {
 
     addEnemyMaterial() {
         let meshMaterial = new BABYLON.StandardMaterial('meshMaterial', this.scene);
-        meshMaterial.diffuseColor = new BABYLON.Color3(0.5, 0, 0);
+        if(this.speed < 0.1) {
+            meshMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0.8);
+        } else if (this.speed < 0.3) {
+            meshMaterial.diffuseColor = new BABYLON.Color3(0, 0.8, 0);
+        } else {
+            meshMaterial.diffuseColor = new BABYLON.Color3(0.8, 0, 0);
+        }
         meshMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
 
         this.mesh.getChildren().forEach(mesh => mesh.material = meshMaterial);
@@ -68,7 +74,7 @@ export default class Enemy {
         // console.log(direction)
         if(this.randPosition.subtract(this.mesh.position).length() <= 1) {
             this.generateRandomPosition();
-        }
+        }this.speed
 
     }
 
