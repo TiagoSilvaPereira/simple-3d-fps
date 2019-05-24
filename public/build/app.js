@@ -448,6 +448,11 @@ function () {
 
         if (mergeMeshes) {
           mesh = BABYLON.Mesh.MergeMeshes(task.loadedMeshes);
+          mesh.setEnabled(false);
+        } else {
+          _this2.mesh.forEach(function (mesh) {
+            return mesh.setEnabled(false);
+          });
         }
 
         _this2.meshes[name] = mesh; // Execute a success callback
@@ -970,29 +975,15 @@ function () {
   _createClass(Enemy, [{
     key: "create",
     value: function create() {
-      var meshParent = BABYLON.Mesh.CreateBox("enemy", 1.6, this.scene);
-      meshParent.visibility = 0;
-      var bigSphere = BABYLON.MeshBuilder.CreateSphere("bigSphere", {
-        diameter: 1.5,
-        segments: 2
-      }, this.scene);
-      bigSphere.parent = meshParent;
-      var smallSphere = BABYLON.MeshBuilder.CreateSphere("smallSphere", {
-        diameter: 0.5,
-        segments: 2
-      }, this.scene);
-      smallSphere.parent = meshParent;
-      smallSphere.position.z = -1;
-      BABYLON.Tags.AddTagsTo(meshParent, 'enemy');
-      BABYLON.Tags.AddTagsTo(bigSphere, 'enemy');
-      BABYLON.Tags.AddTagsTo(smallSphere, 'enemy');
-      this.mesh = meshParent;
+      this.mesh = this.level.assets.getMesh('enemy').clone();
       this.mesh.enemyObject = this;
+      BABYLON.Tags.AddTagsTo(this.mesh, 'enemy');
       this.mesh.position.x = Math.floor(Math.random() * 100) - 50;
       this.mesh.position.z = Math.floor(Math.random() * 100) - 50;
       this.mesh.position.y = this.defaultAltitude;
-      this.initSpeed();
-      this.addEnemyMaterial();
+      this.mesh.scaling = new BABYLON.Vector3(0.075, 0.075, 0.075);
+      this.initSpeed(); // this.addEnemyMaterial();
+
       this.generateRandomPosition();
       return this;
     }
@@ -1094,7 +1085,7 @@ function () {
   _createClass(Weapon, [{
     key: "create",
     value: function create() {
-      this.mesh = this.level.assets.getMesh('shotgun');
+      this.mesh = this.level.assets.getMesh('shotgun').clone();
       this.mesh.isVisible = true;
       this.mesh.rotationQuaternion = null;
       this.mesh.rotation.y = -Math.PI / 2;
@@ -1312,7 +1303,8 @@ function (_Level) {
   }, {
     key: "setupAssets",
     value: function setupAssets() {
-      this.assets.addMergedMesh('shotgun', '/assets/models/weapons/shotgun.obj'); // this.assets.addMusic('music', '/assets/musics/music.mp3');
+      this.assets.addMergedMesh('shotgun', '/assets/models/weapons/shotgun.obj');
+      this.assets.addMergedMesh('enemy', '/assets/models/skull/skull.babylon'); // this.assets.addMusic('music', '/assets/musics/music.mp3');
 
       this.assets.addSound('shotgun', '/assets/sounds/shotgun.wav', {
         volume: 0.4
@@ -1322,10 +1314,11 @@ function (_Level) {
     key: "buildScene",
     value: function buildScene() {
       // this.scene.debugLayer.show();
-      this.scene.clearColor = new BABYLON.Color3.FromHexString(GAME.options.backgroundColor); // Adding lights
+      this.scene.clearColor = new BABYLON.Color3.FromHexString('#777'); // Adding lights
 
       new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 0), this.scene);
-      new BABYLON.HemisphericLight("HemiLight", new BABYLON.Vector3(0, 1, 0), this.scene);
+      var hemiLight = new BABYLON.HemisphericLight("HemiLight", new BABYLON.Vector3(0, 1, 0), this.scene); // hemiLight.
+
       this.scene.gravity = new BABYLON.Vector3(0, -9.81, 0);
       this.scene.collisionsEnabled = true;
       this.createMenus(); // Sets the active camera

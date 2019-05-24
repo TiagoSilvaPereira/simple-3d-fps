@@ -66,6 +66,9 @@ export default class AssetsDatabase {
 
             if(mergeMeshes) {
                 mesh = BABYLON.Mesh.MergeMeshes(task.loadedMeshes);
+                mesh.setEnabled(false);
+            } else {
+                this.mesh.forEach(mesh => mesh.setEnabled(false));
             }
 
             this.meshes[name] = mesh;

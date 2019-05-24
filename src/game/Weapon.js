@@ -13,7 +13,7 @@ export default class Weapon {
     }
 
     create() {
-        this.mesh = this.level.assets.getMesh('shotgun');
+        this.mesh = this.level.assets.getMesh('shotgun').clone();
         this.mesh.isVisible = true;
 
         this.mesh.rotationQuaternion = null;

@@ -16,30 +16,20 @@ export default class Enemy {
     }
 
     create() {
-        let meshParent = BABYLON.Mesh.CreateBox("enemy", 1.6, this.scene);
-        meshParent.visibility = 0;
-
-        let bigSphere = BABYLON.MeshBuilder.CreateSphere("bigSphere", {diameter: 1.5, segments: 2}, this.scene);
-        bigSphere.parent = meshParent;
         
-        let smallSphere = BABYLON.MeshBuilder.CreateSphere("smallSphere", {diameter: 0.5, segments: 2}, this.scene);
-        smallSphere.parent = meshParent;
-        smallSphere.position.z = -1;
-
-        BABYLON.Tags.AddTagsTo(meshParent, 'enemy');
-        BABYLON.Tags.AddTagsTo(bigSphere, 'enemy');
-        BABYLON.Tags.AddTagsTo(smallSphere, 'enemy');
-
-        this.mesh = meshParent;
+        this.mesh = this.level.assets.getMesh('enemy').clone();
         this.mesh.enemyObject = this;
+        
+        BABYLON.Tags.AddTagsTo(this.mesh, 'enemy');
 
         this.mesh.position.x = Math.floor((Math.random() * 100)) - 50;
         this.mesh.position.z = Math.floor((Math.random() * 100)) - 50;
         this.mesh.position.y = this.defaultAltitude;
 
+        this.mesh.scaling = new BABYLON.Vector3(0.075, 0.075, 0.075);
         
         this.initSpeed();
-        this.addEnemyMaterial();
+        // this.addEnemyMaterial();
         this.generateRandomPosition();
 
         return this;

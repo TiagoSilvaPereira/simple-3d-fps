@@ -17,6 +17,7 @@ export default class FirstLevel extends Level {
     setupAssets() {
 
         this.assets.addMergedMesh('shotgun', '/assets/models/weapons/shotgun.obj');
+        this.assets.addMergedMesh('enemy', '/assets/models/skull/skull.babylon');
 
         // this.assets.addMusic('music', '/assets/musics/music.mp3');
         this.assets.addSound('shotgun', '/assets/sounds/shotgun.wav', { volume: 0.4 });
@@ -27,11 +28,12 @@ export default class FirstLevel extends Level {
     buildScene() {
         
         // this.scene.debugLayer.show();
-        this.scene.clearColor = new BABYLON.Color3.FromHexString(GAME.options.backgroundColor);
+        this.scene.clearColor = new BABYLON.Color3.FromHexString('#777');
         
         // Adding lights
         new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 0), this.scene);
-        new BABYLON.HemisphericLight("HemiLight", new BABYLON.Vector3(0, 1, 0), this.scene);
+        let hemiLight = new BABYLON.HemisphericLight("HemiLight", new BABYLON.Vector3(0, 1, 0), this.scene);
+        // hemiLight.
 
         this.scene.gravity = new BABYLON.Vector3(0, -9.81, 0);
         this.scene.collisionsEnabled = true;
@@ -53,6 +55,7 @@ export default class FirstLevel extends Level {
     createGround() {
         let ground = BABYLON.Mesh.CreateGround("ground",  200,  200, 2, this.scene);
         ground.checkCollisions = true;
+        
         let groundMaterial = new BABYLON.StandardMaterial("groundMaterial", this.scene);
         groundMaterial.diffuseTexture = new BABYLON.Texture("/assets/images/sand.jpg", this.scene);
         groundMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
