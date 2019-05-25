@@ -26,7 +26,7 @@ export default class Enemy {
         this.mesh.position.z = Math.floor((Math.random() * 100)) - 50;
         this.mesh.position.y = this.defaultAltitude;
 
-        this.mesh.scaling = new BABYLON.Vector3(0.075, 0.075, 0.075);
+        this.mesh.scaling = new BABYLON.Vector3(0.025, 0.025, 0.025);
         
         this.initSpeed();
         // this.addEnemyMaterial();

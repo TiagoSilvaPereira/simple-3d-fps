@@ -62,25 +62,62 @@ export default class AssetsDatabase {
 
         fileTask.onSuccess = (task) => {
             
-            let mesh = task.loadedMeshes;
-
-            if(mergeMeshes) {
-                mesh = BABYLON.Mesh.MergeMeshes(task.loadedMeshes);
-                mesh.setEnabled(false);
-            } else {
-                this.mesh.forEach(mesh => mesh.setEnabled(false));
-            }
-
-            this.meshes[name] = mesh;
+            let mesh = null;
             
-            // Execute a success callback
-            if(options.onSuccess) {
-                options.onSuccess(this.meshes[name]);
+            try {
+                if(mergeMeshes) {
+                    mesh = BABYLON.Mesh.MergeMeshes(task.loadedMeshes);   
+                } else {
+                    mesh = task.loadedMeshes[0];
+                }
+
+                mesh.setEnabled(false);
+    
+                this.meshes[name] = mesh;
+                
+                // Execute a success callback
+                if(options.onSuccess) {
+                    options.onSuccess(this.meshes[name]);
+                }
+            } catch (error) {
+                console.error(error)
             }
 
         }
 
         return this.meshes[name];
+    }
+
+    addAnimatedMesh() {
+        // BABYLON.SceneLoader.ImportMesh("", '/assets/models/weapons/rifle/', 'rifle.gltf', this.scene, (newMeshes, particleSystems, skeletons) => {
+            
+        //     console.log(skeletons)
+            
+        //     this.scene.beginHierarchyAnimation(newMeshes[0], true, 0, 100, true, 1, () => {
+        //         console.log('animation end')
+        //     });
+        // })
+    }
+
+    cloneComplexMeshes(meshes, quantity = 1) {
+        let clones = [];
+
+        for (var i = 0; i < quantity; i++) {
+
+            var clone = [];
+
+            for (var j = 0; j < meshes.length; j++) {
+                clone[j] = meshes[j].clone("clone" + j);
+                
+                if(meshes[j].skeleton) {
+                    clone[j].skeleton = meshes[j].skeleton.clone();
+                }
+            }
+
+            clones[i] = clone;
+        }
+
+        return clones;
     }
 
     getMesh(name) {

@@ -16,7 +16,6 @@ export default class FirstLevel extends Level {
 
     setupAssets() {
 
-        this.assets.addMergedMesh('shotgun', '/assets/models/weapons/shotgun.obj');
         this.assets.addMergedMesh('enemy', '/assets/models/skull/skull.babylon');
 
         // this.assets.addMusic('music', '/assets/musics/music.mp3');
@@ -31,9 +30,20 @@ export default class FirstLevel extends Level {
         this.scene.clearColor = new BABYLON.Color3.FromHexString('#777');
         
         // Adding lights
-        new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 0), this.scene);
+        let dirLight = new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 0), this.scene);
+        dirLight.intensity = 0.3;
+
         let hemiLight = new BABYLON.HemisphericLight("HemiLight", new BABYLON.Vector3(0, 1, 0), this.scene);
-        // hemiLight.
+        hemiLight.intensity = 0.5;
+
+        // Skybox
+        var skybox = BABYLON.MeshBuilder.CreateBox("skyBox", {size: 1000}, this.scene);
+        var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", this.scene);
+        skyboxMaterial.backFaceCulling = false;
+        skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("assets/skybox/skybox", this.scene);
+        skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
+        skyboxMaterial.disableLighting = true;
+        skybox.material = skyboxMaterial;		
 
         this.scene.gravity = new BABYLON.Vector3(0, -9.81, 0);
         this.scene.collisionsEnabled = true;
@@ -53,7 +63,7 @@ export default class FirstLevel extends Level {
     }
 
     createGround() {
-        let ground = BABYLON.Mesh.CreateGround("ground",  200,  200, 2, this.scene);
+        let ground = BABYLON.Mesh.CreateGround("ground",  500,  500, 2, this.scene);
         ground.checkCollisions = true;
         
         let groundMaterial = new BABYLON.StandardMaterial("groundMaterial", this.scene);

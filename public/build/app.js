@@ -444,25 +444,58 @@ function () {
       var fileTask = this.manager.addMeshTask(name + '__MeshTask', '', file);
 
       fileTask.onSuccess = function (task) {
-        var mesh = task.loadedMeshes;
+        var mesh = null;
 
-        if (mergeMeshes) {
-          mesh = BABYLON.Mesh.MergeMeshes(task.loadedMeshes);
+        try {
+          if (mergeMeshes) {
+            mesh = BABYLON.Mesh.MergeMeshes(task.loadedMeshes);
+          } else {
+            mesh = task.loadedMeshes[0];
+          }
+
           mesh.setEnabled(false);
-        } else {
-          _this2.mesh.forEach(function (mesh) {
-            return mesh.setEnabled(false);
-          });
-        }
+          _this2.meshes[name] = mesh; // Execute a success callback
 
-        _this2.meshes[name] = mesh; // Execute a success callback
-
-        if (options.onSuccess) {
-          options.onSuccess(_this2.meshes[name]);
+          if (options.onSuccess) {
+            options.onSuccess(_this2.meshes[name]);
+          }
+        } catch (error) {
+          console.error(error);
         }
       };
 
       return this.meshes[name];
+    }
+  }, {
+    key: "addAnimatedMesh",
+    value: function addAnimatedMesh() {// BABYLON.SceneLoader.ImportMesh("", '/assets/models/weapons/rifle/', 'rifle.gltf', this.scene, (newMeshes, particleSystems, skeletons) => {
+      //     console.log(skeletons)
+      //     this.scene.beginHierarchyAnimation(newMeshes[0], true, 0, 100, true, 1, () => {
+      //         console.log('animation end')
+      //     });
+      // })
+    }
+  }, {
+    key: "cloneComplexMeshes",
+    value: function cloneComplexMeshes(meshes) {
+      var quantity = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
+      var clones = [];
+
+      for (var i = 0; i < quantity; i++) {
+        var clone = [];
+
+        for (var j = 0; j < meshes.length; j++) {
+          clone[j] = meshes[j].clone("clone" + j);
+
+          if (meshes[j].skeleton) {
+            clone[j].skeleton = meshes[j].skeleton.clone();
+          }
+        }
+
+        clones[i] = clone;
+      }
+
+      return clones;
     }
   }, {
     key: "getMesh",
@@ -981,7 +1014,7 @@ function () {
       this.mesh.position.x = Math.floor(Math.random() * 100) - 50;
       this.mesh.position.z = Math.floor(Math.random() * 100) - 50;
       this.mesh.position.y = this.defaultAltitude;
-      this.mesh.scaling = new BABYLON.Vector3(0.075, 0.075, 0.075);
+      this.mesh.scaling = new BABYLON.Vector3(0.025, 0.025, 0.025);
       this.initSpeed(); // this.addEnemyMaterial();
 
       this.generateRandomPosition();
@@ -1085,14 +1118,33 @@ function () {
   _createClass(Weapon, [{
     key: "create",
     value: function create() {
-      this.mesh = this.level.assets.getMesh('shotgun').clone();
-      this.mesh.isVisible = true;
-      this.mesh.rotationQuaternion = null;
-      this.mesh.rotation.y = -Math.PI / 2;
-      this.mesh.parent = this.level.camera;
-      this.mesh.position = new BABYLON.Vector3(0.4, -0.45, 1.1);
-      this.mesh.scaling = new BABYLON.Vector3(2, 2, 2);
-      this.controlFireRate();
+      var _this = this;
+
+      BABYLON.SceneLoader.ImportMesh("", '/assets/models/weapons/rifle/', 'rifle.gltf', this.scene, function (newMeshes, particleSystems, skeletons) {
+        console.log(newMeshes[0].getChildren());
+
+        _this.scene.stopAllAnimations();
+
+        newMeshes[0].getDescendants().forEach(function (child) {
+          _this.scene.beginAnimation(child, 131, 160, false, 1.0, function () {
+            console.log('finished');
+          });
+        }); // this.scene.beginHierarchyAnimation(newMeshes, true, 1, 10, true, 1, () => {
+        //     console.log('animation end')
+        // });
+        // this.scene.stopAllAnimations();
+
+        _this.mesh = newMeshes[0];
+        _this.mesh.isVisible = true;
+        _this.mesh.rotationQuaternion = null;
+        _this.mesh.rotation.y = Math.PI * 2;
+        _this.mesh.parent = _this.level.camera;
+        _this.mesh.position = new BABYLON.Vector3(0.4, -0.45, 1.1);
+        _this.mesh.scaling = new BABYLON.Vector3(2, 2, 2); // this.scene.stopAnimation(skeletons[0]);
+        // newMeshes.forEach(mesh => this.scene.stopAnimation(mesh));
+
+        _this.controlFireRate();
+      });
     }
   }, {
     key: "fire",
@@ -1128,11 +1180,11 @@ function () {
   }, {
     key: "animateFire",
     value: function animateFire() {
-      var _this = this;
+      var _this2 = this;
 
       this.level.interpolate(this.mesh.position, 'z', 0.9, 50);
       setTimeout(function () {
-        _this.level.interpolate(_this.mesh.position, 'z', 1.1, 50);
+        _this2.level.interpolate(_this2.mesh.position, 'z', 1.1, 50);
       }, 100);
     }
   }, {
@@ -1303,7 +1355,6 @@ function (_Level) {
   }, {
     key: "setupAssets",
     value: function setupAssets() {
-      this.assets.addMergedMesh('shotgun', '/assets/models/weapons/shotgun.obj');
       this.assets.addMergedMesh('enemy', '/assets/models/skull/skull.babylon'); // this.assets.addMusic('music', '/assets/musics/music.mp3');
 
       this.assets.addSound('shotgun', '/assets/sounds/shotgun.wav', {
@@ -1316,9 +1367,20 @@ function (_Level) {
       // this.scene.debugLayer.show();
       this.scene.clearColor = new BABYLON.Color3.FromHexString('#777'); // Adding lights
 
-      new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 0), this.scene);
-      var hemiLight = new BABYLON.HemisphericLight("HemiLight", new BABYLON.Vector3(0, 1, 0), this.scene); // hemiLight.
+      var dirLight = new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 0), this.scene);
+      dirLight.intensity = 0.3;
+      var hemiLight = new BABYLON.HemisphericLight("HemiLight", new BABYLON.Vector3(0, 1, 0), this.scene);
+      hemiLight.intensity = 0.5; // Skybox
 
+      var skybox = BABYLON.MeshBuilder.CreateBox("skyBox", {
+        size: 1000
+      }, this.scene);
+      var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", this.scene);
+      skyboxMaterial.backFaceCulling = false;
+      skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("assets/skybox/skybox", this.scene);
+      skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
+      skyboxMaterial.disableLighting = true;
+      skybox.material = skyboxMaterial;
       this.scene.gravity = new BABYLON.Vector3(0, -9.81, 0);
       this.scene.collisionsEnabled = true;
       this.createMenus(); // Sets the active camera
@@ -1334,7 +1396,7 @@ function (_Level) {
   }, {
     key: "createGround",
     value: function createGround() {
-      var ground = BABYLON.Mesh.CreateGround("ground", 200, 200, 2, this.scene);
+      var ground = BABYLON.Mesh.CreateGround("ground", 500, 500, 2, this.scene);
       ground.checkCollisions = true;
       var groundMaterial = new BABYLON.StandardMaterial("groundMaterial", this.scene);
       groundMaterial.diffuseTexture = new BABYLON.Texture("/assets/images/sand.jpg", this.scene);

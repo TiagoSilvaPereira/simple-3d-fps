@@ -13,17 +13,39 @@ export default class Weapon {
     }
 
     create() {
-        this.mesh = this.level.assets.getMesh('shotgun').clone();
-        this.mesh.isVisible = true;
-
-        this.mesh.rotationQuaternion = null;
-        this.mesh.rotation.y = -Math.PI/2;
         
-        this.mesh.parent = this.level.camera;
-        this.mesh.position = new BABYLON.Vector3(0.4,-0.45,1.1);
-        this.mesh.scaling = new BABYLON.Vector3(2, 2, 2);
+        BABYLON.SceneLoader.ImportMesh("", '/assets/models/weapons/rifle/', 'rifle.gltf', this.scene, (newMeshes, particleSystems, skeletons) => {
+            
+            console.log(newMeshes[0].getChildren());
 
-        this.controlFireRate();
+            this.scene.stopAllAnimations();
+            newMeshes[0].getDescendants().forEach(child => {
+                this.scene.beginAnimation(child, 131, 160, false, 1.0, () => {
+                    console.log('finished')
+                })
+            })
+            // this.scene.beginHierarchyAnimation(newMeshes, true, 1, 10, true, 1, () => {
+            //     console.log('animation end')
+            // });
+
+            // this.scene.stopAllAnimations();
+            this.mesh = newMeshes[0];
+            
+            this.mesh.isVisible = true;
+
+            this.mesh.rotationQuaternion = null;
+            this.mesh.rotation.y = Math.PI * 2;
+            
+            this.mesh.parent = this.level.camera;
+            this.mesh.position = new BABYLON.Vector3(0.4,-0.45,1.1);
+            this.mesh.scaling = new BABYLON.Vector3(2, 2, 2);
+
+            // this.scene.stopAnimation(skeletons[0]);
+            // newMeshes.forEach(mesh => this.scene.stopAnimation(mesh));
+            
+            this.controlFireRate();
+        })
+
     }
 
     fire() {
