@@ -14,21 +14,16 @@ export default class Weapon {
 
     create() {
         
-        BABYLON.SceneLoader.ImportMesh("", '/assets/models/weapons/rifle/', 'rifle.gltf', this.scene, (newMeshes, particleSystems, skeletons) => {
-            
-            console.log(newMeshes[0].getChildren());
+        BABYLON.SceneLoader.OnPluginActivatedObservable.addOnce(function (plugin) {
+            plugin.animationStartMode = BABYLON.GLTFLoaderAnimationStartMode.NONE;
+        });
 
-            this.scene.stopAllAnimations();
-            newMeshes[0].getDescendants().forEach(child => {
-                this.scene.beginAnimation(child, 131, 160, false, 1.0, () => {
-                    console.log('finished')
-                })
-            })
-            // this.scene.beginHierarchyAnimation(newMeshes, true, 1, 10, true, 1, () => {
-            //     console.log('animation end')
-            // });
+        BABYLON.SceneLoader.ImportMesh("", '/assets/models/weapons/rifle/', 'rifle.gltf', this.scene, (newMeshes, particleSystems, skeletons, animationGroups) => {
 
-            // this.scene.stopAllAnimations();
+            animationGroups.forEach(function (animationGroup) {
+                animationGroup.normalize(0, 207 / 30);
+            });
+
             this.mesh = newMeshes[0];
             
             this.mesh.isVisible = true;
@@ -37,8 +32,8 @@ export default class Weapon {
             this.mesh.rotation.y = Math.PI * 2;
             
             this.mesh.parent = this.level.camera;
-            this.mesh.position = new BABYLON.Vector3(0.4,-0.45,1.1);
-            this.mesh.scaling = new BABYLON.Vector3(2, 2, 2);
+            this.mesh.position = new BABYLON.Vector3(0.7,-0.45,1.1);
+            this.mesh.scaling = new BABYLON.Vector3(3.5, 3.5, 3.5);
 
             // this.scene.stopAnimation(skeletons[0]);
             // newMeshes.forEach(mesh => this.scene.stopAnimation(mesh));

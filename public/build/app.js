@@ -1120,27 +1120,20 @@ function () {
     value: function create() {
       var _this = this;
 
-      BABYLON.SceneLoader.ImportMesh("", '/assets/models/weapons/rifle/', 'rifle.gltf', this.scene, function (newMeshes, particleSystems, skeletons) {
-        console.log(newMeshes[0].getChildren());
-
-        _this.scene.stopAllAnimations();
-
-        newMeshes[0].getDescendants().forEach(function (child) {
-          _this.scene.beginAnimation(child, 131, 160, false, 1.0, function () {
-            console.log('finished');
-          });
-        }); // this.scene.beginHierarchyAnimation(newMeshes, true, 1, 10, true, 1, () => {
-        //     console.log('animation end')
-        // });
-        // this.scene.stopAllAnimations();
-
+      BABYLON.SceneLoader.OnPluginActivatedObservable.addOnce(function (plugin) {
+        plugin.animationStartMode = BABYLON.GLTFLoaderAnimationStartMode.NONE;
+      });
+      BABYLON.SceneLoader.ImportMesh("", '/assets/models/weapons/rifle/', 'rifle.gltf', this.scene, function (newMeshes, particleSystems, skeletons, animationGroups) {
+        animationGroups.forEach(function (animationGroup) {
+          animationGroup.normalize(0, 207 / 30);
+        });
         _this.mesh = newMeshes[0];
         _this.mesh.isVisible = true;
         _this.mesh.rotationQuaternion = null;
         _this.mesh.rotation.y = Math.PI * 2;
         _this.mesh.parent = _this.level.camera;
-        _this.mesh.position = new BABYLON.Vector3(0.4, -0.45, 1.1);
-        _this.mesh.scaling = new BABYLON.Vector3(2, 2, 2); // this.scene.stopAnimation(skeletons[0]);
+        _this.mesh.position = new BABYLON.Vector3(0.7, -0.45, 1.1);
+        _this.mesh.scaling = new BABYLON.Vector3(3.5, 3.5, 3.5); // this.scene.stopAnimation(skeletons[0]);
         // newMeshes.forEach(mesh => this.scene.stopAnimation(mesh));
 
         _this.controlFireRate();
@@ -1432,7 +1425,7 @@ function (_Level) {
   }, {
     key: "createCamera",
     value: function createCamera() {
-      var camera = new BABYLON.UniversalCamera("UniversalCamera", new BABYLON.Vector3(0, 3.5, -10), this.scene);
+      var camera = new BABYLON.UniversalCamera("UniversalCamera", new BABYLON.Vector3(0, 3.5, 10), this.scene);
       camera.setTarget(new BABYLON.Vector3(0, 2, 0));
       camera.attachControl(GAME.canvas, true);
       camera.applyGravity = true;

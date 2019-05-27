@@ -97,7 +97,7 @@ export default class FirstLevel extends Level {
     }
 
     createCamera() {
-        var camera = new BABYLON.UniversalCamera("UniversalCamera", new BABYLON.Vector3(0, 3.5, -10), this.scene);
+        var camera = new BABYLON.UniversalCamera("UniversalCamera", new BABYLON.Vector3(0, 3.5, 10), this.scene);
         camera.setTarget(new BABYLON.Vector3(0,2,0));
         
         camera.attachControl(GAME.canvas, true);
