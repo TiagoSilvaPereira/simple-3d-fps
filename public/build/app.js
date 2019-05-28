@@ -1128,13 +1128,15 @@ function () {
           animationGroup.normalize(0, 207 / 30);
         });
         _this.mesh = newMeshes[0];
-        _this.mesh.isVisible = true;
-        _this.mesh.rotationQuaternion = null;
-        _this.mesh.rotation.y = Math.PI * 2;
-        _this.mesh.parent = _this.level.camera;
-        _this.mesh.position = new BABYLON.Vector3(0.7, -0.45, 1.1);
-        _this.mesh.scaling = new BABYLON.Vector3(3.5, 3.5, 3.5); // this.scene.stopAnimation(skeletons[0]);
-        // newMeshes.forEach(mesh => this.scene.stopAnimation(mesh));
+        _this.mesh.isVisible = true; // Let's use a transform node to never lose the correct mesh orientation
+        // It we apply transformations directly to the mesh, It can be mirrored,
+        // removinf the handedness conversion
+
+        var transformNode = new BABYLON.TransformNode('weaponTransformNode');
+        transformNode.parent = _this.level.camera;
+        transformNode.scaling = new BABYLON.Vector3(3.5, 3.5, 3.5);
+        transformNode.position = new BABYLON.Vector3(0.7, -0.45, 1.1);
+        _this.mesh.parent = transformNode;
 
         _this.controlFireRate();
       });
@@ -1175,9 +1177,9 @@ function () {
     value: function animateFire() {
       var _this2 = this;
 
-      this.level.interpolate(this.mesh.position, 'z', 0.9, 50);
+      this.level.interpolate(this.mesh.parent.position, 'z', 0.9, 50);
       setTimeout(function () {
-        _this2.level.interpolate(_this2.mesh.position, 'z', 1.1, 50);
+        _this2.level.interpolate(_this2.mesh.parent.position, 'z', 1.1, 50);
       }, 100);
     }
   }, {
@@ -1376,10 +1378,10 @@ function (_Level) {
       skybox.material = skyboxMaterial;
       this.scene.gravity = new BABYLON.Vector3(0, -9.81, 0);
       this.scene.collisionsEnabled = true;
-      this.createMenus(); // Sets the active camera
+      this.createMenus(); // Create and set the active camera
 
-      this.camera = this.createCamera(); //this.scene.activeCamera = this.camera;
-
+      this.camera = this.createCamera();
+      this.scene.activeCamera = this.camera;
       this.enablePointerLock();
       this.createGround();
       this.addWeapon();

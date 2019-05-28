@@ -50,9 +50,9 @@ export default class FirstLevel extends Level {
 
         this.createMenus();
 
-        // Sets the active camera
+        // Create and set the active camera
         this.camera = this.createCamera();
-        //this.scene.activeCamera = this.camera;
+        this.scene.activeCamera = this.camera;
         this.enablePointerLock();
         
         this.createGround();

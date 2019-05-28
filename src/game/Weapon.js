@@ -27,16 +27,17 @@ export default class Weapon {
             this.mesh = newMeshes[0];
             
             this.mesh.isVisible = true;
-
-            this.mesh.rotationQuaternion = null;
-            this.mesh.rotation.y = Math.PI * 2;
             
-            this.mesh.parent = this.level.camera;
-            this.mesh.position = new BABYLON.Vector3(0.7,-0.45,1.1);
-            this.mesh.scaling = new BABYLON.Vector3(3.5, 3.5, 3.5);
-
-            // this.scene.stopAnimation(skeletons[0]);
-            // newMeshes.forEach(mesh => this.scene.stopAnimation(mesh));
+            // Let's use a transform node to never lose the correct mesh orientation
+            // It we apply transformations directly to the mesh, It can be mirrored,
+            // removinf the handedness conversion
+            let transformNode = new BABYLON.TransformNode('weaponTransformNode');
+            
+            transformNode.parent = this.level.camera; 
+            transformNode.scaling = new BABYLON.Vector3(3.5, 3.5, 3.5);
+            transformNode.position = new BABYLON.Vector3(0.7,-0.45,1.1);
+            
+            this.mesh.parent = transformNode;
             
             this.controlFireRate();
         })
@@ -78,10 +79,10 @@ export default class Weapon {
     }
 
     animateFire() {
-        this.level.interpolate(this.mesh.position, 'z', 0.9, 50);
+        this.level.interpolate(this.mesh.parent.position, 'z', 0.9, 50);
             
         setTimeout(() => {
-            this.level.interpolate(this.mesh.position, 'z', 1.1, 50);
+            this.level.interpolate(this.mesh.parent.position, 'z', 1.1, 50);
         }, 100);
     }
 
