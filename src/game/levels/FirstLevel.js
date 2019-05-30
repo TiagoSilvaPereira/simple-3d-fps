@@ -16,11 +16,16 @@ export default class FirstLevel extends Level {
 
     setupAssets() {
 
+        this.assets.addAnimatedMesh('rifle', '/assets/models/weapons/rifle/rifle.gltf', {
+            'normalized': true,
+            'start': 0,
+            'end': 207
+        });
+        
         this.assets.addMergedMesh('enemy', '/assets/models/skull/skull.babylon');
 
         // this.assets.addMusic('music', '/assets/musics/music.mp3');
         this.assets.addSound('shotgun', '/assets/sounds/shotgun.wav', { volume: 0.4 });
-        // this.assets.addSound('robotOff', '/assets/sounds/robot_off.wav', { volume: 0.1 });
         
     }
 

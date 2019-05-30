@@ -6,6 +6,7 @@ export default class AssetsDatabase {
 
         this.meshes = [];
         this.sounds = [];
+        this.animatedMeshes = [];
 
         this.manager = new BABYLON.AssetsManager(this.scene);
 
@@ -88,40 +89,80 @@ export default class AssetsDatabase {
         return this.meshes[name];
     }
 
-    addAnimatedMesh() {
-        // BABYLON.SceneLoader.ImportMesh("", '/assets/models/weapons/rifle/', 'rifle.gltf', this.scene, (newMeshes, particleSystems, skeletons) => {
-            
-        //     console.log(skeletons)
-            
-        //     this.scene.beginHierarchyAnimation(newMeshes[0], true, 0, 100, true, 1, () => {
-        //         console.log('animation end')
-        //     });
-        // })
-    }
+    addAnimatedMesh(name, file, options = {}) {
+        let fileTask = this.manager.addMeshTask(name + '__AnimatedMeshTask', '', file);
 
-    cloneComplexMeshes(meshes, quantity = 1) {
-        let clones = [];
-
-        for (var i = 0; i < quantity; i++) {
-
-            var clone = [];
-
-            for (var j = 0; j < meshes.length; j++) {
-                clone[j] = meshes[j].clone("clone" + j);
+        fileTask.onSuccess = (task) => {
+            try {
+                let mesh = task.loadedMeshes[0];
+                mesh.setEnabled(false);
+    
+                this.animatedMeshes[name] = this.buildAnimatedMeshData(mesh, task, options);
                 
-                if(meshes[j].skeleton) {
-                    clone[j].skeleton = meshes[j].skeleton.clone();
+                // Execute a success callback
+                if(options.onSuccess) {
+                    options.onSuccess(this.animatedMeshes[name]);
                 }
+            } catch (error) {
+                console.error(error)
             }
 
-            clones[i] = clone;
         }
 
-        return clones;
+        return this.animatedMeshes[name];
+    }
+
+    buildAnimatedMeshData(mesh, task, options) {
+        let start = 0,
+            end = 0;
+
+        if(options.start || options.startFrame) {
+            start = options.startFrame ? options.startFrame / 30 : options.start;
+            end = options.endFrame ? options.endFrame / 30 : options.end;
+        }
+
+        mesh.animationGroups = task.loadedAnimationGroups;
+
+        mesh.animationGroups.forEach(function (animationGroup) {
+            if(options.normalized) {
+                animationGroup.normalize(start, end);
+            }
+
+            animationGroup.pause();
+        });
+
+        return mesh;
+
+    }
+
+    playMeshAnimation(meshName, start, end, loop = false) {
+        let mesh = this.getAnimatedMesh(meshName);
+
+        start = start / 30;
+        end = end / 30;
+
+        mesh.animationGroups.forEach(function (animationGroup) {
+            animationGroup.stop();
+            animationGroup.start(false, 1, start, end);
+        });
     }
 
     getMesh(name) {
+        if(!this.meshes[name]) {
+            GAME.log.debugError('There is no mesh called "' + name + '"');
+            return;
+        }
+
         return this.meshes[name];     
+    }
+
+    getAnimatedMesh(name) {
+        if(!this.animatedMeshes[name]) {
+            GAME.log.debugError('There is no animated mesh called "' + name + '"');
+            return;
+        }
+
+        return this.animatedMeshes[name];     
     }
 
     getSound(name) {

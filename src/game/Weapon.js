@@ -13,34 +13,24 @@ export default class Weapon {
     }
 
     create() {
+
+        this.mesh = this.level.assets.getAnimatedMesh('rifle');
+        this.mesh.setEnabled(true);
+            
+        this.mesh.isVisible = true;
         
-        BABYLON.SceneLoader.OnPluginActivatedObservable.addOnce(function (plugin) {
-            plugin.animationStartMode = BABYLON.GLTFLoaderAnimationStartMode.NONE;
-        });
-
-        BABYLON.SceneLoader.ImportMesh("", '/assets/models/weapons/rifle/', 'rifle.gltf', this.scene, (newMeshes, particleSystems, skeletons, animationGroups) => {
-
-            animationGroups.forEach(function (animationGroup) {
-                animationGroup.normalize(0, 207 / 30);
-            });
-
-            this.mesh = newMeshes[0];
-            
-            this.mesh.isVisible = true;
-            
-            // Let's use a transform node to never lose the correct mesh orientation
-            // It we apply transformations directly to the mesh, It can be mirrored,
-            // removinf the handedness conversion
-            let transformNode = new BABYLON.TransformNode('weaponTransformNode');
-            
-            transformNode.parent = this.level.camera; 
-            transformNode.scaling = new BABYLON.Vector3(3.5, 3.5, 3.5);
-            transformNode.position = new BABYLON.Vector3(0.7,-0.45,1.1);
-            
-            this.mesh.parent = transformNode;
-            
-            this.controlFireRate();
-        })
+        // Let's use a transform node to never lose the correct mesh orientation
+        // It we apply transformations directly to the mesh, It can be mirrored,
+        // removinf the handedness conversion
+        let transformNode = new BABYLON.TransformNode('weaponTransformNode');
+        
+        transformNode.parent = this.level.camera; 
+        transformNode.scaling = new BABYLON.Vector3(3.5, 3.5, 3.5);
+        transformNode.position = new BABYLON.Vector3(0.7,-0.45,1.1);
+        
+        this.mesh.parent = transformNode;
+        
+        this.controlFireRate();
 
     }
 
@@ -79,11 +69,8 @@ export default class Weapon {
     }
 
     animateFire() {
-        this.level.interpolate(this.mesh.parent.position, 'z', 0.9, 50);
-            
-        setTimeout(() => {
-            this.level.interpolate(this.mesh.parent.position, 'z', 1.1, 50);
-        }, 100);
+        // Playing rifle animation from frame 0 to 10
+        this.level.assets.playMeshAnimation('rifle', 0, 10);
     }
 
     controlFireRate() {

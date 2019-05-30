@@ -381,6 +381,7 @@ function () {
     this.scene = scene;
     this.meshes = [];
     this.sounds = [];
+    this.animatedMeshes = [];
     this.manager = new BABYLON.AssetsManager(this.scene);
 
     this.manager.onFinish = function (tasks) {
@@ -468,39 +469,80 @@ function () {
     }
   }, {
     key: "addAnimatedMesh",
-    value: function addAnimatedMesh() {// BABYLON.SceneLoader.ImportMesh("", '/assets/models/weapons/rifle/', 'rifle.gltf', this.scene, (newMeshes, particleSystems, skeletons) => {
-      //     console.log(skeletons)
-      //     this.scene.beginHierarchyAnimation(newMeshes[0], true, 0, 100, true, 1, () => {
-      //         console.log('animation end')
-      //     });
-      // })
+    value: function addAnimatedMesh(name, file) {
+      var _this3 = this;
+
+      var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+      var fileTask = this.manager.addMeshTask(name + '__AnimatedMeshTask', '', file);
+
+      fileTask.onSuccess = function (task) {
+        try {
+          var mesh = task.loadedMeshes[0];
+          mesh.setEnabled(false);
+          _this3.animatedMeshes[name] = _this3.buildAnimatedMeshData(mesh, task, options); // Execute a success callback
+
+          if (options.onSuccess) {
+            options.onSuccess(_this3.animatedMeshes[name]);
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      };
+
+      return this.animatedMeshes[name];
     }
   }, {
-    key: "cloneComplexMeshes",
-    value: function cloneComplexMeshes(meshes) {
-      var quantity = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
-      var clones = [];
+    key: "buildAnimatedMeshData",
+    value: function buildAnimatedMeshData(mesh, task, options) {
+      var start = 0,
+          end = 0;
 
-      for (var i = 0; i < quantity; i++) {
-        var clone = [];
-
-        for (var j = 0; j < meshes.length; j++) {
-          clone[j] = meshes[j].clone("clone" + j);
-
-          if (meshes[j].skeleton) {
-            clone[j].skeleton = meshes[j].skeleton.clone();
-          }
-        }
-
-        clones[i] = clone;
+      if (options.start || options.startFrame) {
+        start = options.startFrame ? options.startFrame / 30 : options.start;
+        end = options.endFrame ? options.endFrame / 30 : options.end;
       }
 
-      return clones;
+      mesh.animationGroups = task.loadedAnimationGroups;
+      mesh.animationGroups.forEach(function (animationGroup) {
+        if (options.normalized) {
+          animationGroup.normalize(start, end);
+        }
+
+        animationGroup.pause();
+      });
+      return mesh;
+    }
+  }, {
+    key: "playMeshAnimation",
+    value: function playMeshAnimation(meshName, start, end) {
+      var loop = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+      var mesh = this.getAnimatedMesh(meshName);
+      start = start / 30;
+      end = end / 30;
+      mesh.animationGroups.forEach(function (animationGroup) {
+        animationGroup.stop();
+        animationGroup.start(false, 1, start, end);
+      });
     }
   }, {
     key: "getMesh",
     value: function getMesh(name) {
+      if (!this.meshes[name]) {
+        GAME.log.debugError('There is no mesh called "' + name + '"');
+        return;
+      }
+
       return this.meshes[name];
+    }
+  }, {
+    key: "getAnimatedMesh",
+    value: function getAnimatedMesh(name) {
+      if (!this.animatedMeshes[name]) {
+        GAME.log.debugError('There is no animated mesh called "' + name + '"');
+        return;
+      }
+
+      return this.animatedMeshes[name];
     }
   }, {
     key: "getSound",
@@ -1118,28 +1160,18 @@ function () {
   _createClass(Weapon, [{
     key: "create",
     value: function create() {
-      var _this = this;
+      this.mesh = this.level.assets.getAnimatedMesh('rifle');
+      this.mesh.setEnabled(true);
+      this.mesh.isVisible = true; // Let's use a transform node to never lose the correct mesh orientation
+      // It we apply transformations directly to the mesh, It can be mirrored,
+      // removinf the handedness conversion
 
-      BABYLON.SceneLoader.OnPluginActivatedObservable.addOnce(function (plugin) {
-        plugin.animationStartMode = BABYLON.GLTFLoaderAnimationStartMode.NONE;
-      });
-      BABYLON.SceneLoader.ImportMesh("", '/assets/models/weapons/rifle/', 'rifle.gltf', this.scene, function (newMeshes, particleSystems, skeletons, animationGroups) {
-        animationGroups.forEach(function (animationGroup) {
-          animationGroup.normalize(0, 207 / 30);
-        });
-        _this.mesh = newMeshes[0];
-        _this.mesh.isVisible = true; // Let's use a transform node to never lose the correct mesh orientation
-        // It we apply transformations directly to the mesh, It can be mirrored,
-        // removinf the handedness conversion
-
-        var transformNode = new BABYLON.TransformNode('weaponTransformNode');
-        transformNode.parent = _this.level.camera;
-        transformNode.scaling = new BABYLON.Vector3(3.5, 3.5, 3.5);
-        transformNode.position = new BABYLON.Vector3(0.7, -0.45, 1.1);
-        _this.mesh.parent = transformNode;
-
-        _this.controlFireRate();
-      });
+      var transformNode = new BABYLON.TransformNode('weaponTransformNode');
+      transformNode.parent = this.level.camera;
+      transformNode.scaling = new BABYLON.Vector3(3.5, 3.5, 3.5);
+      transformNode.position = new BABYLON.Vector3(0.7, -0.45, 1.1);
+      this.mesh.parent = transformNode;
+      this.controlFireRate();
     }
   }, {
     key: "fire",
@@ -1175,12 +1207,8 @@ function () {
   }, {
     key: "animateFire",
     value: function animateFire() {
-      var _this2 = this;
-
-      this.level.interpolate(this.mesh.parent.position, 'z', 0.9, 50);
-      setTimeout(function () {
-        _this2.level.interpolate(_this2.mesh.parent.position, 'z', 1.1, 50);
-      }, 100);
+      // Playing rifle animation from frame 0 to 10
+      this.level.assets.playMeshAnimation('rifle', 0, 10);
     }
   }, {
     key: "controlFireRate",
@@ -1350,11 +1378,16 @@ function (_Level) {
   }, {
     key: "setupAssets",
     value: function setupAssets() {
+      this.assets.addAnimatedMesh('rifle', '/assets/models/weapons/rifle/rifle.gltf', {
+        'normalized': true,
+        'start': 0,
+        'end': 207
+      });
       this.assets.addMergedMesh('enemy', '/assets/models/skull/skull.babylon'); // this.assets.addMusic('music', '/assets/musics/music.mp3');
 
       this.assets.addSound('shotgun', '/assets/sounds/shotgun.wav', {
         volume: 0.4
-      }); // this.assets.addSound('robotOff', '/assets/sounds/robot_off.wav', { volume: 0.1 });
+      });
     }
   }, {
     key: "buildScene",
