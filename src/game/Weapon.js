@@ -9,7 +9,13 @@ export default class Weapon {
         this.canFire = true;
         this.currentFireRate = 0;
 
+        this.ammo = 20;
+
         this.fireSound = this.level.assets.getSound('shotgun');
+
+        this.states = {
+            'EMPTY': false
+        };
     }
 
     create() {
@@ -35,6 +41,16 @@ export default class Weapon {
     }
 
     fire() {
+
+        if(this.ammo == 1) {
+            if(!this.states.EMPTY) {
+                this.level.ammoIsOver();
+                this.states.EMPTY = true;
+            }
+        } else if(this.ammo <= 0) {
+            return;
+        }
+
         var width = this.scene.getEngine().getRenderWidth();
         var height = this.scene.getEngine().getRenderHeight();
         
@@ -48,7 +64,9 @@ export default class Weapon {
     doFire(pickInfo) {
         if (this.canFire) {
 
+            this.ammo--;
             this.fireSound.play();
+            this.level.updateStats();
             
             // If we hit an enemy
             if (pickInfo.hit && BABYLON.Tags.HasTags(pickInfo.pickedMesh) 
@@ -71,6 +89,12 @@ export default class Weapon {
     animateFire() {
         // Playing rifle animation from frame 0 to 10
         this.level.assets.playMeshAnimation('rifle', 0, 10);
+    }
+
+    reload() {
+        this.ammo += 20;
+        this.states.EMPTY = false;
+        this.level.assets.playMeshAnimation('rifle', 11, 72);
     }
 
     controlFireRate() {

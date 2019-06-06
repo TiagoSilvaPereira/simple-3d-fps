@@ -232,4 +232,8 @@ export default class Level {
         document.addEventListener("webkitpointerlockchange", pointerlockchange, false);
     }
 
+    exitPointerLock() {
+        this.camera.detachControl(GAME.canvas);
+    }
+
 }

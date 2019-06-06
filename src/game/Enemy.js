@@ -6,12 +6,15 @@ export default class Enemy {
         this.mesh = null;
 
         this.defaultAltitude = 2.5;
-        this.maxSpeed = 0.4;
+        this.maxSpeed = 0.7;
 
-        // this.dieSound = this.level.assets.getSound('robotOff');this.speed
+        this.attackSound = this.level.assets.getSound('monsterAttack');
 
         this.states = {
-            'DESTROYED': false
+            'DESTROYED': false,
+            'FOLLOWING': false,
+            'ATTACKING': false,
+            'CLOSE_TO_PLAYER': false,
         };
     }
 
@@ -26,7 +29,7 @@ export default class Enemy {
         this.mesh.position.z = Math.floor((Math.random() * 100)) - 50;
         this.mesh.position.y = this.defaultAltitude;
 
-        this.mesh.scaling = new BABYLON.Vector3(0.025, 0.025, 0.025);
+        this.mesh.scaling = new BABYLON.Vector3(0.25, 0.25, 0.25);
         
         this.initSpeed();
         // this.addEnemyMaterial();
@@ -50,42 +53,99 @@ export default class Enemy {
     }
 
     move() {
+        if(!this.mesh) return;
         if(this.states.DESTROYED) return;
 
-        let direction = this.randPosition.subtract(this.mesh.position).normalize(),
-            alpha = Math.atan2(-1 * direction.x, -1 * direction.z);
+        let distanceFromPlayer = this.level.camera.position.subtract(this.mesh.position).length();
 
-        this.mesh.rotation.y = alpha;
-        this.mesh.moveWithCollisions(
-            direction.multiplyByFloats(this.speed, this.speed, this.speed)
-        );
+        if(distanceFromPlayer <= 5) {
+            this.attack(distanceFromPlayer);
+        } else if(distanceFromPlayer <= 20) {
+            this.followPlayer();
+        } else {
+            this.gotToRandomDirection();
+        }
+    }
+
+    followPlayer() {
+        this.states.ATTACKING = false;
+        this.states.FOLLOWING = true;
+
+        GAME.helper.moveObjectTo(this.mesh, this.level.camera.position, this.speed);
+    }
+
+    attack(distanceFromPlayer) {
+        this.states.FOLLOWING = false;
+
+        if(!this.states.ATTACKING) {
+            this.attackSound.play();
+            this.states.ATTACKING = true;
+        }
+
+        if(distanceFromPlayer > 3) {
+            GAME.helper.moveObjectTo(this.mesh, this.level.camera.position, this.speed * 2);
+        }
+
+        this.checkAttackedThePlayer(distanceFromPlayer);
+    }
+
+    /**
+     * Let's use a simple logic to check if the user was damaged by the enemy
+     * considering the distance from player and the enemy attack mode
+     * @param {*} distanceFromPlayer 
+     */
+    checkAttackedThePlayer(distanceFromPlayer) {
+        if(!this.states.ATTACKING) return;
+
+        if(distanceFromPlayer <= 3.5) {
+            
+            if(!this.states.CLOSE_TO_PLAYER) {
+                this.level.playerWasAttacked();
+            }
+            
+            this.states.CLOSE_TO_PLAYER = true;
+        } else {
+            this.states.CLOSE_TO_PLAYER = false;
+        }
+    }
+
+    gotToRandomDirection() {
+        GAME.helper.moveObjectTo(this.mesh, this.randPosition, this.speed);        
         
         // If is close to the destination, generates a new position
-        // console.log(direction)
         if(this.randPosition.subtract(this.mesh.position).length() <= 1) {
             this.generateRandomPosition();
-        }this.speed
-
+        }
     }
 
     initSpeed() {
-        this.speed = Math.random();
-        this.speed = this.speed <= this.maxSpeed ? this.speed : this.maxSpeed;
+        this.speed = 0.35;
+        // this.speed = this.speed <= this.maxSpeed ? this.speed : this.maxSpeed;
     }
 
     generateRandomPosition() {
         let randomPositionX = Math.floor((Math.random() * 100)) - 50;
         let randomPositionZ = Math.floor((Math.random() * 100)) - 50;
-        let altitude = Math.floor(Math.random() * 7);
+        // let altitude = Math.floor(Math.random() * 7);
 
-        this.randPosition = new BABYLON.Vector3(randomPositionX, 5, randomPositionZ);
+        this.randPosition = new BABYLON.Vector3(randomPositionX, this.defaultAltitude, randomPositionZ);
     }
 
     destroy() {
+        this.level.playerHitEnemy();
+
         this.states.DESTROYED = true;
         // this.dieSound.play();
         this.level.interpolate(this.mesh.position, 'y', 0.5, 100 * this.mesh.position.y);
-        //this.mesh.dispose();
+        
+        this.remove();
+    }
+
+    remove() {
+        setTimeout(() => {
+            this.mesh.dispose();
+            this.mesh = null;
+        }, 300);
     }
 
 }

@@ -8,7 +8,7 @@ mix.js('src/app.js', 'public/build/')
       'src/libs/babylon.objFileLoader.js',
       'src/libs/babylon.glTF2FileLoader.js',
       'src/libs/babylon.gui.js',
-      // 'src/libs/babylon.addons.js',
+      'src/libs/babylon.addons.js',
    ], 'public/build/vendor.js')
    .setPublicPath('public/build');
 

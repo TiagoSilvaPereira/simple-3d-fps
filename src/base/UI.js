@@ -51,6 +51,23 @@ export default class UI {
         return textControl;
     }
 
+    addImage(name, file, options) {
+        let image = new BABYLON.GUI.Image(name, file);
+        
+        image.stretch = BABYLON.GUI.Image.STRETCH_UNIFORM;
+        image.width = options.width;
+        image.height = options.height;
+        image.left = options.left || '0px';
+        image.top = options.top || '0px';
+        image.textHorizontalAlignment = (typeof options.horizontalAlignment !== 'undefined') ? options.horizontalAlignment : BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+        image.textVerticalAlignment = (typeof options.verticalAlignment !== 'undefined') ? options.verticalAlignment : BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+
+        this.menuTexture.addControl(image);
+        this.add(image);
+
+        return image;
+    }
+
     add(control) {
         control.uiControlID = this.currentControlID++;
         this.controls.push(control);

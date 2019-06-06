@@ -1,5 +1,6 @@
 // Base
 import Log from './base/Log.js';
+import Helper from './base/Helper.js';
 
 // Game Levels
 import FirstLevel from './game/levels/FirstLevel.js';
@@ -29,6 +30,11 @@ export default class Game {
          * Can be used to log objects and debug the game
          */
         this.log = new Log();
+
+        /**
+         * Helper methods
+         */
+        this.helper = new Helper();
 
         /**
          * Starts the BABYLON engine on the Canvas element

@@ -97,9 +97,10 @@
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Game; });
 /* harmony import */ var _base_Log_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base/Log.js */ "./src/base/Log.js");
-/* harmony import */ var _game_levels_FirstLevel_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./game/levels/FirstLevel.js */ "./src/game/levels/FirstLevel.js");
-/* harmony import */ var _game_levels_CreditsLevel_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./game/levels/CreditsLevel.js */ "./src/game/levels/CreditsLevel.js");
-/* harmony import */ var _game_levels_HomeMenuLevel_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./game/levels/HomeMenuLevel.js */ "./src/game/levels/HomeMenuLevel.js");
+/* harmony import */ var _base_Helper_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./base/Helper.js */ "./src/base/Helper.js");
+/* harmony import */ var _game_levels_FirstLevel_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./game/levels/FirstLevel.js */ "./src/game/levels/FirstLevel.js");
+/* harmony import */ var _game_levels_CreditsLevel_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./game/levels/CreditsLevel.js */ "./src/game/levels/CreditsLevel.js");
+/* harmony import */ var _game_levels_HomeMenuLevel_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./game/levels/HomeMenuLevel.js */ "./src/game/levels/HomeMenuLevel.js");
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -107,6 +108,7 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
 // Base
+
  // Game Levels
 
 
@@ -141,6 +143,11 @@ function () {
 
     this.log = new _base_Log_js__WEBPACK_IMPORTED_MODULE_0__["default"]();
     /**
+     * Helper methods
+     */
+
+    this.helper = new _base_Helper_js__WEBPACK_IMPORTED_MODULE_1__["default"]();
+    /**
      * Starts the BABYLON engine on the Canvas element
      */
 
@@ -149,9 +156,9 @@ function () {
     this.currentLevel = null;
     this.currentLevelName = 'HomeMenuLevel';
     this.levels = {
-      'HomeMenuLevel': new _game_levels_HomeMenuLevel_js__WEBPACK_IMPORTED_MODULE_3__["default"](),
-      'CreditsLevel': new _game_levels_CreditsLevel_js__WEBPACK_IMPORTED_MODULE_2__["default"](),
-      'FirstLevel': new _game_levels_FirstLevel_js__WEBPACK_IMPORTED_MODULE_1__["default"]()
+      'HomeMenuLevel': new _game_levels_HomeMenuLevel_js__WEBPACK_IMPORTED_MODULE_4__["default"](),
+      'CreditsLevel': new _game_levels_CreditsLevel_js__WEBPACK_IMPORTED_MODULE_3__["default"](),
+      'FirstLevel': new _game_levels_FirstLevel_js__WEBPACK_IMPORTED_MODULE_2__["default"]()
     };
   }
 
@@ -563,6 +570,53 @@ function () {
 
 /***/ }),
 
+/***/ "./src/base/Helper.js":
+/*!****************************!*\
+  !*** ./src/base/Helper.js ***!
+  \****************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Helper; });
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var Helper =
+/*#__PURE__*/
+function () {
+  function Helper() {
+    _classCallCheck(this, Helper);
+  }
+
+  _createClass(Helper, [{
+    key: "moveObjectTo",
+    value: function moveObjectTo(object, toPosition) {
+      var speed = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 1;
+      var direction = toPosition.subtract(object.position).normalize(),
+          alpha = Math.atan2(-1 * direction.x, -1 * direction.z);
+      object.rotation.y = alpha;
+      object.moveWithCollisions(direction.multiplyByFloats(speed, speed, speed));
+    }
+  }, {
+    key: "moveObjectBackFrom",
+    value: function moveObjectBackFrom(object, fromPosition) {
+      var speed = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 1;
+      this.moveObjectTo(object, fromPosition, -speed);
+    }
+  }]);
+
+  return Helper;
+}();
+
+
+
+/***/ }),
+
 /***/ "./src/base/Level.js":
 /*!***************************!*\
   !*** ./src/base/Level.js ***!
@@ -797,6 +851,11 @@ function () {
       document.addEventListener("mozpointerlockchange", pointerlockchange, false);
       document.addEventListener("webkitpointerlockchange", pointerlockchange, false);
     }
+  }, {
+    key: "exitPointerLock",
+    value: function exitPointerLock() {
+      this.camera.detachControl(GAME.canvas);
+    }
   }]);
 
   return Level;
@@ -980,6 +1039,21 @@ function () {
       return textControl;
     }
   }, {
+    key: "addImage",
+    value: function addImage(name, file, options) {
+      var image = new BABYLON.GUI.Image(name, file);
+      image.stretch = BABYLON.GUI.Image.STRETCH_UNIFORM;
+      image.width = options.width;
+      image.height = options.height;
+      image.left = options.left || '0px';
+      image.top = options.top || '0px';
+      image.textHorizontalAlignment = typeof options.horizontalAlignment !== 'undefined' ? options.horizontalAlignment : BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+      image.textVerticalAlignment = typeof options.verticalAlignment !== 'undefined' ? options.verticalAlignment : BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+      this.menuTexture.addControl(image);
+      this.add(image);
+      return image;
+    }
+  }, {
     key: "add",
     value: function add(control) {
       control.uiControlID = this.currentControlID++;
@@ -1040,10 +1114,13 @@ function () {
     this.scene = level.scene;
     this.mesh = null;
     this.defaultAltitude = 2.5;
-    this.maxSpeed = 0.4; // this.dieSound = this.level.assets.getSound('robotOff');this.speed
-
+    this.maxSpeed = 0.7;
+    this.attackSound = this.level.assets.getSound('monsterAttack');
     this.states = {
-      'DESTROYED': false
+      'DESTROYED': false,
+      'FOLLOWING': false,
+      'ATTACKING': false,
+      'CLOSE_TO_PLAYER': false
     };
   }
 
@@ -1056,7 +1133,7 @@ function () {
       this.mesh.position.x = Math.floor(Math.random() * 100) - 50;
       this.mesh.position.z = Math.floor(Math.random() * 100) - 50;
       this.mesh.position.y = this.defaultAltitude;
-      this.mesh.scaling = new BABYLON.Vector3(0.025, 0.025, 0.025);
+      this.mesh.scaling = new BABYLON.Vector3(0.25, 0.25, 0.25);
       this.initSpeed(); // this.addEnemyMaterial();
 
       this.generateRandomPosition();
@@ -1083,39 +1160,103 @@ function () {
   }, {
     key: "move",
     value: function move() {
+      if (!this.mesh) return;
       if (this.states.DESTROYED) return;
-      var direction = this.randPosition.subtract(this.mesh.position).normalize(),
-          alpha = Math.atan2(-1 * direction.x, -1 * direction.z);
-      this.mesh.rotation.y = alpha;
-      this.mesh.moveWithCollisions(direction.multiplyByFloats(this.speed, this.speed, this.speed)); // If is close to the destination, generates a new position
-      // console.log(direction)
+      var distanceFromPlayer = this.level.camera.position.subtract(this.mesh.position).length();
+
+      if (distanceFromPlayer <= 5) {
+        this.attack(distanceFromPlayer);
+      } else if (distanceFromPlayer <= 20) {
+        this.followPlayer();
+      } else {
+        this.gotToRandomDirection();
+      }
+    }
+  }, {
+    key: "followPlayer",
+    value: function followPlayer() {
+      this.states.ATTACKING = false;
+      this.states.FOLLOWING = true;
+      GAME.helper.moveObjectTo(this.mesh, this.level.camera.position, this.speed);
+    }
+  }, {
+    key: "attack",
+    value: function attack(distanceFromPlayer) {
+      this.states.FOLLOWING = false;
+
+      if (!this.states.ATTACKING) {
+        this.attackSound.play();
+        this.states.ATTACKING = true;
+      }
+
+      if (distanceFromPlayer > 3) {
+        GAME.helper.moveObjectTo(this.mesh, this.level.camera.position, this.speed * 2);
+      }
+
+      this.checkAttackedThePlayer(distanceFromPlayer);
+    }
+    /**
+     * Let's use a simple logic to check if the user was damaged by the enemy
+     * considering the distance from player and the enemy attack mode
+     * @param {*} distanceFromPlayer 
+     */
+
+  }, {
+    key: "checkAttackedThePlayer",
+    value: function checkAttackedThePlayer(distanceFromPlayer) {
+      if (!this.states.ATTACKING) return;
+
+      if (distanceFromPlayer <= 3.5) {
+        if (!this.states.CLOSE_TO_PLAYER) {
+          this.level.playerWasAttacked();
+        }
+
+        this.states.CLOSE_TO_PLAYER = true;
+      } else {
+        this.states.CLOSE_TO_PLAYER = false;
+      }
+    }
+  }, {
+    key: "gotToRandomDirection",
+    value: function gotToRandomDirection() {
+      GAME.helper.moveObjectTo(this.mesh, this.randPosition, this.speed); // If is close to the destination, generates a new position
 
       if (this.randPosition.subtract(this.mesh.position).length() <= 1) {
         this.generateRandomPosition();
       }
-
-      this.speed;
     }
   }, {
     key: "initSpeed",
     value: function initSpeed() {
-      this.speed = Math.random();
-      this.speed = this.speed <= this.maxSpeed ? this.speed : this.maxSpeed;
+      this.speed = 0.35; // this.speed = this.speed <= this.maxSpeed ? this.speed : this.maxSpeed;
     }
   }, {
     key: "generateRandomPosition",
     value: function generateRandomPosition() {
       var randomPositionX = Math.floor(Math.random() * 100) - 50;
-      var randomPositionZ = Math.floor(Math.random() * 100) - 50;
-      var altitude = Math.floor(Math.random() * 7);
-      this.randPosition = new BABYLON.Vector3(randomPositionX, 5, randomPositionZ);
+      var randomPositionZ = Math.floor(Math.random() * 100) - 50; // let altitude = Math.floor(Math.random() * 7);
+
+      this.randPosition = new BABYLON.Vector3(randomPositionX, this.defaultAltitude, randomPositionZ);
     }
   }, {
     key: "destroy",
     value: function destroy() {
+      this.level.playerHitEnemy();
       this.states.DESTROYED = true; // this.dieSound.play();
 
-      this.level.interpolate(this.mesh.position, 'y', 0.5, 100 * this.mesh.position.y); //this.mesh.dispose();
+      this.level.interpolate(this.mesh.position, 'y', 0.5, 100 * this.mesh.position.y);
+      this.remove();
+    }
+  }, {
+    key: "remove",
+    value: function remove() {
+      var _this = this;
+
+      setTimeout(function () {
+        _this.mesh.dispose();
+
+        _this.mesh = null;
+      }, 300);
     }
   }]);
 
@@ -1154,7 +1295,11 @@ function () {
 
     this.canFire = true;
     this.currentFireRate = 0;
+    this.ammo = 20;
     this.fireSound = this.level.assets.getSound('shotgun');
+    this.states = {
+      'EMPTY': false
+    };
   }
 
   _createClass(Weapon, [{
@@ -1176,6 +1321,15 @@ function () {
   }, {
     key: "fire",
     value: function fire() {
+      if (this.ammo == 1) {
+        if (!this.states.EMPTY) {
+          this.level.ammoIsOver();
+          this.states.EMPTY = true;
+        }
+      } else if (this.ammo <= 0) {
+        return;
+      }
+
       var width = this.scene.getEngine().getRenderWidth();
       var height = this.scene.getEngine().getRenderHeight(); // Is the player control enabled?
 
@@ -1188,7 +1342,9 @@ function () {
     key: "doFire",
     value: function doFire(pickInfo) {
       if (this.canFire) {
-        this.fireSound.play(); // If we hit an enemy
+        this.ammo--;
+        this.fireSound.play();
+        this.level.updateStats(); // If we hit an enemy
 
         if (pickInfo.hit && BABYLON.Tags.HasTags(pickInfo.pickedMesh) && pickInfo.pickedMesh.matchesTagsQuery('enemy')) {
           var mainMesh = pickInfo.pickedMesh.parent ? pickInfo.pickedMesh.parent : pickInfo.pickedMesh;
@@ -1209,6 +1365,13 @@ function () {
     value: function animateFire() {
       // Playing rifle animation from frame 0 to 10
       this.level.assets.playMeshAnimation('rifle', 0, 10);
+    }
+  }, {
+    key: "reload",
+    value: function reload() {
+      this.ammo += 20;
+      this.states.EMPTY = false;
+      this.level.assets.playMeshAnimation('rifle', 11, 72);
     }
   }, {
     key: "controlFireRate",
@@ -1372,7 +1535,15 @@ function (_Level) {
     value: function setProperties() {
       // Menu
       this.menu = null;
-      this.weapon = null;
+      this.weapon = null; // Player
+
+      this.playerMesh = null;
+      this.playerLife = 100;
+      this.playerHits = 0;
+      this.playerPoints = 0; // Enemies
+
+      this.maxEnemies = 10;
+      this.currentEnemies = 0;
       this.enemies = [];
     }
   }, {
@@ -1383,16 +1554,25 @@ function (_Level) {
         'start': 0,
         'end': 207
       });
-      this.assets.addMergedMesh('enemy', '/assets/models/skull/skull.babylon'); // this.assets.addMusic('music', '/assets/musics/music.mp3');
-
+      this.assets.addMergedMesh('enemy', '/assets/models/skull/skull2.obj');
+      this.assets.addMusic('music', '/assets/musics/music.mp3', {
+        volume: 0.1
+      });
       this.assets.addSound('shotgun', '/assets/sounds/shotgun.wav', {
         volume: 0.4
+      });
+      this.assets.addSound('monsterAttack', '/assets/sounds/monster_attack.wav', {
+        volume: 0.3
+      });
+      this.assets.addSound('playerDamaged', '/assets/sounds/damage.wav', {
+        volume: 0.3
       });
     }
   }, {
     key: "buildScene",
     value: function buildScene() {
-      // this.scene.debugLayer.show();
+      var _this = this;
+
       this.scene.clearColor = new BABYLON.Color3.FromHexString('#777'); // Adding lights
 
       var dirLight = new BABYLON.DirectionalLight("DirectionalLight", new BABYLON.Vector3(0, -1, 0), this.scene);
@@ -1408,10 +1588,13 @@ function (_Level) {
       skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("assets/skybox/skybox", this.scene);
       skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
       skyboxMaterial.disableLighting = true;
-      skybox.material = skyboxMaterial;
+      skybox.material = skyboxMaterial; // FOG
+      // this.scene.fogMode = BABYLON.Scene.FOGMODE_EXP2;
+      // this.scene.fogDensity = 0.02;
+      // this.scene.fogColor = new BABYLON.Color3(0.9, 0.9, 0.85);
+
       this.scene.gravity = new BABYLON.Vector3(0, -9.81, 0);
-      this.scene.collisionsEnabled = true;
-      this.createMenus(); // Create and set the active camera
+      this.scene.collisionsEnabled = true; // Create and set the active camera
 
       this.camera = this.createCamera();
       this.scene.activeCamera = this.camera;
@@ -1419,6 +1602,11 @@ function (_Level) {
       this.createGround();
       this.addWeapon();
       this.addEnemies();
+      this.createHUD();
+      this.createMenu();
+      setInterval(function () {
+        _this.addEnemies();
+      }, 1000 * 20);
       this.setupEventListeners();
     }
   }, {
@@ -1440,48 +1628,215 @@ function (_Level) {
   }, {
     key: "addEnemies",
     value: function addEnemies() {
-      for (var enemiesQuantity = 0; enemiesQuantity < 10; enemiesQuantity++) {
+      // Let's remove unnecessary enemies to prevent performance issues
+      this.removeUnnecessaryEnemies();
+      var quantityOfEnemiesToCreate = this.maxEnemies - this.currentEnemies;
+
+      for (var enemiesQuantity = 0; enemiesQuantity < quantityOfEnemiesToCreate; enemiesQuantity++) {
         var enemy = new _Enemy__WEBPACK_IMPORTED_MODULE_0__["default"](this).create();
         this.enemies.push(enemy);
+        this.currentEnemies++;
+      }
+    }
+  }, {
+    key: "removeUnnecessaryEnemies",
+    value: function removeUnnecessaryEnemies() {
+      var enemiesQuantity = this.enemies.length;
+
+      for (var i = 0; i < enemiesQuantity; i++) {
+        if (this.enemies[i] && !this.enemies[i].mesh) {
+          this.enemies.splice(i, 1);
+        }
       }
     }
   }, {
     key: "setupEventListeners",
     value: function setupEventListeners() {
-      var _this = this;
+      var _this2 = this;
 
       GAME.canvas.addEventListener('click', function () {
-        _this.weapon.fire();
+        _this2.weapon.fire();
       }, false);
     }
   }, {
-    key: "createMenus",
-    value: function createMenus() {}
+    key: "createHUD",
+    value: function createHUD() {
+      var hud = new _base_UI__WEBPACK_IMPORTED_MODULE_1__["default"]('levelUI');
+      hud.addImage('gunsight', '/assets/images/gunsight.png', {
+        'width': 0.05,
+        'height': 0.05
+      });
+      this.lifeTextControl = hud.addText('Life: ' + this.playerLife, {
+        'top': '10px',
+        'left': '10px',
+        'horizontalAlignment': BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT
+      });
+      this.ammoTextControl = hud.addText('Ammo: ' + this.weapon.ammo, {
+        'top': '10px',
+        'left': '10px',
+        'horizontalAlignment': BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER
+      });
+      this.hitsTextControl = hud.addText('Hits: ' + this.playerHits, {
+        'top': '10px',
+        'left': '-10px',
+        'horizontalAlignment': BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT
+      });
+    }
+  }, {
+    key: "createMenu",
+    value: function createMenu() {
+      var _this3 = this;
+
+      this.menu = new _base_UI__WEBPACK_IMPORTED_MODULE_1__["default"]('runnerMenuUI'); // this.pointsTextControl = this.menu.addText('Points: 0', {
+      //     'top': '-150px',
+      //     'outlineWidth': '2px',
+      //     'fontSize': '40px',
+      //     'verticalAlignment': BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER
+      // });
+      // this.currentRecordTextControl = this.menu.addText('Current Record: 0', {
+      //     'top': '-100px',
+      //     'verticalAlignment': BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER
+      // });
+      // this.hasMadeRecordTextControl = this.menu.addText('You got a new Points Record!', {
+      //     'top': '-60px',
+      //     'color': GAME.options.recordTextColor,
+      //     'fontSize': '20px',
+      //     'verticalAlignment': BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER
+      // });
+
+      this.gameOverTextControl = this.menu.addText('GAME OVER', {
+        'top': '-60px',
+        'color': GAME.options.recordTextColor,
+        'fontSize': '25px',
+        'verticalAlignment': BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER
+      });
+      this.menu.addButton('replayButton', 'Replay Game', {
+        'onclick': function onclick() {
+          return _this3.replay();
+        }
+      });
+      this.menu.addButton('backButton', 'Return to Home', {
+        'top': '70px',
+        'onclick': function onclick() {
+          return GAME.goToLevel('HomeMenuLevel');
+        }
+      });
+      this.menu.hide();
+    }
   }, {
     key: "createCamera",
     value: function createCamera() {
-      var camera = new BABYLON.UniversalCamera("UniversalCamera", new BABYLON.Vector3(0, 3.5, 10), this.scene);
+      var _this4 = this;
+
+      var camera = new BABYLON.UniversalCamera("UniversalCamera", new BABYLON.Vector3(0, 3.5, 60), this.scene);
       camera.setTarget(new BABYLON.Vector3(0, 2, 0));
       camera.attachControl(GAME.canvas, true);
       camera.applyGravity = true;
       camera.ellipsoid = new BABYLON.Vector3(1, 1.7, 1);
       camera.checkCollisions = true;
-      camera._needMoveForGravity = true; // Reducing the minimum visible FOV to show the Weapon correctly 
+      camera._needMoveForGravity = true; // this.playerMesh = BABYLON.MeshBuilder.CreateBox('playerMesh', {width: 1, height: 1.7, depth: 1}, this.scene);
+      // this.playerMesh.parent = camera;
+      // this.playerMesh.position.z = 10;
+      // //this.playerMesh.setEnabled(false);
+
+      this.addEnemies(); // Reducing the minimum visible FOV to show the Weapon correctly 
 
       camera.minZ = 0; // Remap keys to move with WASD
 
-      camera.keysUp = [87]; // W
+      camera.keysUp = [87, 38]; // W or UP Arrow
 
-      camera.keysDown = [83]; // S
+      camera.keysDown = [83, 40]; // S or DOWN ARROW
 
-      camera.keysLeft = [65]; // A
+      camera.keysLeft = [65, 37]; // A or LEFT ARROW
 
-      camera.keysRight = [68]; // D
+      camera.keysRight = [68, 39]; // D or RIGHT ARROW
       // camera.speed = 10;
       // camera.inertia = 5;
       // camera.angularSensibility = 1000;
 
+      camera.onCollide = function (collidedMesh) {
+        // If the camera collides with the ammo box
+        if (collidedMesh.id == 'ammoBox') {
+          _this4.weapon.reload();
+
+          collidedMesh.dispose();
+        }
+      };
+
       return camera;
+    }
+  }, {
+    key: "playerWasAttacked",
+    value: function playerWasAttacked() {
+      this.playerLife -= 5;
+
+      if (this.playerLife <= 0) {
+        this.playerLife = 0;
+        this.lifeTextControl.text = 'Life: ' + this.playerLife;
+        this.gameOver();
+        return;
+      }
+
+      this.lifeTextControl.text = 'Life: ' + this.playerLife;
+      this.assets.getSound('playerDamaged').play();
+    }
+  }, {
+    key: "playerHitEnemy",
+    value: function playerHitEnemy() {
+      this.currentEnemies--;
+      this.playerHits++;
+      this.hitsTextControl.text = 'Hits: ' + this.playerHits;
+    }
+  }, {
+    key: "ammoIsOver",
+    value: function ammoIsOver() {
+      // Create a new ammo package that, if collided, recharge the ammo
+      this.addAmmoBox();
+    }
+  }, {
+    key: "addAmmoBox",
+    value: function addAmmoBox() {
+      var ammoBox = BABYLON.MeshBuilder.CreateBox('ammoBox', {
+        'width': 4,
+        'height': 2,
+        'depth': 2
+      }, this.scene);
+      ammoBox.position.x = 0;
+      ammoBox.position.y = 1;
+      ammoBox.position.z = 0;
+      ammoBox.checkCollisions = true;
+    }
+  }, {
+    key: "updateStats",
+    value: function updateStats() {
+      this.lifeTextControl.text = 'Life: ' + this.playerLife;
+      this.ammoTextControl.text = 'Ammo: ' + this.weapon.ammo;
+      this.hitsTextControl.text = 'Hits: ' + this.playerHits;
+    }
+  }, {
+    key: "gameOver",
+    value: function gameOver() {
+      GAME.pause();
+      this.menu.show();
+      this.exitPointerLock();
+      this.enemies.forEach(function (enemy) {
+        return enemy.remove();
+      });
+      this.removeUnnecessaryEnemies();
+    }
+  }, {
+    key: "replay",
+    value: function replay() {
+      this.playerLife = 100;
+      this.playerHits = 0;
+      this.playerPoints = 0;
+      this.maxEnemies = 10;
+      this.currentEnemies = 0;
+      this.enemies = [];
+      GAME.resume();
+      this.menu.hide();
+      this.camera.position = new BABYLON.Vector3(0, 3.5, 60);
+      this.addEnemies();
     }
   }, {
     key: "beforeRender",
@@ -1491,6 +1846,10 @@ function (_Level) {
         this.enemies.forEach(function (enemy) {
           return enemy.move();
         });
+
+        if (this.camera.position.y < -20) {
+          this.gameOver();
+        }
       }
     }
   }]);
