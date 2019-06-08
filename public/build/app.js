@@ -1546,13 +1546,23 @@ function (_Level) {
         'fontSize': '20px',
         'horizontalAlignment': BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_TOP
       });
-      ui.addText('Music by Eric Matyas\nwww.soundimage.org\n\nPlease check the music license documentation before\nchanging the credits', {
+      ui.addText('Music by Eric Matyas\nwww.soundimage.org', {
         'top': '140px',
         'fontSize': '20px',
         'horizontalAlignment': BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_TOP
       });
+      ui.addText('Rifle model by 3DMaesen (bumstrum) under CC BY 4.0\nhttps://sketchfab.com/bumstrum', {
+        'top': '250px',
+        'fontSize': '20px',
+        'horizontalAlignment': BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_TOP
+      });
+      ui.addText('Skybox Textures from BabylonJS\nhttps://doc.babylonjs.com/resources/playground_textures\n\nPlease check the license documentation before\nchanging the credits', {
+        'top': '360px',
+        'fontSize': '20px',
+        'horizontalAlignment': BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_TOP
+      });
       ui.addButton('backButton', 'Return to Home', {
-        'top': '220px',
+        'top': '0px',
         'background': 'transparent',
         'color': 'white',
         'onclick': function onclick() {
