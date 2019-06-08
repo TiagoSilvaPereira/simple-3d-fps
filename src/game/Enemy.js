@@ -1,11 +1,11 @@
 export default class Enemy {
 
-    constructor(level, maxDistanceFromCenter = 100) {
+    constructor(level) {
         this.level = level;
         this.scene = level.scene;
         this.mesh = null;
 
-        this.maxDistanceFromCenter = maxDistanceFromCenter;
+        this.maxDistanceFromCenter = level.enemyDistanceFromCenter;
         this.defaultAltitude = 2.5;
         this.speed = 0.4;        
 

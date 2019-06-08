@@ -1108,14 +1108,12 @@ var Enemy =
 /*#__PURE__*/
 function () {
   function Enemy(level) {
-    var maxDistanceFromCenter = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 100;
-
     _classCallCheck(this, Enemy);
 
     this.level = level;
     this.scene = level.scene;
     this.mesh = null;
-    this.maxDistanceFromCenter = maxDistanceFromCenter;
+    this.maxDistanceFromCenter = level.enemyDistanceFromCenter;
     this.defaultAltitude = 2.5;
     this.speed = 0.4;
     this.attackSound = this.level.assets.getSound('monsterAttack');
@@ -1629,6 +1627,7 @@ function (_Level) {
       this.maxEnemies = 10;
       this.currentEnemies = 0;
       this.enemies = [];
+      this.enemyDistanceFromCenter = 100;
     }
   }, {
     key: "setupAssets",
@@ -1730,6 +1729,7 @@ function (_Level) {
 
 
       this.maxEnemies += 2;
+      this.enemyDistanceFromCenter += 10;
     }
   }, {
     key: "removeUnnecessaryEnemies",
@@ -1944,6 +1944,7 @@ function (_Level) {
       this.maxEnemies = 10;
       this.currentEnemies = 0;
       this.enemies = [];
+      this.enemyDistanceFromCenter = 100;
       this.updateStats();
       GAME.resume();
       this.menu.hide();

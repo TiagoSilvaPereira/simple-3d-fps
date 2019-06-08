@@ -22,6 +22,7 @@ export default class FirstLevel extends Level {
         this.maxEnemies = 10;
         this.currentEnemies = 0;
         this.enemies = [];
+        this.enemyDistanceFromCenter = 100;
 
     }
 
@@ -126,6 +127,7 @@ export default class FirstLevel extends Level {
 
         // Increasing the quantity of max enemies
         this.maxEnemies += 2;
+        this.enemyDistanceFromCenter += 10;
     }
 
     removeUnnecessaryEnemies() {
@@ -336,6 +338,7 @@ export default class FirstLevel extends Level {
         this.maxEnemies = 10;
         this.currentEnemies = 0;
         this.enemies = [];
+        this.enemyDistanceFromCenter = 100;
 
         this.updateStats();
         GAME.resume();
