@@ -8,10 +8,13 @@ export default class Weapon {
         this.fireRate = 350; // Milliseconds between each fire
         this.canFire = true;
         this.currentFireRate = 0;
+        this.shots = 0;
 
-        this.ammo = 20;
+        this.ammo = 10;
 
         this.fireSound = this.level.assets.getSound('shotgun');
+        this.reloadSound = this.level.assets.getSound('reload');
+        this.emptySound = this.level.assets.getSound('empty');
 
         this.states = {
             'EMPTY': false
@@ -48,6 +51,7 @@ export default class Weapon {
                 this.states.EMPTY = true;
             }
         } else if(this.ammo <= 0) {
+            this.emptySound.play();
             return;
         }
 
@@ -65,6 +69,7 @@ export default class Weapon {
         if (this.canFire) {
 
             this.ammo--;
+            this.shots++;
             this.fireSound.play();
             this.level.updateStats();
             
@@ -92,9 +97,11 @@ export default class Weapon {
     }
 
     reload() {
-        this.ammo += 20;
+        this.ammo += 10;
         this.states.EMPTY = false;
         this.level.assets.playMeshAnimation('rifle', 11, 72);
+        this.reloadSound.play();
+        this.level.updateStats();
     }
 
     controlFireRate() {

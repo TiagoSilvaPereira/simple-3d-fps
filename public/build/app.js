@@ -1108,13 +1108,16 @@ var Enemy =
 /*#__PURE__*/
 function () {
   function Enemy(level) {
+    var maxDistanceFromCenter = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 100;
+
     _classCallCheck(this, Enemy);
 
     this.level = level;
     this.scene = level.scene;
     this.mesh = null;
+    this.maxDistanceFromCenter = maxDistanceFromCenter;
     this.defaultAltitude = 2.5;
-    this.maxSpeed = 0.7;
+    this.speed = 0.4;
     this.attackSound = this.level.assets.getSound('monsterAttack');
     this.states = {
       'DESTROYED': false,
@@ -1129,33 +1132,14 @@ function () {
     value: function create() {
       this.mesh = this.level.assets.getMesh('enemy').clone();
       this.mesh.enemyObject = this;
+      this.mesh.checkCollisions = true;
       BABYLON.Tags.AddTagsTo(this.mesh, 'enemy');
       this.mesh.position.x = Math.floor(Math.random() * 100) - 50;
       this.mesh.position.z = Math.floor(Math.random() * 100) - 50;
       this.mesh.position.y = this.defaultAltitude;
       this.mesh.scaling = new BABYLON.Vector3(0.25, 0.25, 0.25);
-      this.initSpeed(); // this.addEnemyMaterial();
-
       this.generateRandomPosition();
       return this;
-    }
-  }, {
-    key: "addEnemyMaterial",
-    value: function addEnemyMaterial() {
-      var meshMaterial = new BABYLON.StandardMaterial('meshMaterial', this.scene);
-
-      if (this.speed < 0.1) {
-        meshMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0.8);
-      } else if (this.speed < 0.3) {
-        meshMaterial.diffuseColor = new BABYLON.Color3(0, 0.8, 0);
-      } else {
-        meshMaterial.diffuseColor = new BABYLON.Color3(0.8, 0, 0);
-      }
-
-      meshMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
-      this.mesh.getChildren().forEach(function (mesh) {
-        return mesh.material = meshMaterial;
-      });
     }
   }, {
     key: "move",
@@ -1166,7 +1150,7 @@ function () {
 
       if (distanceFromPlayer <= 5) {
         this.attack(distanceFromPlayer);
-      } else if (distanceFromPlayer <= 20) {
+      } else if (distanceFromPlayer <= 30) {
         this.followPlayer();
       } else {
         this.gotToRandomDirection();
@@ -1226,15 +1210,10 @@ function () {
       }
     }
   }, {
-    key: "initSpeed",
-    value: function initSpeed() {
-      this.speed = 0.35; // this.speed = this.speed <= this.maxSpeed ? this.speed : this.maxSpeed;
-    }
-  }, {
     key: "generateRandomPosition",
     value: function generateRandomPosition() {
-      var randomPositionX = Math.floor(Math.random() * 100) - 50;
-      var randomPositionZ = Math.floor(Math.random() * 100) - 50; // let altitude = Math.floor(Math.random() * 7);
+      var randomPositionX = Math.floor(Math.random() * this.maxDistanceFromCenter) - this.maxDistanceFromCenter / 2;
+      var randomPositionZ = Math.floor(Math.random() * this.maxDistanceFromCenter) - this.maxDistanceFromCenter / 2; // let altitude = Math.floor(Math.random() * 7);
 
       this.randPosition = new BABYLON.Vector3(randomPositionX, this.defaultAltitude, randomPositionZ);
     }
@@ -1252,6 +1231,7 @@ function () {
     value: function remove() {
       var _this = this;
 
+      if (!this.mesh) return;
       setTimeout(function () {
         _this.mesh.dispose();
 
@@ -1261,6 +1241,101 @@ function () {
   }]);
 
   return Enemy;
+}();
+
+
+
+/***/ }),
+
+/***/ "./src/game/Player.js":
+/*!****************************!*\
+  !*** ./src/game/Player.js ***!
+  \****************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Player; });
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var Player =
+/*#__PURE__*/
+function () {
+  function Player(level) {
+    _classCallCheck(this, Player);
+
+    this.level = level;
+    this.scene = level.scene;
+    this.hits = 0;
+    this.points = 0;
+    this.pointsRecord = false;
+    this.initialTime = null;
+    this.endTime = null;
+    this.elapsedTime = 0;
+  }
+
+  _createClass(Player, [{
+    key: "startTimeCounter",
+    value: function startTimeCounter() {
+      this.initialTime = new Date();
+      this.elapsedTime = 0;
+    }
+  }, {
+    key: "stopTimeCounter",
+    value: function stopTimeCounter() {
+      this.endTime = new Date();
+      this.elapsedTime = (this.endTime - this.initialTime) / 1000;
+    }
+  }, {
+    key: "getPoints",
+    value: function getPoints() {
+      return this.points;
+    }
+  }, {
+    key: "calculatePoints",
+    value: function calculatePoints() {
+      var elapsedTime = this.elapsedTime || 1;
+      this.points = this.hits * 100;
+      this.points = elapsedTime < this.points ? this.points - elapsedTime : this.points;
+      this.points = this.points - this.level.weapon.shots;
+      this.points = parseInt(this.points, 10);
+      this.points = this.points > 0 ? this.points : this.hits;
+      this.checkAndSaveRecord(this.points);
+      return this.points;
+    }
+  }, {
+    key: "checkAndSaveRecord",
+    value: function checkAndSaveRecord(points) {
+      var lastRecord = 0;
+      this.pointsRecord = false;
+
+      if (window.localStorage['last_record']) {
+        lastRecord = parseInt(window.localStorage['last_record'], 10);
+      }
+
+      if (lastRecord < points) {
+        this.pointsRecord = true;
+        window.localStorage['last_record'] = points;
+      }
+    }
+  }, {
+    key: "hasMadePointsRecord",
+    value: function hasMadePointsRecord() {
+      return this.pointsRecord;
+    }
+  }, {
+    key: "getLastRecord",
+    value: function getLastRecord() {
+      return window.localStorage['last_record'] || 0;
+    }
+  }]);
+
+  return Player;
 }();
 
 
@@ -1295,8 +1370,11 @@ function () {
 
     this.canFire = true;
     this.currentFireRate = 0;
-    this.ammo = 20;
+    this.shots = 0;
+    this.ammo = 10;
     this.fireSound = this.level.assets.getSound('shotgun');
+    this.reloadSound = this.level.assets.getSound('reload');
+    this.emptySound = this.level.assets.getSound('empty');
     this.states = {
       'EMPTY': false
     };
@@ -1327,6 +1405,7 @@ function () {
           this.states.EMPTY = true;
         }
       } else if (this.ammo <= 0) {
+        this.emptySound.play();
         return;
       }
 
@@ -1343,6 +1422,7 @@ function () {
     value: function doFire(pickInfo) {
       if (this.canFire) {
         this.ammo--;
+        this.shots++;
         this.fireSound.play();
         this.level.updateStats(); // If we hit an enemy
 
@@ -1369,9 +1449,11 @@ function () {
   }, {
     key: "reload",
     value: function reload() {
-      this.ammo += 20;
+      this.ammo += 10;
       this.states.EMPTY = false;
       this.level.assets.playMeshAnimation('rifle', 11, 72);
+      this.reloadSound.play();
+      this.level.updateStats();
     }
   }, {
     key: "controlFireRate",
@@ -1495,7 +1577,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Enemy__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../Enemy */ "./src/game/Enemy.js");
 /* harmony import */ var _base_UI__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../base/UI */ "./src/base/UI.js");
 /* harmony import */ var _Weapon__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../Weapon */ "./src/game/Weapon.js");
-/* harmony import */ var _base_Level__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../base/Level */ "./src/base/Level.js");
+/* harmony import */ var _Player__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../Player */ "./src/game/Player.js");
+/* harmony import */ var _base_Level__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../base/Level */ "./src/base/Level.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1519,6 +1602,7 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 
 
+
 var FirstLevel =
 /*#__PURE__*/
 function (_Level) {
@@ -1535,12 +1619,12 @@ function (_Level) {
     value: function setProperties() {
       // Menu
       this.menu = null;
-      this.weapon = null; // Player
+      this.weapon = null;
+      this.ammoBox = null; // Player
 
+      this.player = new _Player__WEBPACK_IMPORTED_MODULE_3__["default"](this);
       this.playerMesh = null;
-      this.playerLife = 100;
-      this.playerHits = 0;
-      this.playerPoints = 0; // Enemies
+      this.playerLife = 100; // Enemies
 
       this.maxEnemies = 10;
       this.currentEnemies = 0;
@@ -1551,14 +1635,19 @@ function (_Level) {
     value: function setupAssets() {
       this.assets.addAnimatedMesh('rifle', '/assets/models/weapons/rifle/rifle.gltf', {
         'normalized': true,
+        // Normalize all animations
         'start': 0,
         'end': 207
       });
-      this.assets.addMergedMesh('enemy', '/assets/models/skull/skull2.obj');
-      this.assets.addMusic('music', '/assets/musics/music.mp3', {
-        volume: 0.1
-      });
+      this.assets.addMergedMesh('enemy', '/assets/models/skull/skull2.obj'); // this.assets.addMusic('music', '/assets/musics/music.mp3', {volume: 0.1});
+
       this.assets.addSound('shotgun', '/assets/sounds/shotgun.wav', {
+        volume: 0.4
+      });
+      this.assets.addSound('reload', '/assets/sounds/reload.mp3', {
+        volume: 0.4
+      });
+      this.assets.addSound('empty', '/assets/sounds/empty.wav', {
         volume: 0.4
       });
       this.assets.addSound('monsterAttack', '/assets/sounds/monster_attack.wav', {
@@ -1608,14 +1697,15 @@ function (_Level) {
         _this.addEnemies();
       }, 1000 * 20);
       this.setupEventListeners();
+      this.player.startTimeCounter();
     }
   }, {
     key: "createGround",
     value: function createGround() {
-      var ground = BABYLON.Mesh.CreateGround("ground", 500, 500, 2, this.scene);
+      var ground = BABYLON.Mesh.CreateGround('ground', 500, 500, 2, this.scene);
       ground.checkCollisions = true;
-      var groundMaterial = new BABYLON.StandardMaterial("groundMaterial", this.scene);
-      groundMaterial.diffuseTexture = new BABYLON.Texture("/assets/images/sand.jpg", this.scene);
+      var groundMaterial = new BABYLON.StandardMaterial('groundMaterial', this.scene);
+      groundMaterial.diffuseTexture = new BABYLON.Texture('/assets/images/sand.jpg', this.scene);
       groundMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
       ground.material = groundMaterial;
     }
@@ -1636,7 +1726,10 @@ function (_Level) {
         var enemy = new _Enemy__WEBPACK_IMPORTED_MODULE_0__["default"](this).create();
         this.enemies.push(enemy);
         this.currentEnemies++;
-      }
+      } // Increasing the quantity of max enemies
+
+
+      this.maxEnemies += 2;
     }
   }, {
     key: "removeUnnecessaryEnemies",
@@ -1676,7 +1769,7 @@ function (_Level) {
         'left': '10px',
         'horizontalAlignment': BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER
       });
-      this.hitsTextControl = hud.addText('Hits: ' + this.playerHits, {
+      this.hitsTextControl = hud.addText('Hits: ' + this.player.hits, {
         'top': '10px',
         'left': '-10px',
         'horizontalAlignment': BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT
@@ -1687,23 +1780,23 @@ function (_Level) {
     value: function createMenu() {
       var _this3 = this;
 
-      this.menu = new _base_UI__WEBPACK_IMPORTED_MODULE_1__["default"]('runnerMenuUI'); // this.pointsTextControl = this.menu.addText('Points: 0', {
-      //     'top': '-150px',
-      //     'outlineWidth': '2px',
-      //     'fontSize': '40px',
-      //     'verticalAlignment': BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER
-      // });
-      // this.currentRecordTextControl = this.menu.addText('Current Record: 0', {
-      //     'top': '-100px',
-      //     'verticalAlignment': BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER
-      // });
-      // this.hasMadeRecordTextControl = this.menu.addText('You got a new Points Record!', {
-      //     'top': '-60px',
-      //     'color': GAME.options.recordTextColor,
-      //     'fontSize': '20px',
-      //     'verticalAlignment': BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER
-      // });
-
+      this.menu = new _base_UI__WEBPACK_IMPORTED_MODULE_1__["default"]('runnerMenuUI');
+      this.pointsTextControl = this.menu.addText('Points: 0', {
+        'top': '-200px',
+        'outlineWidth': '2px',
+        'fontSize': '40px',
+        'verticalAlignment': BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER
+      });
+      this.currentRecordTextControl = this.menu.addText('Current Record: 0', {
+        'top': '-150px',
+        'verticalAlignment': BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER
+      });
+      this.hasMadeRecordTextControl = this.menu.addText('You got a new Points Record!', {
+        'top': '-100px',
+        'color': GAME.options.recordTextColor,
+        'fontSize': '20px',
+        'verticalAlignment': BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER
+      });
       this.gameOverTextControl = this.menu.addText('GAME OVER', {
         'top': '-60px',
         'color': GAME.options.recordTextColor,
@@ -1728,7 +1821,7 @@ function (_Level) {
     value: function createCamera() {
       var _this4 = this;
 
-      var camera = new BABYLON.UniversalCamera("UniversalCamera", new BABYLON.Vector3(0, 3.5, 60), this.scene);
+      var camera = new BABYLON.UniversalCamera("UniversalCamera", new BABYLON.Vector3(0, 3.5, 100), this.scene);
       camera.setTarget(new BABYLON.Vector3(0, 2, 0));
       camera.attachControl(GAME.canvas, true);
       camera.applyGravity = true;
@@ -1784,8 +1877,8 @@ function (_Level) {
     key: "playerHitEnemy",
     value: function playerHitEnemy() {
       this.currentEnemies--;
-      this.playerHits++;
-      this.hitsTextControl.text = 'Hits: ' + this.playerHits;
+      this.player.hits++;
+      this.hitsTextControl.text = 'Hits: ' + this.player.hits;
     }
   }, {
     key: "ammoIsOver",
@@ -1796,47 +1889,68 @@ function (_Level) {
   }, {
     key: "addAmmoBox",
     value: function addAmmoBox() {
-      var ammoBox = BABYLON.MeshBuilder.CreateBox('ammoBox', {
+      this.ammoBox = BABYLON.MeshBuilder.CreateBox('ammoBox', {
         'width': 4,
         'height': 2,
         'depth': 2
       }, this.scene);
-      ammoBox.position.x = 0;
-      ammoBox.position.y = 1;
-      ammoBox.position.z = 0;
-      ammoBox.checkCollisions = true;
+      this.ammoBox.position.x = 0;
+      this.ammoBox.position.y = 1;
+      this.ammoBox.position.z = 0;
+      this.ammoBox.checkCollisions = true;
     }
   }, {
     key: "updateStats",
     value: function updateStats() {
       this.lifeTextControl.text = 'Life: ' + this.playerLife;
       this.ammoTextControl.text = 'Ammo: ' + this.weapon.ammo;
-      this.hitsTextControl.text = 'Hits: ' + this.playerHits;
+      this.hitsTextControl.text = 'Hits: ' + this.player.hits;
     }
   }, {
     key: "gameOver",
     value: function gameOver() {
       GAME.pause();
-      this.menu.show();
+      this.player.stopTimeCounter();
+      this.player.calculatePoints();
+      this.showMenu();
       this.exitPointerLock();
       this.enemies.forEach(function (enemy) {
         return enemy.remove();
       });
       this.removeUnnecessaryEnemies();
+
+      if (this.ammoBox) {
+        this.ammoBox.dispose();
+      }
+    }
+  }, {
+    key: "showMenu",
+    value: function showMenu() {
+      this.pointsTextControl.text = 'Points: ' + this.player.getPoints();
+      this.currentRecordTextControl.text = 'Current Record: ' + this.player.getLastRecord();
+      this.menu.show();
+
+      if (this.player.hasMadePointsRecord()) {
+        this.hasMadeRecordTextControl.isVisible = true;
+      } else {
+        this.hasMadeRecordTextControl.isVisible = false;
+      }
     }
   }, {
     key: "replay",
     value: function replay() {
       this.playerLife = 100;
-      this.playerHits = 0;
-      this.playerPoints = 0;
+      this.player.hits = 0;
       this.maxEnemies = 10;
       this.currentEnemies = 0;
       this.enemies = [];
+      this.updateStats();
       GAME.resume();
       this.menu.hide();
-      this.camera.position = new BABYLON.Vector3(0, 3.5, 60);
+      this.camera.position = new BABYLON.Vector3(0, 3.5, 100);
+      this.weapon.reload();
       this.addEnemies();
+      this.player.startTimeCounter();
     }
   }, {
     key: "beforeRender",
@@ -1855,7 +1969,7 @@ function (_Level) {
   }]);
 
   return FirstLevel;
-}(_base_Level__WEBPACK_IMPORTED_MODULE_3__["default"]);
+}(_base_Level__WEBPACK_IMPORTED_MODULE_4__["default"]);
 
 
 

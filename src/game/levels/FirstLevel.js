@@ -1,6 +1,7 @@
 import Enemy from '../Enemy';
 import UI from '../../base/UI';
 import Weapon from '../Weapon';
+import Player from '../Player';
 import Level from '../../base/Level';
 
 export default class FirstLevel extends Level {
@@ -10,12 +11,12 @@ export default class FirstLevel extends Level {
         // Menu
         this.menu = null;
         this.weapon = null;
+        this.ammoBox = null;
 
         // Player
+        this.player = new Player(this);
         this.playerMesh = null;
         this.playerLife = 100;
-        this.playerHits = 0;
-        this.playerPoints = 0;
 
         // Enemies
         this.maxEnemies = 10;
@@ -27,15 +28,17 @@ export default class FirstLevel extends Level {
     setupAssets() {
 
         this.assets.addAnimatedMesh('rifle', '/assets/models/weapons/rifle/rifle.gltf', {
-            'normalized': true,
+            'normalized': true, // Normalize all animations
             'start': 0,
             'end': 207
         });
         
         this.assets.addMergedMesh('enemy', '/assets/models/skull/skull2.obj');
 
-        this.assets.addMusic('music', '/assets/musics/music.mp3', {volume: 0.1});
+        // this.assets.addMusic('music', '/assets/musics/music.mp3', {volume: 0.1});
         this.assets.addSound('shotgun', '/assets/sounds/shotgun.wav', { volume: 0.4 });
+        this.assets.addSound('reload', '/assets/sounds/reload.mp3', { volume: 0.4 });
+        this.assets.addSound('empty', '/assets/sounds/empty.wav', { volume: 0.4 });
         this.assets.addSound('monsterAttack', '/assets/sounds/monster_attack.wav', { volume: 0.3 });
         this.assets.addSound('playerDamaged', '/assets/sounds/damage.wav', { volume: 0.3 });
         
@@ -87,14 +90,16 @@ export default class FirstLevel extends Level {
         }, 1000 * 20);
 
         this.setupEventListeners();
+
+        this.player.startTimeCounter();
     }
 
     createGround() {
-        let ground = BABYLON.Mesh.CreateGround("ground",  500,  500, 2, this.scene);
+        let ground = BABYLON.Mesh.CreateGround('ground',  500,  500, 2, this.scene);
         ground.checkCollisions = true;
         
-        let groundMaterial = new BABYLON.StandardMaterial("groundMaterial", this.scene);
-        groundMaterial.diffuseTexture = new BABYLON.Texture("/assets/images/sand.jpg", this.scene);
+        let groundMaterial = new BABYLON.StandardMaterial('groundMaterial', this.scene);
+        groundMaterial.diffuseTexture = new BABYLON.Texture('/assets/images/sand.jpg', this.scene);
         groundMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
 
         ground.material = groundMaterial;
@@ -118,6 +123,9 @@ export default class FirstLevel extends Level {
             this.enemies.push(enemy);
             this.currentEnemies++;
         }
+
+        // Increasing the quantity of max enemies
+        this.maxEnemies += 2;
     }
 
     removeUnnecessaryEnemies() {
@@ -156,7 +164,7 @@ export default class FirstLevel extends Level {
             'horizontalAlignment': BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_CENTER
         });
 
-        this.hitsTextControl = hud.addText('Hits: ' + this.playerHits, {
+        this.hitsTextControl = hud.addText('Hits: ' + this.player.hits, {
             'top': '10px',
             'left': '-10px',
             'horizontalAlignment': BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT
@@ -166,24 +174,24 @@ export default class FirstLevel extends Level {
     createMenu() {
         this.menu = new UI('runnerMenuUI');
 
-        // this.pointsTextControl = this.menu.addText('Points: 0', {
-        //     'top': '-150px',
-        //     'outlineWidth': '2px',
-        //     'fontSize': '40px',
-        //     'verticalAlignment': BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER
-        // });
+        this.pointsTextControl = this.menu.addText('Points: 0', {
+            'top': '-200px',
+            'outlineWidth': '2px',
+            'fontSize': '40px',
+            'verticalAlignment': BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER
+        });
 
-        // this.currentRecordTextControl = this.menu.addText('Current Record: 0', {
-        //     'top': '-100px',
-        //     'verticalAlignment': BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER
-        // });
+        this.currentRecordTextControl = this.menu.addText('Current Record: 0', {
+            'top': '-150px',
+            'verticalAlignment': BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER
+        });
 
-        // this.hasMadeRecordTextControl = this.menu.addText('You got a new Points Record!', {
-        //     'top': '-60px',
-        //     'color': GAME.options.recordTextColor,
-        //     'fontSize': '20px',
-        //     'verticalAlignment': BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER
-        // });
+        this.hasMadeRecordTextControl = this.menu.addText('You got a new Points Record!', {
+            'top': '-100px',
+            'color': GAME.options.recordTextColor,
+            'fontSize': '20px',
+            'verticalAlignment': BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER
+        });
 
         this.gameOverTextControl = this.menu.addText('GAME OVER', {
             'top': '-60px',
@@ -205,7 +213,7 @@ export default class FirstLevel extends Level {
     }
 
     createCamera() {
-        var camera = new BABYLON.UniversalCamera("UniversalCamera", new BABYLON.Vector3(0, 3.5, 60), this.scene);
+        var camera = new BABYLON.UniversalCamera("UniversalCamera", new BABYLON.Vector3(0, 3.5, 100), this.scene);
         camera.setTarget(new BABYLON.Vector3(0,2,0));
         
         camera.attachControl(GAME.canvas, true);
@@ -264,8 +272,8 @@ export default class FirstLevel extends Level {
 
     playerHitEnemy() {
         this.currentEnemies--;
-        this.playerHits++;
-        this.hitsTextControl.text = 'Hits: ' + this.playerHits;
+        this.player.hits++;
+        this.hitsTextControl.text = 'Hits: ' + this.player.hits;
     }
 
     ammoIsOver() {
@@ -274,47 +282,70 @@ export default class FirstLevel extends Level {
     }
 
     addAmmoBox() {
-        let ammoBox = BABYLON.MeshBuilder.CreateBox(
+        this.ammoBox = BABYLON.MeshBuilder.CreateBox(
             'ammoBox', 
             { 'width': 4, 'height': 2, 'depth': 2 }, 
             this.scene
         );
         
-        ammoBox.position.x = 0;
-        ammoBox.position.y = 1;
-        ammoBox.position.z = 0;
+        this.ammoBox.position.x = 0;
+        this.ammoBox.position.y = 1;
+        this.ammoBox.position.z = 0;
 
-        ammoBox.checkCollisions = true;
+        this.ammoBox.checkCollisions = true;
     }
 
     updateStats() {
         this.lifeTextControl.text = 'Life: ' + this.playerLife;
         this.ammoTextControl.text = 'Ammo: ' + this.weapon.ammo;
-        this.hitsTextControl.text = 'Hits: ' + this.playerHits;
+        this.hitsTextControl.text = 'Hits: ' + this.player.hits;
     }
 
     gameOver() {
         GAME.pause();
-        this.menu.show();
+        
+        this.player.stopTimeCounter();
+        this.player.calculatePoints();
+        
+        this.showMenu();
         this.exitPointerLock();
         this.enemies.forEach(enemy => enemy.remove());
         this.removeUnnecessaryEnemies();
+        
+        if(this.ammoBox) {
+            this.ammoBox.dispose();
+        }
+    }
+
+    showMenu() {
+        this.pointsTextControl.text = 'Points: ' + this.player.getPoints();
+        this.currentRecordTextControl.text = 'Current Record: ' + this.player.getLastRecord();
+        this.menu.show();
+
+        if(this.player.hasMadePointsRecord()) {
+            this.hasMadeRecordTextControl.isVisible = true;
+        } else {
+            this.hasMadeRecordTextControl.isVisible = false;
+        }
     }
 
     replay() {
         this.playerLife = 100;
-        this.playerHits = 0;
-        this.playerPoints = 0;
+        this.player.hits = 0;
 
         this.maxEnemies = 10;
         this.currentEnemies = 0;
         this.enemies = [];
 
+        this.updateStats();
         GAME.resume();
         this.menu.hide();
 
-        this.camera.position = new BABYLON.Vector3(0, 3.5, 60);
+        this.camera.position = new BABYLON.Vector3(0, 3.5, 100);
+        this.weapon.reload();
         this.addEnemies();
+
+        this.player.startTimeCounter();
     }
     
     beforeRender() {

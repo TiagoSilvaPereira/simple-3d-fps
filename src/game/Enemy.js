@@ -1,12 +1,13 @@
 export default class Enemy {
 
-    constructor(level) {
+    constructor(level, maxDistanceFromCenter = 100) {
         this.level = level;
         this.scene = level.scene;
         this.mesh = null;
 
+        this.maxDistanceFromCenter = maxDistanceFromCenter;
         this.defaultAltitude = 2.5;
-        this.maxSpeed = 0.7;
+        this.speed = 0.4;        
 
         this.attackSound = this.level.assets.getSound('monsterAttack');
 
@@ -22,6 +23,7 @@ export default class Enemy {
         
         this.mesh = this.level.assets.getMesh('enemy').clone();
         this.mesh.enemyObject = this;
+        this.mesh.checkCollisions = true;
         
         BABYLON.Tags.AddTagsTo(this.mesh, 'enemy');
 
@@ -31,25 +33,9 @@ export default class Enemy {
 
         this.mesh.scaling = new BABYLON.Vector3(0.25, 0.25, 0.25);
         
-        this.initSpeed();
-        // this.addEnemyMaterial();
         this.generateRandomPosition();
 
         return this;
-    }
-
-    addEnemyMaterial() {
-        let meshMaterial = new BABYLON.StandardMaterial('meshMaterial', this.scene);
-        if(this.speed < 0.1) {
-            meshMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0.8);
-        } else if (this.speed < 0.3) {
-            meshMaterial.diffuseColor = new BABYLON.Color3(0, 0.8, 0);
-        } else {
-            meshMaterial.diffuseColor = new BABYLON.Color3(0.8, 0, 0);
-        }
-        meshMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
-
-        this.mesh.getChildren().forEach(mesh => mesh.material = meshMaterial);
     }
 
     move() {
@@ -60,7 +46,7 @@ export default class Enemy {
 
         if(distanceFromPlayer <= 5) {
             this.attack(distanceFromPlayer);
-        } else if(distanceFromPlayer <= 20) {
+        } else if(distanceFromPlayer <= 30) {
             this.followPlayer();
         } else {
             this.gotToRandomDirection();
@@ -118,14 +104,9 @@ export default class Enemy {
         }
     }
 
-    initSpeed() {
-        this.speed = 0.35;
-        // this.speed = this.speed <= this.maxSpeed ? this.speed : this.maxSpeed;
-    }
-
     generateRandomPosition() {
-        let randomPositionX = Math.floor((Math.random() * 100)) - 50;
-        let randomPositionZ = Math.floor((Math.random() * 100)) - 50;
+        let randomPositionX = Math.floor((Math.random() * this.maxDistanceFromCenter)) - (this.maxDistanceFromCenter / 2);
+        let randomPositionZ = Math.floor((Math.random() * this.maxDistanceFromCenter)) - (this.maxDistanceFromCenter / 2);
         // let altitude = Math.floor(Math.random() * 7);
 
         this.randPosition = new BABYLON.Vector3(randomPositionX, this.defaultAltitude, randomPositionZ);
@@ -142,6 +123,8 @@ export default class Enemy {
     }
 
     remove() {
+        if(!this.mesh) return;
+        
         setTimeout(() => {
             this.mesh.dispose();
             this.mesh = null;
