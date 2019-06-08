@@ -4,7 +4,7 @@ Simple 3D FPS is a 3D game built with BabylonJS engine on top of WebGL and HTML5
 
 If you want, you can see a live preview here: 
 
-[Live Preview - Simple 3D FPS](https://cube-endless-runner.herokuapp.com/)
+[Live Preview - Simple 3D FPS](https://simple-3d-fps-game.herokuapp.com/)
 
 # Documentation
 
