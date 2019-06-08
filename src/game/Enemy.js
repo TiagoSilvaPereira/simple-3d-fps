@@ -46,7 +46,7 @@ export default class Enemy {
 
         if(distanceFromPlayer <= 5) {
             this.attack(distanceFromPlayer);
-        } else if(distanceFromPlayer <= 25) {
+        } else if(distanceFromPlayer <= 27) {
             this.followPlayer();
         } else {
             this.gotToRandomDirection();

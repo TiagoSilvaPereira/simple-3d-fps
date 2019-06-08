@@ -1154,7 +1154,7 @@ function () {
 
       if (distanceFromPlayer <= 5) {
         this.attack(distanceFromPlayer);
-      } else if (distanceFromPlayer <= 25) {
+      } else if (distanceFromPlayer <= 27) {
         this.followPlayer();
       } else {
         this.gotToRandomDirection();
@@ -1526,7 +1526,8 @@ function (_Level) {
 
   _createClass(CreditsLevel, [{
     key: "setupAssets",
-    value: function setupAssets() {//this.assets.addMusic('music', '/assets/musics/music.mp3');
+    value: function setupAssets() {
+      this.assets.addMusic('music', '/assets/musics/music.mp3');
     }
   }, {
     key: "buildScene",
@@ -1756,7 +1757,9 @@ function (_Level) {
       var _this2 = this;
 
       GAME.canvas.addEventListener('click', function () {
-        _this2.weapon.fire();
+        if (_this2.weapon) {
+          _this2.weapon.fire();
+        }
       }, false);
     }
   }, {
@@ -2026,7 +2029,8 @@ function (_Level) {
 
   _createClass(HomeMenuLevel, [{
     key: "setupAssets",
-    value: function setupAssets() {//this.assets.addMusic('music', '/assets/musics/music.mp3');
+    value: function setupAssets() {
+      this.assets.addMusic('music', '/assets/musics/music.mp3');
     }
   }, {
     key: "buildScene",

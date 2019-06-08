@@ -142,7 +142,9 @@ export default class FirstLevel extends Level {
 
     setupEventListeners() {
         GAME.canvas.addEventListener('click', () => {
-            this.weapon.fire();
+            if(this.weapon) {
+                this.weapon.fire();
+            }
         }, false);
     }
 

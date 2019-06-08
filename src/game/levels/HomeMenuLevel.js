@@ -4,7 +4,7 @@ import Level from '../../base/Level';
 export default class HomeMenuLevel extends Level {
 
     setupAssets() {
-        //this.assets.addMusic('music', '/assets/musics/music.mp3');
+        this.assets.addMusic('music', '/assets/musics/music.mp3');
     }
 
     buildScene() {
