@@ -1148,7 +1148,7 @@ function () {
 
       if (distanceFromPlayer <= 5) {
         this.attack(distanceFromPlayer);
-      } else if (distanceFromPlayer <= 30) {
+      } else if (distanceFromPlayer <= 25) {
         this.followPlayer();
       } else {
         this.gotToRandomDirection();
@@ -1694,7 +1694,7 @@ function (_Level) {
       this.createMenu();
       setInterval(function () {
         _this.addEnemies();
-      }, 1000 * 20);
+      }, 1000 * 25);
       this.setupEventListeners();
       this.player.startTimeCounter();
     }
@@ -1728,8 +1728,8 @@ function (_Level) {
       } // Increasing the quantity of max enemies
 
 
-      this.maxEnemies += 2;
-      this.enemyDistanceFromCenter += 10;
+      this.maxEnemies += 1;
+      this.enemyDistanceFromCenter += 5;
     }
   }, {
     key: "removeUnnecessaryEnemies",

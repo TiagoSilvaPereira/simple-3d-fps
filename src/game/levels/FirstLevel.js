@@ -88,7 +88,7 @@ export default class FirstLevel extends Level {
         
         setInterval(() => {
             this.addEnemies();
-        }, 1000 * 20);
+        }, 1000 * 25);
 
         this.setupEventListeners();
 
@@ -126,8 +126,8 @@ export default class FirstLevel extends Level {
         }
 
         // Increasing the quantity of max enemies
-        this.maxEnemies += 2;
-        this.enemyDistanceFromCenter += 10;
+        this.maxEnemies += 1;
+        this.enemyDistanceFromCenter += 5;
     }
 
     removeUnnecessaryEnemies() {
