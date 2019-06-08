@@ -1685,11 +1685,7 @@ function (_Level) {
       skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("assets/skybox/skybox", this.scene);
       skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
       skyboxMaterial.disableLighting = true;
-      skybox.material = skyboxMaterial; // FOG
-      // this.scene.fogMode = BABYLON.Scene.FOGMODE_EXP2;
-      // this.scene.fogDensity = 0.02;
-      // this.scene.fogColor = new BABYLON.Color3(0.9, 0.9, 0.85);
-
+      skybox.material = skyboxMaterial;
       this.scene.gravity = new BABYLON.Vector3(0, -9.81, 0);
       this.scene.collisionsEnabled = true; // Create and set the active camera
 
@@ -1850,9 +1846,6 @@ function (_Level) {
       camera.keysLeft = [65, 37]; // A or LEFT ARROW
 
       camera.keysRight = [68, 39]; // D or RIGHT ARROW
-      // camera.speed = 10;
-      // camera.inertia = 5;
-      // camera.angularSensibility = 1000;
 
       camera.onCollide = function (collidedMesh) {
         // If the camera collides with the ammo box
@@ -1860,6 +1853,7 @@ function (_Level) {
           _this4.weapon.reload();
 
           collidedMesh.dispose();
+          collidedMesh.arrow.dispose();
         }
       };
 
@@ -1904,7 +1898,12 @@ function (_Level) {
       this.ammoBox.position.x = 0;
       this.ammoBox.position.y = 1;
       this.ammoBox.position.z = 0;
-      this.ammoBox.checkCollisions = true;
+      this.ammoBox.checkCollisions = true; // Let's add a green arrow to show where is the ammo box
+
+      var arrowSpriteManager = new BABYLON.SpriteManager('arrowSpriteManager', 'assets/images/arrow.png', 1, 256, this.scene);
+      this.ammoBox.arrow = new BABYLON.Sprite('arrow', arrowSpriteManager);
+      this.ammoBox.arrow.position.y = 5;
+      this.ammoBox.arrow.size = 4;
     }
   }, {
     key: "updateStats",
@@ -1928,6 +1927,7 @@ function (_Level) {
 
       if (this.ammoBox) {
         this.ammoBox.dispose();
+        this.ammoBox.arrow.dispose();
       }
     }
   }, {

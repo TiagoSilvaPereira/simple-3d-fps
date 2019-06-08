@@ -64,11 +64,6 @@ export default class FirstLevel extends Level {
         skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
         skyboxMaterial.disableLighting = true;
         skybox.material = skyboxMaterial;	
-        
-        // FOG
-        // this.scene.fogMode = BABYLON.Scene.FOGMODE_EXP2;
-        // this.scene.fogDensity = 0.02;
-        // this.scene.fogColor = new BABYLON.Color3(0.9, 0.9, 0.85);
 
         this.scene.gravity = new BABYLON.Vector3(0, -9.81, 0);
         this.scene.collisionsEnabled = true;
@@ -238,15 +233,12 @@ export default class FirstLevel extends Level {
         camera.keysLeft = [65, 37]; // A or LEFT ARROW
         camera.keysRight = [68, 39]; // D or RIGHT ARROW
         
-        // camera.speed = 10;
-        // camera.inertia = 5;
-        // camera.angularSensibility = 1000;
-        
         camera.onCollide = (collidedMesh) => {
             // If the camera collides with the ammo box
             if(collidedMesh.id == 'ammoBox') {
                 this.weapon.reload();
                 collidedMesh.dispose();
+                collidedMesh.arrow.dispose();
             }
         }
         
@@ -292,6 +284,12 @@ export default class FirstLevel extends Level {
         this.ammoBox.position.z = 0;
 
         this.ammoBox.checkCollisions = true;
+        
+        // Let's add a green arrow to show where is the ammo box
+        var arrowSpriteManager = new BABYLON.SpriteManager('arrowSpriteManager','assets/images/arrow.png', 1, 256, this.scene);
+        this.ammoBox.arrow = new BABYLON.Sprite('arrow', arrowSpriteManager);
+        this.ammoBox.arrow.position.y = 5;
+        this.ammoBox.arrow.size = 4;
     }
 
     updateStats() {
@@ -313,6 +311,7 @@ export default class FirstLevel extends Level {
         
         if(this.ammoBox) {
             this.ammoBox.dispose();
+            this.ammoBox.arrow.dispose();
         }
     }
 
