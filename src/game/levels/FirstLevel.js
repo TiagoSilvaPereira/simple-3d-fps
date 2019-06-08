@@ -36,7 +36,7 @@ export default class FirstLevel extends Level {
         
         this.assets.addMergedMesh('enemy', '/assets/models/skull/skull2.obj');
 
-        // this.assets.addMusic('music', '/assets/musics/music.mp3', {volume: 0.1});
+        this.assets.addMusic('music', '/assets/musics/music.mp3', {volume: 0.1});
         this.assets.addSound('shotgun', '/assets/sounds/shotgun.wav', { volume: 0.4 });
         this.assets.addSound('reload', '/assets/sounds/reload.mp3', { volume: 0.4 });
         this.assets.addSound('empty', '/assets/sounds/empty.wav', { volume: 0.4 });
@@ -127,7 +127,7 @@ export default class FirstLevel extends Level {
 
         // Increasing the quantity of max enemies
         this.maxEnemies += 1;
-        this.enemyDistanceFromCenter += 5;
+        this.enemyDistanceFromCenter += 10;
     }
 
     removeUnnecessaryEnemies() {
@@ -224,11 +224,6 @@ export default class FirstLevel extends Level {
         camera.ellipsoid = new BABYLON.Vector3(1, 1.7, 1);
         camera.checkCollisions = true;
         camera._needMoveForGravity = true;
-
-        // this.playerMesh = BABYLON.MeshBuilder.CreateBox('playerMesh', {width: 1, height: 1.7, depth: 1}, this.scene);
-        // this.playerMesh.parent = camera;
-        // this.playerMesh.position.z = 10;
-        // //this.playerMesh.setEnabled(false);
 
         this.addEnemies();
 

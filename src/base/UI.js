@@ -15,6 +15,7 @@ export default class UI {
         button.color = options.color || 'black';
         button.outlineWidth = options.outlineWidth || 0;
         button.outlineColor = options.outlineColor || button.color;
+        button.alpha = (typeof options.alpha !== 'undefined') ? button.alpha : 1;
         button.background = options.background || 'white';
         button.left = options.left || '0px';
         button.top = options.top || '0px';

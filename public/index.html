@@ -19,7 +19,9 @@
                 background-repeat: no-repeat;
                 background-attachment: fixed;
                 background-position: center; 
-                background-color: #7ed6df;
+                background-color:black;
+                background-size: cover;
+                background-image: url('/assets/images/background.jpg')
             }
 
             #renderCanvas {
@@ -40,6 +42,7 @@
     <body>
 
         <!-- Main game canvas -->
+        <a id="forkMeOnGithub" href="https://github.com/TiagoSilvaPereira/simple-3d-fps" style="position: fixed; right: 0; display: none;"><img width="149" height="149" src="https://github.blog/wp-content/uploads/2008/12/forkme_right_orange_ff7600.png?resize=149%2C149" class="attachment-full size-full" alt="Fork me on GitHub" data-recalc-dims="1"></a>
         <canvas id="renderCanvas" touch-action="none" style="z-index: 1"></canvas>
     </body>
 

@@ -17,18 +17,24 @@ export default class HomeMenuLevel extends Level {
         var menu = new UI('homeMenuUI');
         
         menu.addButton('playButton', 'Play Game', {
-            'background': GAME.options.backgroundColor,
+            'background': 'transparent',
             'color': 'white',
             'onclick': () => GAME.goToLevel('FirstLevel')
         });
         
         menu.addButton('creditsButton', 'Credits', {
             'top': '70px',
-            'background': GAME.options.backgroundColor,
+            'background': 'transparent',
             'color': 'white',
             'onclick': () => GAME.goToLevel('CreditsLevel')
         });
 
+        document.getElementById('forkMeOnGithub').style.display = 'block';
+
+    }
+
+    onExit() {
+        document.getElementById('forkMeOnGithub').style.display = 'none';
     }
 
 }

@@ -703,6 +703,11 @@ function () {
       // Fix to blur the canvas to avoid issues with keyboard input
       GAME.canvas.blur();
       GAME.stopRenderLoop();
+
+      if (this.onExit) {
+        this.onExit();
+      }
+
       this.scene.dispose();
       this.scene = null;
     }
@@ -1004,6 +1009,7 @@ function () {
       button.color = options.color || 'black';
       button.outlineWidth = options.outlineWidth || 0;
       button.outlineColor = options.outlineColor || button.color;
+      button.alpha = typeof options.alpha !== 'undefined' ? button.alpha : 1;
       button.background = options.background || 'white';
       button.left = options.left || '0px';
       button.top = options.top || '0px';
@@ -1546,7 +1552,7 @@ function (_Level) {
       });
       ui.addButton('backButton', 'Return to Home', {
         'top': '220px',
-        'background': GAME.options.backgroundColor,
+        'background': 'transparent',
         'color': 'white',
         'onclick': function onclick() {
           return GAME.goToLevel('HomeMenuLevel');
@@ -1638,8 +1644,10 @@ function (_Level) {
         'start': 0,
         'end': 207
       });
-      this.assets.addMergedMesh('enemy', '/assets/models/skull/skull2.obj'); // this.assets.addMusic('music', '/assets/musics/music.mp3', {volume: 0.1});
-
+      this.assets.addMergedMesh('enemy', '/assets/models/skull/skull2.obj');
+      this.assets.addMusic('music', '/assets/musics/music.mp3', {
+        volume: 0.1
+      });
       this.assets.addSound('shotgun', '/assets/sounds/shotgun.wav', {
         volume: 0.4
       });
@@ -1729,7 +1737,7 @@ function (_Level) {
 
 
       this.maxEnemies += 1;
-      this.enemyDistanceFromCenter += 5;
+      this.enemyDistanceFromCenter += 10;
     }
   }, {
     key: "removeUnnecessaryEnemies",
@@ -1827,11 +1835,7 @@ function (_Level) {
       camera.applyGravity = true;
       camera.ellipsoid = new BABYLON.Vector3(1, 1.7, 1);
       camera.checkCollisions = true;
-      camera._needMoveForGravity = true; // this.playerMesh = BABYLON.MeshBuilder.CreateBox('playerMesh', {width: 1, height: 1.7, depth: 1}, this.scene);
-      // this.playerMesh.parent = camera;
-      // this.playerMesh.position.z = 10;
-      // //this.playerMesh.setEnabled(false);
-
+      camera._needMoveForGravity = true;
       this.addEnemies(); // Reducing the minimum visible FOV to show the Weapon correctly 
 
       camera.minZ = 0; // Remap keys to move with WASD
@@ -2032,7 +2036,7 @@ function (_Level) {
       this.scene.clearColor = new BABYLON.Color4(0, 0, 0, 0);
       var menu = new _base_UI__WEBPACK_IMPORTED_MODULE_0__["default"]('homeMenuUI');
       menu.addButton('playButton', 'Play Game', {
-        'background': GAME.options.backgroundColor,
+        'background': 'transparent',
         'color': 'white',
         'onclick': function onclick() {
           return GAME.goToLevel('FirstLevel');
@@ -2040,12 +2044,18 @@ function (_Level) {
       });
       menu.addButton('creditsButton', 'Credits', {
         'top': '70px',
-        'background': GAME.options.backgroundColor,
+        'background': 'transparent',
         'color': 'white',
         'onclick': function onclick() {
           return GAME.goToLevel('CreditsLevel');
         }
       });
+      document.getElementById('forkMeOnGithub').style.display = 'block';
+    }
+  }, {
+    key: "onExit",
+    value: function onExit() {
+      document.getElementById('forkMeOnGithub').style.display = 'none';
     }
   }]);
 

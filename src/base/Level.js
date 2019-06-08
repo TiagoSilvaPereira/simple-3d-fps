@@ -70,6 +70,11 @@ export default class Level {
         GAME.canvas.blur();
 
         GAME.stopRenderLoop();
+
+        if(this.onExit) {
+            this.onExit();
+        }
+
         this.scene.dispose();
         this.scene = null;
     }
