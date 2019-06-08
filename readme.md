@@ -6,6 +6,8 @@ If you want, you can see a live preview here:
 
 [Live Preview - Simple 3D FPS](https://simple-3d-fps-game.herokuapp.com/)
 
+![Image of the game](https://kingofcode.com.br/storage/images/projects/normal/xJbZiBBbs0Vaj6ZVEJ8sFmQoYV5SJKgDkRHsZVbL.jpeg)
+
 # Documentation
 
 All documentation is inside the ```/docs``` folder. Only open index.html on your preferred browser to see the complete documentation.
