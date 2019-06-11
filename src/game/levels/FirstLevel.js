@@ -29,7 +29,7 @@ export default class FirstLevel extends Level {
     setupAssets() {
 
         this.assets.addAnimatedMesh('rifle', '/assets/models/weapons/rifle/rifle.gltf', {
-            'normalized': true, // Normalize all animations
+            'normalized': true, // Normalize all rifle animations
             'start': 0,
             'end': 207
         });
@@ -232,6 +232,10 @@ export default class FirstLevel extends Level {
         camera.keysDown = [83, 40]; // S or DOWN ARROW
         camera.keysLeft = [65, 37]; // A or LEFT ARROW
         camera.keysRight = [68, 39]; // D or RIGHT ARROW
+
+        camera.inertia = 0.1;
+        camera.angularSensibility = 800;
+        camera.speed = 17;
         
         camera.onCollide = (collidedMesh) => {
             // If the camera collides with the ammo box
